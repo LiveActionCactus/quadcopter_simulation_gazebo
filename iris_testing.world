@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+  <sdf version="1.4">
+    <world name="default">
+
+    <!-- A ground plane -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <!-- A global light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <include>
+      <uri>model://iris_test</uri>
+    </include>
+
+    </world>
+  </sdf>
+
+<!-- when there are plugins to compile.... -->
+  <!-- export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/odysseus/projects/inprogress/gazebo_code/iris_testing/build -->
