@@ -188,6 +188,8 @@ void RotorModelPlugin::UpdateForcesAndMoments() {
 //    std::cout << std::endl;
 
 //    joint_->SetVelocity(0, turning_direction_ * ref_motor_rot_vel / rotor_velocity_slowdown_sim_); // TODO: this is what should be running, but the filter is not working
+//        std::cout << real_motor_velocity << std::endl;
+//        std::cout << std::endl;
       joint_->SetVelocity(0, turning_direction_ * real_motor_velocity / rotor_velocity_slowdown_sim_ );
 
 }
@@ -235,6 +237,7 @@ void RotorModelPlugin::WindVelocityCallback(WindPtr& msg) {
 void RotorModelPlugin::RefMotorCallback(const boost::shared_ptr<const std_msgs::msgs::Float> &ref_motor_vel_update)
 {
     ref_motor_vel = ref_motor_vel_update->data();
+//    std::cout "in the motor callback: " << ref_motor_vel << std::endl;
     RotorModelPlugin::UpdateForcesAndMoments();
 }
 
