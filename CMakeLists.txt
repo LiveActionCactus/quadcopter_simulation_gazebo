@@ -41,3 +41,6 @@ target_include_directories(rotor_plugin PRIVATE ${CMAKE_SOURCE_DIR}/include)
 add_executable(set_rotor_vel set_rotor_vel.cpp include/set_rotor_vel.hpp ${PROTO_SRCS})
 target_link_libraries(set_rotor_vel ${GAZEBO_LIBRARIES})
 #target_include_directories(set_rotor_vel PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/msgs/include/)
+
+add_executable(HIL-connect HIL_connect.cpp include/hil_connect.hpp ${PROTO_SRCS})
+target_link_libraries(HIL-connect ${GAZEBO_LIBRARIES})
