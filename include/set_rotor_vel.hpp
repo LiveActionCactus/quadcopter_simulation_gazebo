@@ -10,10 +10,15 @@
 #include <gazebo/transport/transport.hh>
 #include <gazebo/msgs/msgs.hh>
 #include <gazebo/common/common.hh>
+#include <string.h>
 
 #include <gazebo/gazebo_client.hh>
 #include "../msgs/include/Float.pb.h"
 #include "../msgs/include/Wind.pb.h"
 #include "../msgs/include/CommandMotorSpeed.pb.h"
+#include "../msgs/include/local_poses_stamped.pb.h"
+
+void test_ol_takeoff();
+void test_ol_land();
 
 #endif // SET_ROTOR_VEL_HPP

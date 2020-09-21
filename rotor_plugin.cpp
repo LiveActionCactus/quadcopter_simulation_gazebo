@@ -111,12 +111,13 @@ rotor_velocity_filter_.reset(new FirstOrderFilter<double>(time_constant_up_, tim
 void RotorModelPlugin::OnUpdate(const common::UpdateInfo& _info) {
     sampling_time_ = _info.simTime.Double() - prev_sim_time_;
     prev_sim_time_ = _info.simTime.Double();
-    UpdateMotorFail();
-    Publish();
-
+//    UpdateMotorFail();
+//    Publish();
+    UpdateForcesAndMoments();
 } // end RotorModelPlugin::OnUpdate()
 
 // TODO: add clipping for maximum rotor speed (physical limitations)
+// TODO: might be breaking because these variables haven't been initialized as zero (so random high value makes them explode)...
 void RotorModelPlugin::UpdateForcesAndMoments() {
     motor_rot_vel_ = ref_motor_vel;
 
@@ -238,7 +239,6 @@ void RotorModelPlugin::RefMotorCallback(const boost::shared_ptr<const std_msgs::
 {
     ref_motor_vel = ref_motor_vel_update->data();
 //    std::cout "in the motor callback: " << ref_motor_vel << std::endl;
-    RotorModelPlugin::UpdateForcesAndMoments();
 }
 
   // Tell Gazebo about this plugin, so that Gazebo can call Load on this plugin.

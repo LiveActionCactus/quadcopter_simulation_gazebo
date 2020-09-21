@@ -1,0 +1,14 @@
+syntax = "proto2";
+package gazebo.msgs;
+
+
+import "time.proto";
+import "local_pose.proto";
+
+message LocalPosesStamped
+{
+  required Time time          	= 1; // Time when the data was captured
+  repeated LocalPose pose          = 2;
+}
+
+

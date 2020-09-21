@@ -344,11 +344,7 @@
         <use_parent_model_frame>1</use_parent_model_frame>
       </axis>
     </joint>
-<!--     <plugin name='rosbag' filename='libgazebo_multirotor_base_plugin.so'>
-      <robotNamespace/>
-      <linkName>base_link</linkName>
-      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
-    </plugin> -->
+
     <plugin name='front_right_motor_model' filename='librotor_plugin.so'>
       <robotNamespace/>
       <jointName>rotor_0_joint</jointName>
@@ -364,7 +360,6 @@
       <timeConstantDown>0.025</timeConstantDown>
       <motorSpeedPubTopic>/motor_speed/0</motorSpeedPubTopic>
       <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
-      <velocity>2.0</velocity>
     </plugin>
     <plugin name='back_left_motor_model' filename='librotor_plugin.so'>
       <robotNamespace/>
@@ -374,14 +369,13 @@
       <turningDirection>ccw</turningDirection>
       <rotorDragCoefficient>0.000175</rotorDragCoefficient>
       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
-      <maxRotVelocity>1100</maxRotVelocity>                           <!-- units? -->
+      <maxRotVelocity>1100</maxRotVelocity>                           <!-- units: rad/s -->
       <motorConstant>8.54858e-06</motorConstant>
       <momentConstant>0.06</momentConstant>
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>                      <!-- I don't think this is actually used -->
       <motorSpeedPubTopic>/motor_speed/1</motorSpeedPubTopic>
       <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
-      <velocity>2.0</velocity>
     </plugin>
     <plugin name='front_left_motor_model' filename='librotor_plugin.so'>
       <robotNamespace/>
@@ -391,14 +385,13 @@
       <turningDirection>cw</turningDirection>
       <rotorDragCoefficient>0.000175</rotorDragCoefficient>
       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
-      <maxRotVelocity>1100</maxRotVelocity>                           <!-- units? -->
+      <maxRotVelocity>1100</maxRotVelocity>                           <!-- units: rad/s -->
       <motorConstant>8.54858e-06</motorConstant>
       <momentConstant>0.06</momentConstant>
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>                      <!-- I don't think this is actually used -->
       <motorSpeedPubTopic>/motor_speed/2</motorSpeedPubTopic>
       <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
-      <velocity>2.0</velocity>
     </plugin>
     <plugin name='back_right_motor_model' filename='librotor_plugin.so'>
       <robotNamespace/>
@@ -408,17 +401,16 @@
       <turningDirection>cw</turningDirection>
       <rotorDragCoefficient>0.000175</rotorDragCoefficient>
       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
-      <maxRotVelocity>1100</maxRotVelocity>                           <!-- units? -->
+      <maxRotVelocity>1100</maxRotVelocity>                           <!-- units: rad/s -->
       <motorConstant>8.54858e-06</motorConstant>
       <momentConstant>0.06</momentConstant>
       <timeConstantUp>0.0125</timeConstantUp>
       <timeConstantDown>0.025</timeConstantDown>                      <!-- I don't think this is actually used -->
       <motorSpeedPubTopic>/motor_speed/3</motorSpeedPubTopic>
       <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
-      <velocity>2.0</velocity>
     </plugin>
 
-    <model name='gps0'>
+<!--     <model name='gps0'>
       <link name='link'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <inertial>
@@ -447,9 +439,9 @@
             </script>
           </material>
         </visual>
-        <sensor name='gps' type='gps'>
+         <sensor name='gps' type='gps'>
           <pose frame=''>0 0 0 0 -0 0</pose>
-          <!-- <plugin name='gps_plugin' filename='libgazebo_gps_plugin.so'>
+          <plugin name='gps_plugin' filename='libgazebo_gps_plugin.so'>
             <robotNamespace/>
             <gpsNoise>1</gpsNoise>
             <gpsXYRandomWalk>2.0</gpsXYRandomWalk>
@@ -458,14 +450,15 @@
             <gpsZNoiseDensity>0.0004</gpsZNoiseDensity>
             <gpsVXYNoiseDensity>0.2</gpsVXYNoiseDensity>
             <gpsVZNoiseDensity>0.4</gpsVZNoiseDensity>
-          </plugin> -->
+          </plugin>
         </sensor>
       </link>
     </model>
     <joint name='gps0_joint' type='fixed'>
       <parent>base_link</parent>
       <child>gps0::link</child>
-    </joint>
+    </joint> -->
+
 <!--     <plugin name='groundtruth_plugin' filename='libgazebo_groundtruth_plugin.so'>
       <robotNamespace/>
     </plugin> -->

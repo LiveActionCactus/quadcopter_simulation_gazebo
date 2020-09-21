@@ -4,10 +4,13 @@
 /////////////////////////////////////////////////
 ///
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "EndlessLoop"
 typedef const boost::shared_ptr<const std_msgs::msgs::Float> MotorSpeedPtr;         // points to protobuf custom message "Float"
-//typedef const boost::shared_ptr<const gazebo::msgs::PoseStamped> ConstPoseStampedPtr ;
-typedef const boost::shared_ptr<const gazebo::msgs::PosesStamped>  ConstPosesStampedPtr;
+//typedef const boost::shared_ptr<const gazebo::msgs::PoseStamped> ConstPosesStampedPtr ;
+//typedef const boost::shared_ptr<const gazebo::msgs::PosesStampedPtr> ConstPosesStampedPtr;
 
+typedef const boost::shared_ptr<const gazebo::msgs::LocalPosesStamped> ConstLocalPosesStampedPtr;
 
 gazebo::transport::NodePtr node_handle;
 
@@ -32,6 +35,9 @@ double sensor_rot_y = 0.0;
 double sensor_rot_z = 0.0;
 double sensor_rot_w = 0.0;
 
+// Actions
+std::string takeoff ("takeoff");
+
 //
 // Callback functions providing measured motor velocity
 //
@@ -55,34 +61,31 @@ void rotor3_cb(MotorSpeedPtr &rotor_vel)
     sensor_motor_vel3 = static_cast<double>(rotor_vel->data());
 }
 
-// TODO: did I need the base plugin to make this work?? The x,y values seem wrong and the z value is not reading in
-void local_pose_cb(ConstPosesStampedPtr &local_pose)
+// TODO: not sure if "iris" is the same index every run, need to run a for loop to find it and its index
+void local_poses_cb(ConstLocalPosesStampedPtr &local_pose)
 {
-//    std::cout << local_pose->pose().position().x() << std::endl;        // okay
-//    std::cout << local_pose->pose().position().y() << std::endl;        // okay
-//    std::cout << local_pose->pose().position().z() << std::endl;        // no value...
+    sensor_pos_x = local_pose->pose(0).position().x();
+    sensor_pos_y = local_pose->pose(0).position().y();
+    sensor_pos_z = local_pose->pose(0).position().z();
 
-    std::cout << local_pose->time().sec() << std::endl;
-    std::cout << local_pose->pose().Get(0).position().x() << std::endl;
-    std::cout << local_pose->pose().Get(0).position().y() << std::endl;
-    std::cout << local_pose->pose().Get(0).position().z() << std::endl;
+    sensor_rot_w = local_pose->pose(0).orientation().w();
+    sensor_rot_w = local_pose->pose(0).orientation().x();
+    sensor_rot_w = local_pose->pose(0).orientation().y();
+    sensor_rot_w = local_pose->pose(0).orientation().z();
 
+    std::cout << local_pose->pose(0).name().data() << std::endl;
+    std::cout << local_pose->pose(0).position().x() << std::endl;
+    std::cout << local_pose->pose(0).position().y() << std::endl;
+    std::cout << local_pose->pose(0).position().z() << std::endl;
 
-//    std::cout << local_pose->position().x() << std::endl;
-//    std::cout << local_pose->position().y() << std::endl;
-//    std::cout << local_pose->position().z() << std::endl;
-
-//    std::cout << local_pose->pose_size() << std::endl;
-//    std::cout << local_pose->pose(0).name() << std::endl;
-//    std::cout << local_pose->pose(1).name() << std::endl;
-//    std::cout << local_pose->pose(2).name() << std::endl;
-//    std::cout << local_pose->pose(3).name() << std::endl;
-//
-//    std::cout << local_pose->pose(2).position().x() << std::endl;
-//    std::cout << local_pose->pose(2).position().y() << std::endl;
-//    std::cout << local_pose->pose(2).position().z() << std::endl;
+    std::cout << local_pose->pose(0).orientation().w() << std::endl;
+    std::cout << local_pose->pose(0).orientation().x() << std::endl;
+    std::cout << local_pose->pose(0).orientation().y() << std::endl;
+    std::cout << local_pose->pose(0).orientation().z() << std::endl;
+    std::cout << std::endl;
 
 }
+
 
 int main(int _argc, char **_argv)
 {
@@ -103,36 +106,46 @@ int main(int _argc, char **_argv)
     gazebo::transport::PublisherPtr pub3 =
         node_handle->Advertise<std_msgs::msgs::Float>("/gazebo/default/iris/ref/motor_speed/3", 1);
 
-    // Subscribe to measured rotor velocities
-    gazebo::transport::SubscriberPtr sub0 = node_handle->Subscribe("/gazebo/default/iris/motor_speed/0", rotor0_cb);
-    gazebo::transport::SubscriberPtr sub1 = node_handle->Subscribe("/gazebo/default/iris/motor_speed/1", rotor1_cb);
-    gazebo::transport::SubscriberPtr sub2 = node_handle->Subscribe("/gazebo/default/iris/motor_speed/2", rotor2_cb);
-    gazebo::transport::SubscriberPtr sub3 = node_handle->Subscribe("/gazebo/default/iris/motor_speed/3", rotor3_cb);
+    // TODO: implement a controller where the rotor velocities can be incorperated (I read this paper...)
+//    // Subscribe to measured rotor velocities
+//    gazebo::transport::SubscriberPtr sub0 = node_handle->Subscribe("/gazebo/default/iris/motor_speed/0", rotor0_cb);
+//    gazebo::transport::SubscriberPtr sub1 = node_handle->Subscribe("/gazebo/default/iris/motor_speed/1", rotor1_cb);
+//    gazebo::transport::SubscriberPtr sub2 = node_handle->Subscribe("/gazebo/default/iris/motor_speed/2", rotor2_cb);
+//    gazebo::transport::SubscriberPtr sub3 = node_handle->Subscribe("/gazebo/default/iris/motor_speed/3", rotor3_cb);
 
     // Subscribe to measured position and orientation values
-    gazebo::transport::SubscriberPtr sub4 = node_handle->Subscribe("/gazebo/default/pose/info", local_pose_cb);
+    gazebo::transport::SubscriberPtr sub5 = node_handle->Subscribe("~/pose/info", local_poses_cb);
 
     while(1)
     {
-        ref_motor_vel0.set_data(200.0);
-        ref_motor_vel1.set_data(200.0);
-        ref_motor_vel2.set_data(200.0);
-        ref_motor_vel3.set_data(200.0);
+        if(takeoff == _argv[1]){
+            test_ol_takeoff();
+        } else {
+            test_ol_land();
+        }
 
         pub0->Publish(ref_motor_vel0);
         pub1->Publish(ref_motor_vel1);
         pub2->Publish(ref_motor_vel2);
         pub3->Publish(ref_motor_vel3);
 
-//        std::cout << "sensor motor 0: " << sensor_motor_vel0 << std::endl;
-//        std::cout << "sensor motor 1: " << sensor_motor_vel1 << std::endl;
-//        std::cout << "sensor motor 2: " << sensor_motor_vel2 << std::endl;
-//        std::cout << "sensor motor 3: " << sensor_motor_vel3 << std::endl;
-//        std::cout << std::endl;
-
     } // end while(1)
-
-    return(0);
 
 } // end main()
 
+void test_ol_takeoff()
+{
+    ref_motor_vel0.set_data(670.0);
+    ref_motor_vel1.set_data(670.0);
+    ref_motor_vel2.set_data(670.0);
+    ref_motor_vel3.set_data(670.0);
+}
+
+void test_ol_land()
+{
+    ref_motor_vel0.set_data(645.0);
+    ref_motor_vel1.set_data(645.0);
+    ref_motor_vel2.set_data(645.0);
+    ref_motor_vel3.set_data(645.0);
+}
+#pragma clang diagnostic pop

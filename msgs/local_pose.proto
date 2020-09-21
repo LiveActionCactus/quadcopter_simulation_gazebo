@@ -1,0 +1,14 @@
+syntax = "proto2";
+package gazebo.msgs;
+
+
+import "local_vector3d.proto";
+import "local_quaternion.proto";
+
+message LocalPose
+{
+  optional string name            = 1;
+  optional uint32 id              = 9;
+  required LocalVector3d position      = 3;
+  required LocalQuaternion orientation = 4;
+}

@@ -131,7 +131,7 @@ private:
     double time_constant_down_;
     double time_constant_up_;
 
-    float ref_motor_vel;
+    float ref_motor_vel = 0.0;
 
     bool reversible_;
 
