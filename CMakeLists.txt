@@ -38,6 +38,6 @@ target_link_libraries(rotor_plugin ${GAZEBO_LIBRARIES} Eigen3::Eigen)
 target_include_directories(rotor_plugin PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 # Build the test publisher
-add_executable(set_rotor_vel set_rotor_vel.cpp include/set_rotor_vel.hpp ${PROTO_SRCS})
-target_link_libraries(set_rotor_vel ${GAZEBO_LIBRARIES})
+add_executable(basic_quad_control basic_quad_control.cpp include/basic_quad_control.hpp ${PROTO_SRCS})
+target_link_libraries(basic_quad_control ${GAZEBO_LIBRARIES} Eigen3::Eigen)
 #target_include_directories(set_rotor_vel PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/msgs/include/)
