@@ -45,6 +45,7 @@ void local_poses_cb(ConstLocalPosesStampedPtr &local_pose)
     _sensor_quat(2) = local_pose->pose(0).orientation().y();
     _sensor_quat(3) = local_pose->pose(0).orientation().z();
 
+
 //    // for debugging quadcopter pose information
 //    std::cout << local_pose->pose(0).name().data() << std::endl;
 //    std::cout << local_pose->pose(0).position().x() << std::endl;
@@ -86,13 +87,16 @@ int main(int _argc, char **_argv)
 //    gazebo::transport::SubscriberPtr sub3 = node_handle->Subscribe("/gazebo/default/iris/motor_speed/3", rotor3_cb);
 
     // Subscribe to measured position and orientation values
-    gazebo::transport::SubscriberPtr sub5 = node_handle->Subscribe("~/pose/info", local_poses_cb);
+    gazebo::transport::SubscriberPtr sub5 = node_handle->Subscribe("~/pose/local/info", local_poses_cb);
 
     // TODO: organized this so the initial state comes from read-in values
     initialize_variables();         // assumes starting from origin with zeroed orientation
 
     Eigen::Matrix<double,1,4> desired_thrust_;
 
+    std::ofstream testdata;
+    testdata.open("test_data.txt");
+    u_int64_t ctr = 0;
     while(1)
     {
         if(sim_state == 0)
@@ -110,10 +114,44 @@ int main(int _argc, char **_argv)
 //            std::cout << std::endl;
 
             if (takeoff == _argv[1]) {
+                if((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1)
+                {
+//                    if((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1)
+//                    _desired_pos << -0.5, 0.0, 2.0;
+//                    std::cout << "New desired position: " << _desired_pos << std::endl;
+                      _orig_desired_euler_att << 0.0, 0.0, 0.0;
+//                      _desired_pos << 0.5, 0.0, 2.0;
+//                    if((_desired_euler_att - _derived_euler_att).lpNorm<2>() < 0.1)
+                }
                 test_cl_takeoff();
+
+//                std::cout << "desired position: " << _desired_pos << std::endl;
+//                std::cout << _sensor_pos << std::endl;
+//                std::cout << "desired attitude: " << _desired_euler_att << std::endl;
+//                std::cout << _derived_euler_att << std::endl;
+//                std::cout << std::endl;
+//                    test_ol_takeoff();
+                if((ctr % 1000) == 0) {
+                    testdata << sim_time << "\n";
+                    testdata << std::fixed << std::setprecision(8) << _desired_pos << "\n";
+                    testdata << std::fixed << std::setprecision(8) << _sensor_pos << "\n";
+                    testdata << std::fixed << std::setprecision(8) << _desired_euler_att << "\n";
+                    testdata << std::fixed << std::setprecision(8) << _derived_euler_att << "\n";
+                }
+
+                ctr++;
             } else {
                 test_ol_land();
             }
+
+
+//            std::cout << "des thrust: " << desired_thrust_ << std::endl;
+//            std::cout << "des att: " << _desired_euler_att << std::endl;
+//            std::cout << "meas att: " << _derived_euler_att << std::endl;
+//            std::cout << std::endl;
+//            std::cout << "x err: " << (_desired_pos(0) - _sensor_pos(0)) << std::endl;
+//            std::cout << "y err: " << (_desired_pos(0) - _sensor_pos(0)) << std::endl;
+//            std::cout << std::endl;
 
             // publish motor commands
 //            pub0->Publish(ref_motor_vel0);
@@ -121,10 +159,10 @@ int main(int _argc, char **_argv)
 //            pub2->Publish(ref_motor_vel2);
 //            pub3->Publish(ref_motor_vel3);
 
-            std::cout << _derived_euler_att << std::endl;
-            std::cout << _desired_euler_att << std::endl;
-            std::cout << _desired_thrust << std::endl;
-            std::cout << std::endl;
+//            std::cout << _derived_euler_att << std::endl;
+//            std::cout << _desired_euler_att << std::endl;
+//            std::cout << _desired_thrust << std::endl;
+//            std::cout << std::endl;
 
             pub0->Publish(ref_motor_vel0);
             pub1->Publish(ref_motor_vel1);
@@ -139,7 +177,7 @@ void test_ol_takeoff()
 {
     ref_motor_vel0.set_data(690.0);
     ref_motor_vel1.set_data(690.0);
-    ref_motor_vel2.set_data(690.0);
+    ref_motor_vel2.set_data(690.0);     // TODO: not sure why there's a delta now, might be that the props are perfectly centered now
     ref_motor_vel3.set_data(690.0);
 }
 
@@ -154,6 +192,7 @@ void test_ol_land()
 
 void test_cl_takeoff()
 {
+//    _desired_thrust = _desired_thrust / 10.0;
     ref_motor_vel0.set_data(_desired_thrust(0));
     ref_motor_vel1.set_data(_desired_thrust(1));
     ref_motor_vel2.set_data(_desired_thrust(2));
@@ -166,15 +205,17 @@ void initialize_variables()
 //    _Kd_pos << 12.0, 12.0, 10.0;
 //    _Kp_ang << 3000.0, 3000.0, 3000.0;
 //    _Kd_ang << 300.0, 300.0, 300.0;
-    _Kp_pos << 1.0, 1.0, 8.0;
-    _Kd_pos << 0.0, 0.0, 4.0;
-    _Kp_ang << 0.0, 0.0, 50.0;
-    _Kd_ang << 0.0, 00.0, 00.0;
+    _Kp_pos << 5.0, 5.0, 8.0;
+    _Kd_pos << 1.0, 1.0, 3.0;
+    _Kp_ang << 40.0, 40.0, 65.0;
+    _Kd_ang << 8.0, 8.0, 13.5;
 
-    _desired_pos << 0.1, 0.0, 2.0;
+    _desired_pos << 0.0, 0.0, 2.0;
     _desired_vel << 0.0, 0.0, 0.0;
     _desired_acc << 0.0, 0.0, 0.0;
-    _desired_euler_att << 0.0, 0.0, 0.0;
+    _desired_euler_att << 0.0, 0.0, 0.0; // roll, pitch, yaw
+    _orig_desired_euler_att = _desired_euler_att;
+//    _desired_euler_att(2) = quat2euler(_sensor_quat)(2);
     _desired_pqr_att << 0.0, 0.0, 0.0;          // angular rates (not really the "velocity")
 
     _state << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;   // zeroed position and orientation
@@ -224,15 +265,28 @@ void basic_position_controller()
 {
     // TODO: i'm pretty sure we shouldn't be keeping track of _desired_acc (eg: every loop it iterates)
 
-    Eigen::Array3d acc_des_ = _desired_acc + (_Kd_pos * (_desired_vel - _derived_lin_vel))
-                                + (_Kp_pos * (_desired_pos - _sensor_pos));
+    Eigen::Array3d acc_des_ = _desired_acc + (_Kd_pos.cwiseProduct(_desired_vel - _derived_lin_vel))
+                                + (_Kp_pos.cwiseProduct(_desired_pos - _sensor_pos));
 
-    _desired_euler_att(0) = (1.0/_gravity) * ((acc_des_(0)*sin(0.0)) - (acc_des_(1)*cos(0.0)));
-    _desired_euler_att(1) = (1.0/_gravity) * ((acc_des_(0)*cos(0.0)) + (acc_des_(1)*sin(0.0)));
-    _desired_euler_att(2) = 0.0;        // desired yaw is 0.0, forward-facing
+//    Eigen::Matrix<double,1,3> _desired_acc;
+//    _desired_acc(0) = _gravity * ((_desired_euler_att(1) * cos(_desired_euler_att(2)))
+//                                + (_desired_euler_att(0) * sin(_desired_euler_att(2))));
+//    _desired_acc(1) = _gravity * ((_desired_euler_att(1) * sin(_desired_euler_att(2)))
+//                                  - (_desired_euler_att(0) * cos(_desired_euler_att(2))));
+
+    //TODO: need to constrain the attitude quaternion to a norm of 1...
+    _desired_euler_att(0) = (1.0/_gravity) * ((acc_des_(0)*sin(_desired_euler_att(2))) - (acc_des_(1)*cos(_desired_euler_att(2))));
+    _desired_euler_att(1) = (1.0/_gravity) * ((acc_des_(0)*cos(_desired_euler_att(2))) + (acc_des_(1)*sin(_desired_euler_att(2))));
+//    _desired_euler_att(2) = 0.0;        // desired yaw is 0.0, forward-facing
+
+    // TODO: there is a problem here!! either _desired_euler_att shouldn't be updated to itself (above)
+    // TODO: we might not even be needing to update the desired_euler_att here...
+    _desired_euler_att(0) = _orig_desired_euler_att(0);
+    _desired_euler_att(1) = _orig_desired_euler_att(1);
+    _desired_euler_att(2) = _orig_desired_euler_att(2);
+
 
     // TODO: the desired total thrust for 1) seems kinda low, 2) better...
-//    _desired_tot_thrust = _mass * (_gravity + acc_des_(2));
     _desired_tot_thrust_delta = (_mass / (8.0 * _motor_force_const * _hover_point)) * acc_des_(2);
 
 //    std::cout << _desired_euler_att << std::endl;
@@ -241,17 +295,30 @@ void basic_position_controller()
 
 } // end basic_position_controller()
 
+Eigen::Matrix<double,1,3> test_att_;
+
+//TODO: need to fix the desired attitude so I can test the controller
+//TODO: right now it's updating from the position controller
 void basic_attitude_controller()
 {
     _derived_euler_att = quat2euler(_sensor_quat);
+//    _bRw = quat2rot(_sensor_quat);
+//    _wRb = _bRw.transpose();
+//
+//    test_att_ = _wRb*_derived_euler_att;
+//    std::cout << _desired_euler_att << std::endl;
+//    std::cout << _derived_euler_att << std::endl;
+//    std::cout << std::endl;
+
+
 
     Eigen::Array3d att_deltas_;
-    att_deltas_(0) = (_Kp_ang(0) * (_desired_euler_att(0) - _derived_euler_att(0)))
-                            + (_Kd_ang(0) * (_desired_pqr_att(0) - _derived_pqr_att(0)));
-    att_deltas_(1) = (_Kp_ang(1) * (_desired_euler_att(1) - _derived_euler_att(1)))
-                            + (_Kd_ang(1) * (_desired_pqr_att(1) - _derived_pqr_att(1)));
-    att_deltas_(2) = (_Kp_ang(2) * (_desired_euler_att(2) - _derived_euler_att(2)))
-                            + (_Kd_ang(2) * (_desired_pqr_att(2) - _derived_pqr_att(2)));
+    att_deltas_(0) = -1.0*(_Kp_ang(0) * (_desired_euler_att(0) - _derived_euler_att(0)))
+                            + -1.0*(_Kd_ang(0) * (_desired_pqr_att(0) - _derived_pqr_att(0)));
+    att_deltas_(1) = -1.0*(_Kp_ang(1) * (_desired_euler_att(1) - _derived_euler_att(1)))
+                            + -1.0*(_Kd_ang(1) * (_desired_pqr_att(1) - _derived_pqr_att(1)));
+    att_deltas_(2) = 1.0*(_Kp_ang(2) * (_desired_euler_att(2) - _derived_euler_att(2)))
+                            + 1.0*(_Kd_ang(2) * (_desired_pqr_att(2) - _derived_pqr_att(2)));
 
 //    att_deltas_ = -1.0 * att_deltas_;
 //    att_deltas_(0) = -1.0 * att_deltas_(0);
@@ -262,14 +329,14 @@ void basic_attitude_controller()
     all_deltas_ << (_hover_point + _desired_tot_thrust_delta), att_deltas_(0), att_deltas_(1), att_deltas_(2);
 
     _desired_thrust =  (_motor_mapping * all_deltas_);
-    std::cout << std::endl;
-    std::cout << "mappings" << std::endl;
-    std::cout << _motor_mapping << std::endl;
-    std::cout << att_deltas_ << std::endl;
-    std::cout << std::endl;
-    std::cout << all_deltas_ << std::endl;
-    std::cout << _desired_thrust << std::endl;
-    std::cout << std::endl;
+//    std::cout << std::endl;
+//    std::cout << "mappings" << std::endl;
+//    std::cout << _motor_mapping << std::endl;
+//    std::cout << att_deltas_ << std::endl;
+//    std::cout << std::endl;
+//    std::cout << all_deltas_ << std::endl;
+//    std::cout << _desired_thrust << std::endl;
+//    std::cout << std::endl;
 
     // TODO: is this an issue with coordinate frames? what frame is my quaternion in?
     // TODO: if the quaternion measurement is based in the inertial frame it's gonna f everything up

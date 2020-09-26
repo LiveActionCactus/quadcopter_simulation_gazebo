@@ -164,7 +164,7 @@ void RotorModelPlugin::UpdateForcesAndMoments() {
     // The transformation from the parent_link to the link_.
     ignition::math::Pose3d pose_difference = link_->WorldCoGPose() - parent_links.at(0)->WorldCoGPose();
 
-    ignition::math::Vector3d drag_torque(0, 0, -turning_direction_ * force * moment_constant_);
+    ignition::math::Vector3d drag_torque(0, 0, -turning_direction_ * force * moment_constant_); // neg (-) bc moment is in opposite direction
 
     // Transforming the drag torque into the parent frame to handle arbitrary rotor orientations.
     ignition::math::Vector3d drag_torque_parent_frame = pose_difference.Rot().RotateVector(drag_torque);

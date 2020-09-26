@@ -13,6 +13,8 @@
 #include <string.h>
 #include <cmath>
 #include <eigen3/Eigen/Eigen>          // we have options here: ignition (limited), xtensor (like numpy), eigen (standard?)
+#include <iostream>
+#include <fstream>
 //#include <eigen3/Eigen/Core>
 
 #include <gazebo/gazebo_client.hh>
@@ -87,9 +89,9 @@ Eigen::Matrix<double,1,4> _quat_normalized((Eigen::Matrix<double,1,4>() << 1.0, 
 Eigen::Matrix<double,1,4> _desired_thrust((Eigen::Matrix<double,1,4>() << 1.0, 0.0, 0.0, 0.0).finished());
 Eigen::Array<double,1,13> _state;
 Eigen::Array<double,1,13> _statedot;
-Eigen::Array<double,1,3> _sensor_pos;
-Eigen::Array<double,1,3> _prev_sensor_pos;
-Eigen::Array<double,1,3> _derived_lin_vel;
+Eigen::Matrix<double,1,3> _sensor_pos;
+Eigen::Matrix<double,1,3> _prev_sensor_pos;
+Eigen::Matrix<double,1,3> _derived_lin_vel;
 Eigen::Matrix<double,1,3> _derived_euler_att;
 Eigen::Matrix<double,1,3> _derived_euler_attdot;
 Eigen::Matrix<double,1,3> _prev_derived_euler_att;
@@ -98,17 +100,18 @@ Eigen::Array<double,1,4> _derived_quatdot;
 Eigen::Array<double,1,3> _z_bbasis;      // z basis vector for body frame
 Eigen::Array<double,1,3> _blin_force;    // linear force for body frame
 
-Eigen::Array<double,1,3> _desired_pos;
-Eigen::Array<double,1,3> _desired_vel;
-Eigen::Array<double,1,3> _desired_acc;
-Eigen::Array<double,1,3> _desired_euler_att;
+Eigen::Matrix<double,1,3> _desired_pos;
+Eigen::Matrix<double,1,3> _desired_vel;
+Eigen::Matrix<double,1,3> _desired_acc;
+Eigen::Matrix<double,1,3> _desired_euler_att;
+Eigen::Matrix<double,1,3> _orig_desired_euler_att;
 Eigen::Array<double,1,3> _desired_pqr_att;
 double _desired_tot_thrust_delta;
 
-static Eigen::Array<double,1,3> _Kp_pos;
-static Eigen::Array<double,1,3> _Kd_pos;
-static Eigen::Array<double,1,3> _Kp_ang;
-static Eigen::Array<double,1,3> _Kd_ang;
+static Eigen::Matrix<double,1,3> _Kp_pos;
+static Eigen::Matrix<double,1,3> _Kd_pos;
+static Eigen::Matrix<double,1,3> _Kp_ang;
+static Eigen::Matrix<double,1,3> _Kd_ang;
 
 // function declarations
 void test_ol_takeoff();
