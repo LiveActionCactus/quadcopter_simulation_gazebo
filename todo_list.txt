@@ -1,0 +1,6 @@
+Goals (as of 27Sep)
+	- tune the iris controller
+	- automate the data output of the iris (imagining a c++ real-time interface here)
+	- implement rudimentary waypointing
+	- implement minimum snap trajectory following
+	- implement a fully non-linear controller
