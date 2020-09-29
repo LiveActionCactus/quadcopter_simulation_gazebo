@@ -102,13 +102,21 @@ int main(int _argc, char **_argv)
         if(sim_state == 0)
         {
             prev_sim_time = sim_time;
+            prev_sim_time_pos = sim_time;
+            prev_sim_time_att = sim_time;
             sim_state = 2;
             std::cout << "Armed" << std::endl;
         } else if(sim_state == 2)
         {
             derived_sensor_values();                // called before a control decision
-            basic_position_controller();
-            basic_attitude_controller();
+            if ((sim_time - prev_sim_time_pos) > 0.01){
+                basic_position_controller();
+                prev_sim_time_pos = sim_time;
+            }
+            if ((sim_time - prev_sim_time_att) > 0.001){
+                basic_attitude_controller();
+                prev_sim_time_att = sim_time;
+            }
 
 //            std::cout << desired_thrust_ << std::endl;
 //            std::cout << std::endl;
@@ -119,7 +127,8 @@ int main(int _argc, char **_argv)
 //                    if((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1)
 //                    _desired_pos << -0.5, 0.0, 2.0;
 //                    std::cout << "New desired position: " << _desired_pos << std::endl;
-                      _orig_desired_euler_att << 0.0, 0.0, 0.0;
+                      _orig_desired_euler_att << 0.1, 0.0, 0.0;
+//                      _att_test = 1;
 //                      _desired_pos << 0.5, 0.0, 2.0;
 //                    if((_desired_euler_att - _derived_euler_att).lpNorm<2>() < 0.1)
                 }
@@ -137,32 +146,15 @@ int main(int _argc, char **_argv)
                     testdata << std::fixed << std::setprecision(8) << _sensor_pos << "\n";
                     testdata << std::fixed << std::setprecision(8) << _desired_euler_att << "\n";
                     testdata << std::fixed << std::setprecision(8) << _derived_euler_att << "\n";
+                    testdata << std::fixed << std::setprecision(8) << _desired_thrust << "\n";
+                    testdata << std::fixed << std::setprecision(8) << _final_att_deltas << "\n";
+
                 }
 
-                ctr++;
+                ctr++;          // TODO: need to handle this overflow, maybe use some sort of circular buffer
             } else {
                 test_ol_land();
             }
-
-
-//            std::cout << "des thrust: " << desired_thrust_ << std::endl;
-//            std::cout << "des att: " << _desired_euler_att << std::endl;
-//            std::cout << "meas att: " << _derived_euler_att << std::endl;
-//            std::cout << std::endl;
-//            std::cout << "x err: " << (_desired_pos(0) - _sensor_pos(0)) << std::endl;
-//            std::cout << "y err: " << (_desired_pos(0) - _sensor_pos(0)) << std::endl;
-//            std::cout << std::endl;
-
-            // publish motor commands
-//            pub0->Publish(ref_motor_vel0);
-//            pub1->Publish(ref_motor_vel1);
-//            pub2->Publish(ref_motor_vel2);
-//            pub3->Publish(ref_motor_vel3);
-
-//            std::cout << _derived_euler_att << std::endl;
-//            std::cout << _desired_euler_att << std::endl;
-//            std::cout << _desired_thrust << std::endl;
-//            std::cout << std::endl;
 
             pub0->Publish(ref_motor_vel0);
             pub1->Publish(ref_motor_vel1);
@@ -205,10 +197,10 @@ void initialize_variables()
 //    _Kd_pos << 12.0, 12.0, 10.0;
 //    _Kp_ang << 3000.0, 3000.0, 3000.0;
 //    _Kd_ang << 300.0, 300.0, 300.0;
-    _Kp_pos << 5.0, 5.0, 8.0;
-    _Kd_pos << 1.0, 1.0, 3.0;
-    _Kp_ang << 40.0, 40.0, 65.0;
-    _Kd_ang << 8.0, 8.0, 13.5;
+    _Kp_pos << 5.0, 5.0, 10.0;
+    _Kd_pos << 1.0, 1.0, 6.0;
+    _Kp_ang << 50.0, 0.0, 0.0;
+    _Kd_ang << 25.0, 0.0, 0.0;
 
     _desired_pos << 0.0, 0.0, 2.0;
     _desired_vel << 0.0, 0.0, 0.0;
@@ -226,6 +218,7 @@ void initialize_variables()
     _z_bbasis << 0.0, 0.0, 1.0;
     _blin_force << 0.0, 0.0, 0.0;
     _derived_euler_att << 0.0, 0.0, 0.0;
+    _final_att_deltas << 0.0, 0.0, 0.0;
 
 } // end initialize_variables()
 
@@ -258,7 +251,7 @@ void derived_sensor_values()
 
 } // end derived_sensor_values()
 
-//references:
+//references (papers):
 // Trajectory Generation and Control for Precise Aggressive Maneuvers with Quadrotors
 // The GRASP Multiple Micro UAV Testbed
 void basic_position_controller()
@@ -277,17 +270,21 @@ void basic_position_controller()
     //TODO: need to constrain the attitude quaternion to a norm of 1...
     _desired_euler_att(0) = (1.0/_gravity) * ((acc_des_(0)*sin(_desired_euler_att(2))) - (acc_des_(1)*cos(_desired_euler_att(2))));
     _desired_euler_att(1) = (1.0/_gravity) * ((acc_des_(0)*cos(_desired_euler_att(2))) + (acc_des_(1)*sin(_desired_euler_att(2))));
-//    _desired_euler_att(2) = 0.0;        // desired yaw is 0.0, forward-facing
+    _desired_euler_att(2) = _derived_euler_att(2);        // desired yaw is forward-facing
 
     // TODO: there is a problem here!! either _desired_euler_att shouldn't be updated to itself (above)
     // TODO: we might not even be needing to update the desired_euler_att here...
     _desired_euler_att(0) = _orig_desired_euler_att(0);
     _desired_euler_att(1) = _orig_desired_euler_att(1);
-    _desired_euler_att(2) = _orig_desired_euler_att(2);
+//    _desired_euler_att(2) = _orig_desired_euler_att(2);
 
 
     // TODO: the desired total thrust for 1) seems kinda low, 2) better...
-    _desired_tot_thrust_delta = (_mass / (8.0 * _motor_force_const * _hover_point)) * acc_des_(2);
+    if(_att_test){
+        _desired_tot_thrust_delta = _hover_point;
+    } else{
+        _desired_tot_thrust_delta = (_mass / (8.0 * _motor_force_const * _hover_point)) * acc_des_(2);
+    }
 
 //    std::cout << _desired_euler_att << std::endl;
 //    std::cout << _desired_tot_thrust_delta << std::endl;
@@ -301,25 +298,26 @@ Eigen::Matrix<double,1,3> test_att_;
 //TODO: right now it's updating from the position controller
 void basic_attitude_controller()
 {
-    _derived_euler_att = quat2euler(_sensor_quat);
+//    /// Test
 //    _bRw = quat2rot(_sensor_quat);
 //    _wRb = _bRw.transpose();
 //
 //    test_att_ = _wRb*_derived_euler_att;
-//    std::cout << _desired_euler_att << std::endl;
-//    std::cout << _derived_euler_att << std::endl;
-//    std::cout << std::endl;
+//    ///
 
-
+    _derived_euler_att = quat2euler(_sensor_quat);
 
     Eigen::Array3d att_deltas_;
+
+    // TODO: don't forget that these signs have be flip flopped around, I think negative is correct...
     att_deltas_(0) = -1.0*(_Kp_ang(0) * (_desired_euler_att(0) - _derived_euler_att(0)))
                             + -1.0*(_Kd_ang(0) * (_desired_pqr_att(0) - _derived_pqr_att(0)));
-    att_deltas_(1) = -1.0*(_Kp_ang(1) * (_desired_euler_att(1) - _derived_euler_att(1)))
-                            + -1.0*(_Kd_ang(1) * (_desired_pqr_att(1) - _derived_pqr_att(1)));
+    att_deltas_(1) = 1.0*(_Kp_ang(1) * (_desired_euler_att(1) - _derived_euler_att(1)))
+                            + 1.0*(_Kd_ang(1) * (_desired_pqr_att(1) - _derived_pqr_att(1)));
     att_deltas_(2) = 1.0*(_Kp_ang(2) * (_desired_euler_att(2) - _derived_euler_att(2)))
                             + 1.0*(_Kd_ang(2) * (_desired_pqr_att(2) - _derived_pqr_att(2)));
 
+    _final_att_deltas = att_deltas_;
 //    att_deltas_ = -1.0 * att_deltas_;
 //    att_deltas_(0) = -1.0 * att_deltas_(0);
 //    att_deltas_(1) = -1.0 * att_deltas_(1);
@@ -329,14 +327,7 @@ void basic_attitude_controller()
     all_deltas_ << (_hover_point + _desired_tot_thrust_delta), att_deltas_(0), att_deltas_(1), att_deltas_(2);
 
     _desired_thrust =  (_motor_mapping * all_deltas_);
-//    std::cout << std::endl;
-//    std::cout << "mappings" << std::endl;
-//    std::cout << _motor_mapping << std::endl;
-//    std::cout << att_deltas_ << std::endl;
-//    std::cout << std::endl;
-//    std::cout << all_deltas_ << std::endl;
-//    std::cout << _desired_thrust << std::endl;
-//    std::cout << std::endl;
+
 
     // TODO: is this an issue with coordinate frames? what frame is my quaternion in?
     // TODO: if the quaternion measurement is based in the inertial frame it's gonna f everything up

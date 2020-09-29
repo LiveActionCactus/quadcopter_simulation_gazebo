@@ -31,6 +31,8 @@ typedef const boost::shared_ptr<const gazebo::msgs::LocalPosesStamped> ConstLoca
 // simulation time
 double sim_time = 0.0;
 double prev_sim_time = 0.0;
+double prev_sim_time_pos = 0.0;
+double prev_sim_time_att = 0.0;
 double sim_time_delta = 0.0;
 
 // simulation state
@@ -77,7 +79,7 @@ double _length = 0.2555;     // m
 double _hover_point = 665.0; // rad/s for one motor only
 double _motor_force_const = 8.54858e-06;
 double _motor_torque_const = 0.016;         // TODO: seems too large
-Eigen::Matrix4d _motor_mapping((Eigen::Matrix4d() << 1, 0, -1, 1, 1, 1, 0, -1, 1, 0, 1, 1, 1, -1, 0, -1).finished());
+Eigen::Matrix4d _motor_mapping((Eigen::Matrix4d() << 1.0, 0.0, -1.0, 1.0, 1.0, 1.0, 0.0, -1.0, 1.0, 0.0, 1.0, 1.0, 1.0, -1.0, 0.0, -1.0).finished());
 static Eigen::Matrix3d _I((Eigen::Matrix3d() << 0.029125, 0.0, 0.0, 0.0, 0.029125, 0.0, 0.0, 0.0, 0.029125).finished());
 static Eigen::Matrix3d _I_inv = _I.inverse();
 Eigen::Matrix3d _bRw((Eigen::Matrix3d() << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0).finished());
@@ -99,6 +101,7 @@ Eigen::Matrix<double,1,3> _derived_pqr_att;
 Eigen::Array<double,1,4> _derived_quatdot;
 Eigen::Array<double,1,3> _z_bbasis;      // z basis vector for body frame
 Eigen::Array<double,1,3> _blin_force;    // linear force for body frame
+Eigen::Matrix<double,1,3> _final_att_deltas;
 
 Eigen::Matrix<double,1,3> _desired_pos;
 Eigen::Matrix<double,1,3> _desired_vel;
@@ -112,6 +115,9 @@ static Eigen::Matrix<double,1,3> _Kp_pos;
 static Eigen::Matrix<double,1,3> _Kd_pos;
 static Eigen::Matrix<double,1,3> _Kp_ang;
 static Eigen::Matrix<double,1,3> _Kd_ang;
+
+// test
+bool _att_test = 0;
 
 // function declarations
 void test_ol_takeoff();
