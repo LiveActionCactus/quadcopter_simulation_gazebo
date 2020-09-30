@@ -125,13 +125,13 @@ int main(int _argc, char **_argv)
 
     // Publish motor reference commands
     gazebo::transport::PublisherPtr pub0 =
-        node_handle->Advertise<std_msgs::msgs::Float>("/gazebo/default/iris/ref/motor_speed/0", motor_0_speed);
+        node_handle->Advertise<std_msgs::msgs::Float>("/gazebo/default/iris/ref/motor_speed/0", 1);
     gazebo::transport::PublisherPtr pub1 =
-        node_handle->Advertise<std_msgs::msgs::Float>("/gazebo/default/iris/ref/motor_speed/1", motor_1_speed);
+        node_handle->Advertise<std_msgs::msgs::Float>("/gazebo/default/iris/ref/motor_speed/1", 1);
     gazebo::transport::PublisherPtr pub2 =
-        node_handle->Advertise<std_msgs::msgs::Float>("/gazebo/default/iris/ref/motor_speed/2", motor_2_speed);
+        node_handle->Advertise<std_msgs::msgs::Float>("/gazebo/default/iris/ref/motor_speed/2", 1);
     gazebo::transport::PublisherPtr pub3 =
-        node_handle->Advertise<std_msgs::msgs::Float>("/gazebo/default/iris/ref/motor_speed/3", motor_3_speed);
+        node_handle->Advertise<std_msgs::msgs::Float>("/gazebo/default/iris/ref/motor_speed/3", 1);
 
     // Subscribe to measured rotor velocities
     gazebo::transport::SubscriberPtr sub0 = node_handle->Subscribe("/gazebo/default/iris/motor_speed/0", rotor0_cb);
@@ -178,10 +178,10 @@ int main(int _argc, char **_argv)
             vect.push_back( std::stoi(substr) );
         }
 
-        ref_motor_vel0.set_data(100);
-        ref_motor_vel1.set_data(100);
-        ref_motor_vel2.set_data(100);
-        ref_motor_vel3.set_data(100);
+        ref_motor_vel0.set_data(vect[0]);
+        ref_motor_vel1.set_data(vect[1]);
+        ref_motor_vel2.set_data(vect[2]);
+        ref_motor_vel3.set_data(vect[3]);
 
         pub0->Publish(ref_motor_vel0);
         pub1->Publish(ref_motor_vel1);

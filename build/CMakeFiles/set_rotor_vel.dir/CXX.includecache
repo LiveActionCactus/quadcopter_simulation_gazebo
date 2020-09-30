@@ -357,6 +357,22 @@ header.pb.h
 /home/jules/drone/quadcopter_simulation_gazebo/set_rotor_vel.cpp
 include/set_rotor_vel.hpp
 /home/jules/drone/quadcopter_simulation_gazebo/include/set_rotor_vel.hpp
+errno.h
+-
+fcntl.h
+-
+string.h
+-
+termios.h
+-
+unistd.h
+-
+iostream
+-
+vector
+-
+sstream
+-
 
 /usr/include/gazebo-9/gazebo/Master.hh
 string

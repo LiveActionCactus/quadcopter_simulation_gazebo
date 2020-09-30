@@ -111,8 +111,9 @@ rotor_velocity_filter_.reset(new FirstOrderFilter<double>(time_constant_up_, tim
 void RotorModelPlugin::OnUpdate(const common::UpdateInfo& _info) {
     sampling_time_ = _info.simTime.Double() - prev_sim_time_;
     prev_sim_time_ = _info.simTime.Double();
-    UpdateMotorFail();
-    Publish();
+    UpdateForcesAndMoments();
+    // UpdateMotorFail();
+    // Publish();
 
 } // end RotorModelPlugin::OnUpdate()
 
