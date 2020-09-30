@@ -79,11 +79,15 @@ double _length = 0.2555;     // m
 double _hover_point = 665.0; // rad/s for one motor only
 double _motor_force_const = 8.54858e-06;
 double _motor_torque_const = 0.016;         // TODO: seems too large
-Eigen::Matrix4d _motor_mapping((Eigen::Matrix4d() << 1.0, 0.0, -1.0, 1.0, 1.0, 1.0, 0.0, -1.0, 1.0, 0.0, 1.0, 1.0, 1.0, -1.0, 0.0, -1.0).finished());
+//Eigen::Matrix4d _motor_mapping((Eigen::Matrix4d() << 1.0, 0.0, -1.0, 1.0, 1.0, 1.0, 0.0, -1.0, 1.0, 0.0, 1.0, 1.0, 1.0, -1.0, 0.0, -1.0).finished());
+Eigen::Matrix4d _motor_mapping((Eigen::Matrix4d() << 1.0, 0.5, 0.5, 1.0, 1.0, -0.5, 0.5, -1.0, 1.0, -0.5, -0.5, 1.0, 1.0, 0.5, -0.5, -1.0).finished());
+
+
 static Eigen::Matrix3d _I((Eigen::Matrix3d() << 0.029125, 0.0, 0.0, 0.0, 0.029125, 0.0, 0.0, 0.0, 0.029125).finished());
 static Eigen::Matrix3d _I_inv = _I.inverse();
 Eigen::Matrix3d _bRw((Eigen::Matrix3d() << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0).finished());
 Eigen::Matrix3d _wRb((Eigen::Matrix3d() << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0).finished());
+//Eigen::Matrix3d _imu_alignment((Eigen::Matrix3d() << cos(-0.785398), -1.0*sin(-0.785398), 0.0, -1.0*sin(-0.785398), cos(-0.785398), 0.0, 0.0, 0.0, 1.0).finished());
 //Eigen::Matrix4d _quat_matrix((Eigen::Matrix4d() << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0).finished());
 Eigen::Matrix3d _q_hat((Eigen::Matrix3d() << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0).finished());
 Eigen::Matrix<double,1,4> _sensor_quat((Eigen::Matrix<double,1,4>() << 1.0, 0.0, 0.0, 0.0).finished());

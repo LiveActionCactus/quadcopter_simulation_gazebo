@@ -32,6 +32,8 @@ void rotor3_cb(MotorSpeedPtr &rotor_vel)
 
 // TODO: not sure if "iris" is the same index every run, need to run a for loop to find it and its index
 // TODO: put in write lock here and read lock in derived_sensor_values()
+
+
 void local_poses_cb(ConstLocalPosesStampedPtr &local_pose)
 {
     sim_time = local_pose->time().sec() + (local_pose->time().nsec() * 10E-10);
@@ -125,9 +127,14 @@ int main(int _argc, char **_argv)
                 if((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1)
                 {
 //                    if((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1)
-//                    _desired_pos << -0.5, 0.0, 2.0;
+//                    _desired_pos << 0.5, 0.0, 2.0;
 //                    std::cout << "New desired position: " << _desired_pos << std::endl;
-                      _orig_desired_euler_att << 0.1, 0.0, 0.0;
+                    _orig_desired_euler_att << 0.1, 0.0, 0.0;
+                    std::cout << "New desired attitude: " << _desired_euler_att << std::endl;
+//                    _orig_desired_euler_att << 0.0, 0.0, 0.2;
+//                    _orig_desired_euler_att << 0.0, 0.0, 0.2;
+//                    _orig_desired_euler_att << 0.0, 0.0, 0.2;
+//                    _orig_desired_euler_att << 0.0, 0.0, 0.2;
 //                      _att_test = 1;
 //                      _desired_pos << 0.5, 0.0, 2.0;
 //                    if((_desired_euler_att - _derived_euler_att).lpNorm<2>() < 0.1)
@@ -197,10 +204,10 @@ void initialize_variables()
 //    _Kd_pos << 12.0, 12.0, 10.0;
 //    _Kp_ang << 3000.0, 3000.0, 3000.0;
 //    _Kd_ang << 300.0, 300.0, 300.0;
-    _Kp_pos << 5.0, 5.0, 10.0;
-    _Kd_pos << 1.0, 1.0, 6.0;
-    _Kp_ang << 50.0, 0.0, 0.0;
-    _Kd_ang << 25.0, 0.0, 0.0;
+    _Kp_pos << 1.0, 1.0, 10.0;
+    _Kd_pos << 0.5, 0.5, 6.0;
+    _Kp_ang << 10.0, 10.0, 40.0;
+    _Kd_ang << 0.0, 0.0, 45.0;
 
     _desired_pos << 0.0, 0.0, 2.0;
     _desired_vel << 0.0, 0.0, 0.0;
@@ -234,6 +241,7 @@ void derived_sensor_values()
         _derived_lin_vel(2) = (_sensor_pos(2) - _prev_sensor_pos(2)) / sim_time_delta;
 
         Eigen::Matrix<double,1,3> euler_ = quat2euler(_sensor_quat);
+//        euler_ = _imu_alignment * (euler_.transpose());
 //        _derived_euler_attdot = euler_ - _prev_derived_euler_att; // TODO: check this for accuracy
         _derived_pqr_att = derive_ang_velocity(euler_);
 
@@ -243,6 +251,7 @@ void derived_sensor_values()
 
         _prev_derived_euler_att(0) = euler_(0);
         _prev_derived_euler_att(1) = euler_(1);
+//        _prev_derived_euler_att(1) = -euler_(1);
         _prev_derived_euler_att(2) = euler_(2);
 
 
@@ -254,12 +263,13 @@ void derived_sensor_values()
 //references (papers):
 // Trajectory Generation and Control for Precise Aggressive Maneuvers with Quadrotors
 // The GRASP Multiple Micro UAV Testbed
+// TODO: is the position in body frame converted from world frame??
 void basic_position_controller()
 {
     // TODO: i'm pretty sure we shouldn't be keeping track of _desired_acc (eg: every loop it iterates)
 
-    Eigen::Array3d acc_des_ = _desired_acc + (_Kd_pos.cwiseProduct(_desired_vel - _derived_lin_vel))
-                                + (_Kp_pos.cwiseProduct(_desired_pos - _sensor_pos));
+    Eigen::Array3d acc_des_ = _desired_acc + (1.0*_Kd_pos.cwiseProduct(_desired_vel - _derived_lin_vel))
+                                + (1.0*_Kp_pos.cwiseProduct(_desired_pos - _sensor_pos));
 
 //    Eigen::Matrix<double,1,3> _desired_acc;
 //    _desired_acc(0) = _gravity * ((_desired_euler_att(1) * cos(_desired_euler_att(2)))
@@ -270,13 +280,15 @@ void basic_position_controller()
     //TODO: need to constrain the attitude quaternion to a norm of 1...
     _desired_euler_att(0) = (1.0/_gravity) * ((acc_des_(0)*sin(_desired_euler_att(2))) - (acc_des_(1)*cos(_desired_euler_att(2))));
     _desired_euler_att(1) = (1.0/_gravity) * ((acc_des_(0)*cos(_desired_euler_att(2))) + (acc_des_(1)*sin(_desired_euler_att(2))));
-    _desired_euler_att(2) = _derived_euler_att(2);        // desired yaw is forward-facing
+//    _desired_euler_att(2) = _derived_euler_att(2);        // desired yaw is forward-facing
+    _desired_euler_att(2) = _orig_desired_euler_att(2);
 
     // TODO: there is a problem here!! either _desired_euler_att shouldn't be updated to itself (above)
     // TODO: we might not even be needing to update the desired_euler_att here...
+    // TODO: THERE IS A MISALIGNMENT BETWEEN "FORWARD" FOR THE QUAD AND "FORWARD" FOR THE EULER ANGLE MEASUREMENT
     _desired_euler_att(0) = _orig_desired_euler_att(0);
     _desired_euler_att(1) = _orig_desired_euler_att(1);
-//    _desired_euler_att(2) = _orig_desired_euler_att(2);
+    _desired_euler_att(2) = _orig_desired_euler_att(2);
 
 
     // TODO: the desired total thrust for 1) seems kinda low, 2) better...
@@ -306,12 +318,15 @@ void basic_attitude_controller()
 //    ///
 
     _derived_euler_att = quat2euler(_sensor_quat);
+//    _derived_euler_att(1) = -_derived_euler_att(1);
+//    _derived_euler_att = _imu_alignment * (_derived_euler_att.transpose());
 
     Eigen::Array3d att_deltas_;
 
+    // TODO: the roll is getting away from me, i don't know why
     // TODO: don't forget that these signs have be flip flopped around, I think negative is correct...
-    att_deltas_(0) = -1.0*(_Kp_ang(0) * (_desired_euler_att(0) - _derived_euler_att(0)))
-                            + -1.0*(_Kd_ang(0) * (_desired_pqr_att(0) - _derived_pqr_att(0)));
+    att_deltas_(0) = 1.0*(_Kp_ang(0) * (_desired_euler_att(0) - _derived_euler_att(0)))
+                            + 1.0*(_Kd_ang(0) * (_desired_pqr_att(0) - _derived_pqr_att(0)));
     att_deltas_(1) = 1.0*(_Kp_ang(1) * (_desired_euler_att(1) - _derived_euler_att(1)))
                             + 1.0*(_Kd_ang(1) * (_desired_pqr_att(1) - _derived_pqr_att(1)));
     att_deltas_(2) = 1.0*(_Kp_ang(2) * (_desired_euler_att(2) - _derived_euler_att(2)))
