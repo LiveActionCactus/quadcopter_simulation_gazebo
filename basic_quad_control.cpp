@@ -124,13 +124,15 @@ int main(int _argc, char **_argv)
 //            std::cout << std::endl;
 
             if (takeoff == _argv[1]) {
-                if((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1)
+                if(((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1) & _test == 1)
                 {
 //                    if((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1)
-//                    _desired_pos << 0.5, 0.0, 2.0;
-//                    std::cout << "New desired position: " << _desired_pos << std::endl;
-                    _orig_desired_euler_att << 0.1, 0.0, 0.0;
-                    std::cout << "New desired attitude: " << _desired_euler_att << std::endl;
+                    _desired_pos << 1.0, 0.0, 2.0;
+                    std::cout << "New desired position: " << _desired_pos << std::endl;
+                    _test = 0;
+                    _test1 = 1;
+//                    _orig_desired_euler_att << 0.1, 0.0, 0.0;
+//                    std::cout << "New desired attitude: " << _desired_euler_att << std::endl;
 //                    _orig_desired_euler_att << 0.0, 0.0, 0.2;
 //                    _orig_desired_euler_att << 0.0, 0.0, 0.2;
 //                    _orig_desired_euler_att << 0.0, 0.0, 0.2;
@@ -138,6 +140,22 @@ int main(int _argc, char **_argv)
 //                      _att_test = 1;
 //                      _desired_pos << 0.5, 0.0, 2.0;
 //                    if((_desired_euler_att - _derived_euler_att).lpNorm<2>() < 0.1)
+                } else if (((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1) & _test1 == 1)
+                {
+                    _desired_pos << 1.0, 1.0, 2.0;
+                    std::cout << "New desired position: " << _desired_pos << std::endl;
+                    _test1 = 0;
+                    _test2 = 1;
+                } else if (((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1) & _test2 == 1)
+                {
+                    _desired_pos << 1.0, 1.0, 3.0;
+                    std::cout << "New desired position: " << _desired_pos << std::endl;
+                    _test2 = 0;
+                    _test3 = 1;
+                } else if (((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1) & _test3 == 1)
+                {
+                    _desired_pos << 1.0, 1.0, 2.0;
+                    std::cout << "New desired position: " << _desired_pos << std::endl;
                 }
                 test_cl_takeoff();
 
@@ -200,14 +218,23 @@ void test_cl_takeoff()
 
 void initialize_variables()
 {
-//    _Kp_pos << 15.0, 15.0, 30.0;
-//    _Kd_pos << 12.0, 12.0, 10.0;
-//    _Kp_ang << 3000.0, 3000.0, 3000.0;
-//    _Kd_ang << 300.0, 300.0, 300.0;
-    _Kp_pos << 1.0, 1.0, 10.0;
-    _Kd_pos << 0.5, 0.5, 6.0;
-    _Kp_ang << 10.0, 10.0, 40.0;
-    _Kd_ang << 0.0, 0.0, 45.0;
+////     Soft controller
+//    _Kp_pos << 3.0, 3.0, 10.0;
+//    _Kd_pos << 3.0, 3.0, 6.0;
+//    _Kp_ang << 700.0, 700.0, 0.0;
+//    _Kd_ang << 100000.0, 100000.0, 0.0;
+
+//    //  Testing/Intermediate Controller
+//    _Kp_pos << 5.0, 5.0, 10.0;
+//    _Kd_pos << 3.0, 3.0, 6.0;
+//    _Kp_ang << 700.0, 700.0, 0.0;
+//    _Kd_ang << 100000.0, 100000.0, 0.0;
+
+    // Fast/Stiff controller
+    _Kp_pos << 8.0, 8.0, 32.0;
+    _Kd_pos << 3.8, 4.1, 10.0;
+    _Kp_ang << 1100.0, 1100.0, 0.0;
+    _Kd_ang << 120000.0, 120000.0, 0.0;
 
     _desired_pos << 0.0, 0.0, 2.0;
     _desired_vel << 0.0, 0.0, 0.0;
@@ -278,17 +305,19 @@ void basic_position_controller()
 //                                  - (_desired_euler_att(0) * cos(_desired_euler_att(2))));
 
     //TODO: need to constrain the attitude quaternion to a norm of 1...
-    _desired_euler_att(0) = (1.0/_gravity) * ((acc_des_(0)*sin(_desired_euler_att(2))) - (acc_des_(1)*cos(_desired_euler_att(2))));
-    _desired_euler_att(1) = (1.0/_gravity) * ((acc_des_(0)*cos(_desired_euler_att(2))) + (acc_des_(1)*sin(_desired_euler_att(2))));
+//    _desired_euler_att(0) = (1.0/_gravity) * ((acc_des_(0)*sin(_desired_euler_att(2))) - (acc_des_(1)*cos(_desired_euler_att(2))));
+//    _desired_euler_att(1) = (1.0/_gravity) * ((acc_des_(0)*cos(_desired_euler_att(2))) + (acc_des_(1)*sin(_desired_euler_att(2))));
+    _desired_euler_att(0) = (1.0/_gravity) * ((acc_des_(0)*sin(_desired_euler_att(2))) + (acc_des_(1)*cos(_desired_euler_att(2))));
+    _desired_euler_att(1) = (1.0/_gravity) * ((acc_des_(0)*-1.0*cos(_desired_euler_att(2))) + (acc_des_(1)*sin(_desired_euler_att(2))));
 //    _desired_euler_att(2) = _derived_euler_att(2);        // desired yaw is forward-facing
     _desired_euler_att(2) = _orig_desired_euler_att(2);
 
     // TODO: there is a problem here!! either _desired_euler_att shouldn't be updated to itself (above)
     // TODO: we might not even be needing to update the desired_euler_att here...
     // TODO: THERE IS A MISALIGNMENT BETWEEN "FORWARD" FOR THE QUAD AND "FORWARD" FOR THE EULER ANGLE MEASUREMENT
-    _desired_euler_att(0) = _orig_desired_euler_att(0);
-    _desired_euler_att(1) = _orig_desired_euler_att(1);
-    _desired_euler_att(2) = _orig_desired_euler_att(2);
+//    _desired_euler_att(0) = _orig_desired_euler_att(0);
+//    _desired_euler_att(1) = _orig_desired_euler_att(1);
+//    _desired_euler_att(2) = _orig_desired_euler_att(2);
 
 
     // TODO: the desired total thrust for 1) seems kinda low, 2) better...

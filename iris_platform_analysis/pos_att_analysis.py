@@ -99,7 +99,9 @@ def resize_data_in():
 
 def visualize_results():
 	# plot position data
-	plt.subplot(1,4,1)
+	plt.figure(200)
+
+	plt.subplot(1,2,1)
 	plt.plot(time, desired_pos[:,0], label='Des x')
 	plt.plot(time, desired_pos[:,1], label='Des y')
 	plt.plot(time, desired_pos[:,2], label='Des z')
@@ -114,7 +116,7 @@ def visualize_results():
 	plt.grid(True)
 
 	# plot attitude data
-	plt.subplot(1,4,2)
+	plt.subplot(1,2,2)
 	plt.plot(time, desired_att[:,0], label='Des roll')
 	plt.plot(time, desired_att[:,1], label='Des pitch')
 	plt.plot(time, desired_att[:,2], label='Des yaw')
@@ -128,7 +130,9 @@ def visualize_results():
 	plt.legend()
 	plt.grid(True)
 
-	plt.subplot(1,4,3)
+
+	plt.figure(300)
+	plt.subplot(1,2,1)
 	plt.plot(time, desired_thrust[:,0], label="motor 1")
 	plt.plot(time, desired_thrust[:,1], label="motor 2")
 	plt.plot(time, desired_thrust[:,2], label="motor 3")
@@ -140,7 +144,7 @@ def visualize_results():
 	plt.legend()
 	plt.grid(True)
 
-	plt.subplot(1,4,4)
+	plt.subplot(1,2,2)
 	plt.plot(time, attitude_deltas[:,0], label="roll delta")
 	plt.plot(time, attitude_deltas[:,1], label="pitch delta")
 	plt.plot(time, attitude_deltas[:,2], label="yaw delta")
@@ -148,6 +152,21 @@ def visualize_results():
 	plt.xlabel('Sim time (s)')
 	plt.ylabel('Attitude Delta (rad)')
 	plt.title("Attitude deltas over time")
+	plt.legend()
+	plt.grid(True)
+
+	plt.figure(400)
+	# plt.plot(time, (((desired_att[:,1]-actual_att[:,1]).square()).divide(len(desired_att[:,1]))).sqrt())
+	err = desired_att[:,1]-actual_att[:,1]
+	test = np.sqrt(err)
+	test1 = np.divide(test, len(desired_att[:,1]))
+	test2 = np.sqrt(test1)
+	plt.plot(time, np.square(err))
+
+
+	plt.xlabel('Sim time (s)')
+	plt.ylabel('RMS')
+	plt.title("RMS over time")
 	plt.legend()
 	plt.grid(True)
 

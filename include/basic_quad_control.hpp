@@ -73,6 +73,11 @@ std::string takeoff ("takeoff");
 // environmental variables
 double _gravity = 9.81;     // m/s^2
 
+bool _test = 1;
+bool _test1 = 0;
+bool _test2 = 0;
+bool _test3 = 0;
+
 // initialize physical properties of the vehicle
 double _mass = 1.5;          // kg
 double _length = 0.2555;     // m
