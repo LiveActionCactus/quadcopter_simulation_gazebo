@@ -1,6 +1,6 @@
 Goals (as of 27Sep)
 	- [DONE] tune the iris controller
-	- comment the code for readability
+	- [DONE] comment the code for readability (this includes the README)
 	- implement rudimentary waypointing
 	- implement minimum snap trajectory following
 	- automate the data output of the iris (imagining a c++ real-time interface here)

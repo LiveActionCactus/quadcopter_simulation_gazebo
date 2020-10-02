@@ -1,3 +1,12 @@
+// Rotor bindings header file, binds with gazebo simulation environment
+//
+// By: Patrick Ledzian
+// Date: 01 September 2020
+//
+// Taken and modified from PX4 v1.9.0
+//
+
+// make sure you run this first to set the correct path
 // <!-- export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/odysseus/projects/inprogress/gazebo_code/iris_testing/build -->
 
 // Style guide:
@@ -140,7 +149,7 @@ private:
     std::unique_ptr<FirstOrderFilter<double>>  rotor_velocity_filter_;
     void RefMotorCallback(const boost::shared_ptr<const std_msgs::msgs::Float> &ref_motor_vel_update);
 
-};
-}
+}; // end class RotorModelPlugin
+} // end namespace gazebo
 
 #endif //ROTOR_PLUGIN_HPP

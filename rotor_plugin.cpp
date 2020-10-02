@@ -1,7 +1,13 @@
-// Rotor testing for gazebo quadcopter
+// Rotor bindings for gazebo simulation; pulls in custom sdf file
 // 
 // By: Patrick Ledzian
+// Date: 01 September 2020
+//
+// Taken and modified from PX4 v1.9.0
+//
 
+// make sure you run this first to set the correct path
+// <!-- export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/odysseus/projects/inprogress/gazebo_code/iris_testing/build -->
 
 #include "rotor_plugin.hpp"
 
@@ -23,8 +29,7 @@ void RotorModelPlugin::Publish() {
     // This publishes the actual rotation rate of the motors, can subscribe to in in controller code
 //    motor_velocity_pub_->Publish(turning_velocity_msg_);
 
-//    std::cout << "This is the publish function" << std::endl;
-}
+} // end RotorModelPlugin::Publish()
 
 /// \brief The load function is called by Gazebo when the plugin is
 /// inserted into simulation
@@ -105,20 +110,24 @@ motor_failure_sub_ = node_handle_->Subscribe<msgs::Int>(motor_failure_sub_topic_
 // Create the first order filter
 rotor_velocity_filter_.reset(new FirstOrderFilter<double>(time_constant_up_, time_constant_down_, ref_motor_rot_vel_));
 
-} // end RotorPlugin::Load()
+} // end RotorModelPlugin::Load()
 
 
-void RotorModelPlugin::OnUpdate(const common::UpdateInfo& _info) {
+void RotorModelPlugin::OnUpdate(const common::UpdateInfo& _info)
+{
     sampling_time_ = _info.simTime.Double() - prev_sim_time_;
     prev_sim_time_ = _info.simTime.Double();
 //    UpdateMotorFail();
 //    Publish();
     UpdateForcesAndMoments();
+
 } // end RotorModelPlugin::OnUpdate()
 
+
 // TODO: add clipping for maximum rotor speed (physical limitations)
-// TODO: might be breaking because these variables haven't been initialized as zero (so random high value makes them explode)...
-void RotorModelPlugin::UpdateForcesAndMoments() {
+// TODO: add in PID control of motors instead of instantaneous velocity
+void RotorModelPlugin::UpdateForcesAndMoments()
+{
     motor_rot_vel_ = ref_motor_vel;
 
 //    if (motor_rot_vel_ / (2 * M_PI) > 1 / (2 * sampling_time_)) {
@@ -193,16 +202,20 @@ void RotorModelPlugin::UpdateForcesAndMoments() {
 //        std::cout << std::endl;
       joint_->SetVelocity(0, turning_direction_ * real_motor_velocity / rotor_velocity_slowdown_sim_ );
 
-}
+} // end RotorModelPlugin::UpdateForcesAndMoments()
 
-double RotorModelPlugin::MapEscToMotor() {
+
+double RotorModelPlugin::MapEscToMotor()
+{
   // TODO: build out this function. I need a way to generate the mapping, 
   // TODO: vary the mapping wrt battery voltage
   ;
 } // end RotorModelPlugin::MapEscToMotor()
 
+
 // TODO: need to do better here; if a motor fails, then what?
-void RotorModelPlugin::UpdateMotorFail() {
+void RotorModelPlugin::UpdateMotorFail()
+{
     if (motor_number_ == motor_Failure_Number_ - 1){
         // motor_constant_ = 0.0;
         joint_->SetVelocity(0,0);
@@ -219,20 +232,23 @@ void RotorModelPlugin::UpdateMotorFail() {
             screen_msg_flag = 1;
         }
     }
-}
+} // end RotorModelPlugin::UpdateMotorFail()
 
 // TODO: set motor failure sensing in control code; then publish here if there is a failure
-void RotorModelPlugin::MotorFailureCallback(const boost::shared_ptr<const msgs::Int> &fail_msg) {
+void RotorModelPlugin::MotorFailureCallback(const boost::shared_ptr<const msgs::Int> &fail_msg)
+{
     motor_Failure_Number_ = fail_msg->data();
 }
 
-void RotorModelPlugin::WindVelocityCallback(WindPtr& msg) {
+void RotorModelPlugin::WindVelocityCallback(WindPtr& msg)
+{
     wind_vel_ = ignition::math::Vector3d(msg->velocity().x(),
                                          msg->velocity().y(),
                                          msg->velocity().z());
 
     std::cout << "WindVelocityCallback" << std::endl;
-}
+
+} // end RotorModelPlugin::WindVelocityCallback()
 
 // TODO: clip based on max rotational velocity
 void RotorModelPlugin::RefMotorCallback(const boost::shared_ptr<const std_msgs::msgs::Float> &ref_motor_vel_update)
@@ -243,7 +259,5 @@ void RotorModelPlugin::RefMotorCallback(const boost::shared_ptr<const std_msgs::
 
   // Tell Gazebo about this plugin, so that Gazebo can call Load on this plugin.
   GZ_REGISTER_MODEL_PLUGIN(RotorModelPlugin)
-}
 
-
-  // <!-- export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/odysseus/projects/inprogress/gazebo_code/iris_testing/build -->
+} // end RotorModelPlugin::RefMotorCallback()
