@@ -1,0 +1,4 @@
+/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/rebuild_cache.dir
+/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/edit_cache.dir
+/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/rotor_plugin.dir
+/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/basic_quad_control.dir
