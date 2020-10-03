@@ -85,7 +85,7 @@ int main(int _argc, char **_argv)
 
     // TODO: organized this so the initial state comes from read-in values
     initialize_variables();                         // assumes starting from origin with zeroed orientation
-
+    generate_ts();
     // open file handle for storing test data for later analysis
     std::ofstream testdata;
     testdata.open("test_data.txt");
@@ -159,6 +159,7 @@ void setpoint_trajectory()
     {
         _desired_pos << 1.0, 0.0, 2.0;
         std::cout << "New desired position: " << _desired_pos << std::endl;
+//            _desired_euler_att << 0.0, 0.0, 0.2;
         _set_pt1 = 0;
         _set_pt2 = 1;
 
@@ -180,6 +181,53 @@ void setpoint_trajectory()
         std::cout << "New desired position: " << _desired_pos << std::endl;
     }
 } // end setpoint_trajectory()
+
+// TODO: build circling trajectory (in research tracker)
+// TODO: build figure-eight trajectory (in research tracker)
+
+//// Generate minimum snap trajectory
+// produces an array of nx9 states to track minimizing the snap of the linear movements
+void minimum_snap_trajectory()
+{
+
+}
+
+//// Generate time-series for the minimum snap trajectory
+// produces a nx1 array of times which the vehicle needs to waypoint
+void generate_ts()
+{
+    // TODO: need to shift this time series based on when action begins
+    // TODO: probably do this right after the takeoff routine?
+    // TODO: this shouldn't affect the trajectory itself, just the time-series goals
+    double speed_ = 0.5;         // m/s
+    int _path_max_size = _traj_setpoints.rows();
+    double path_len_;
+    path_len_ = (_traj_setpoints.middleRows(1, _path_max_size-1)
+            - _traj_setpoints.middleRows(0, _path_max_size-1)).array().pow(2).rowwise().sum().cwiseSqrt().sum();
+    _total_traj_time = path_len_/speed_;         // based on naive path length
+    Eigen::MatrixXd path_seg_lenth_((_path_max_size-1),1);
+    path_seg_lenth_ = (_traj_setpoints.middleRows(1, _path_max_size-1)
+                         - _traj_setpoints.middleRows(0, _path_max_size-1)).array().pow(2).rowwise().sum().cwiseSqrt().cwiseSqrt();
+
+    double cumsum_ = 0;
+    for(int i=0; i<(_path_max_size-1); i++)
+    {
+        _ts(i, 0) = path_seg_lenth_(i) + cumsum_;
+        cumsum_ += path_seg_lenth_(i,0);
+    }
+
+    double scaling_ = _ts(_path_max_size-2, 0);
+    _ts = _ts.array() / scaling_;       // scaled/normalized time series
+
+    Eigen::MatrixXd prev_ts_(_ts.rows(), _ts.cols());
+    prev_ts_ = _ts;                     // store previous ts to add 0.0 at the start
+
+    _ts.resize(_path_max_size, 1);
+    _ts << 0.0, prev_ts_;               // add in 0.0 seconds for first time
+
+    _ts = _ts * _total_traj_time;      // final goal times for each waypoint (to be shifted later)
+
+} // end generate_ts()
 
 //// Open-loop control for level take-off
 // theoretical take-off rotor rate is 655.0
@@ -232,10 +280,10 @@ void initialize_variables()
 //    _Kd_ang << 100000.0, 100000.0, 0.0;
 
     // Fast/Stiff controller -- performance tracking for aggressive maneuvers
-    _Kp_pos << 8.0, 8.0, 32.0;
+    _Kp_pos << 8.0, 8.0, 30.0;
     _Kd_pos << 3.8, 4.1, 10.0;
-    _Kp_ang << 1100.0, 1100.0, 0.0;             // TODO: add in yaw tracking for a dedicated "front/forward"
-    _Kd_ang << 120000.0, 120000.0, 0.0;
+    _Kp_ang << 1100.0, 1100.0, 1000.0;             // TODO: add in yaw tracking for a dedicated "front/forward"
+    _Kd_ang << 120000.0, 120000.0, 200000.0;
 
     // Initial setpoints to achieve
     _desired_pos << 0.0, 0.0, 2.0;              // linear position; x, y, z (in meters)
@@ -244,6 +292,14 @@ void initialize_variables()
     _desired_euler_att << 0.0, 0.0, 0.0;        // roll, pitch, yaw (in radians)
     _orig_desired_euler_att = _desired_euler_att;
     _desired_pqr_att << 0.0, 0.0, 0.0;          // angular rates (this is not the same as euler rate of change)
+
+    // trajectory setpoints -- minimum snap
+    _traj_setpoints << _desired_pos(0), _desired_pos(1), _desired_pos(2),
+                    1.0,                  0.0,                  _desired_pos(2),
+                    1.0,                  1.0,                  _desired_pos(2),
+                    0.0,                  1.0,                  _desired_pos(2),
+                    -1.0,                 1.0,                  _desired_pos(2),
+                    -1.0,                 0.0,                  _desired_pos(2);
 
     // Initialize data that will be changing through operation
     _sensor_quat << 1.0, 0.0, 0.0, 0.0;         // define upright zeroed orientation
@@ -298,8 +354,8 @@ void basic_position_controller()
     // calculate desired euler attitudes for the attitude controller
     _desired_euler_att(0) = (1.0/_gravity) * ((acc_des_(0)*sin(_desired_euler_att(2))) + (acc_des_(1)*cos(_desired_euler_att(2))));
     _desired_euler_att(1) = (1.0/_gravity) * ((acc_des_(0)*-1.0*cos(_desired_euler_att(2))) + (acc_des_(1)*sin(_desired_euler_att(2))));
-//    _desired_euler_att(2) = _derived_euler_att(2);                    // desired yaw is forward-facing
-    _desired_euler_att(2) = _orig_desired_euler_att(2);     // yaw is a free variable
+    _desired_euler_att(2) = _derived_euler_att(2);                    // desired yaw is forward-facing
+//    _desired_euler_att(2) = _orig_desired_euler_att(2);     // yaw is a free variable
 
     // For testing the attitude controller; circumvents the position controller except for hover/altitude controller
 //    _desired_euler_att(0) = _orig_desired_euler_att(0);

@@ -77,6 +77,12 @@ bool _set_pt2 = 0;
 bool _set_pt3 = 0;
 bool _set_pt4 = 0;
 
+// Minimum snap trajectory variables
+Eigen::MatrixXd _traj_setpoints(6, 3);      // positions to achieve
+Eigen::MatrixXd _ts(5,1);               // one less x dimension as _trajectory
+Eigen::MatrixXd _coef(12, 6);           // not sure how large this needs to be
+double _total_traj_time;
+
 // Measured sensor values
 Eigen::Matrix<double,1,4> _sensor_quat((Eigen::Matrix<double,1,4>() << 1.0, 0.0, 0.0, 0.0).finished());
 Eigen::Matrix<double,1,3> _sensor_pos;
@@ -120,6 +126,8 @@ void derived_sensor_values();
 void initialize_variables();
 void basic_position_controller();
 void basic_attitude_controller();
+void minimum_snap_trajectory();
+void generate_ts();
 
 // Measured motor speed values; callback functions
 void rotor0_cb(MotorSpeedPtr &rotor_vel);
