@@ -15,6 +15,7 @@
 #include <string.h>
 #include <cmath>
 #include <eigen3/Eigen/Eigen>          // we have options here: ignition (limited), xtensor (like numpy), eigen (standard?)
+//#include <eigen3/Eigen/StdVector>
 #include <iostream>
 #include <fstream>
 
@@ -58,7 +59,9 @@ double prev_sensor_rot_z = 0.0;
 double prev_sensor_rot_w = 0.0;
 
 // Actions; for the state machine
-std::string takeoff ("takeoff");
+std::string steps ("steps");
+std::string hover ("hover");
+std::string min_snap ("min_snap");
 
 // TODO: I could probably pull this directly from the SDF file, not via head, but maybe dynamically at program start
 
@@ -79,9 +82,12 @@ bool _set_pt4 = 0;
 
 // Minimum snap trajectory variables
 Eigen::MatrixXd _traj_setpoints(6, 3);      // positions to achieve
-Eigen::MatrixXd _ts(5,1);               // one less x dimension as _trajectory
-Eigen::MatrixXd _coef(12, 6);           // not sure how large this needs to be
+Eigen::MatrixXd _ts(5,1);                   // one less x dimension as _trajectory
+Eigen::MatrixXd _coef(40, 3);               // 8*(m_-1) x 3; where m_ is the row dimension of _traj_setpoints; resized in optimizer
 double _total_traj_time;
+bool _is_optimized = 0;                           // 0 -- not yet optimized, 1 -- optimal coefficients found
+bool _start_traj = 0;                             // 0 -- not started,       1 -- started / in-progress
+double _traj_start_time = 0.0;
 
 // Measured sensor values
 Eigen::Matrix<double,1,4> _sensor_quat((Eigen::Matrix<double,1,4>() << 1.0, 0.0, 0.0, 0.0).finished());
@@ -128,6 +134,8 @@ void basic_position_controller();
 void basic_attitude_controller();
 void minimum_snap_trajectory();
 void generate_ts();
+void min_snap_optimization();
+void basic_hover();
 
 // Measured motor speed values; callback functions
 void rotor0_cb(MotorSpeedPtr &rotor_vel);

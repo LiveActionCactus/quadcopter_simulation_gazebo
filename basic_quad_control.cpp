@@ -85,7 +85,7 @@ int main(int _argc, char **_argv)
 
     // TODO: organized this so the initial state comes from read-in values
     initialize_variables();                         // assumes starting from origin with zeroed orientation
-    generate_ts();
+
     // open file handle for storing test data for later analysis
     std::ofstream testdata;
     testdata.open("test_data.txt");
@@ -108,38 +108,47 @@ int main(int _argc, char **_argv)
             prev_sim_time_att = sim_time;
             sim_state = 2;
             std::cout << "Armed" << std::endl;
-        } else if(sim_state == 2)
-        {
+        } else if(sim_state == 2) {
             derived_sensor_values();                        // called before a control decision; derive velocities
-            if ((sim_time - prev_sim_time_pos) > 0.01){
+            if ((sim_time - prev_sim_time_pos) > 0.01) {
                 basic_position_controller();                // position controller
                 prev_sim_time_pos = sim_time;
             }
-            if ((sim_time - prev_sim_time_att) > 0.001){
+            if ((sim_time - prev_sim_time_att) > 0.001) {
                 basic_attitude_controller();                // attitude controller
                 prev_sim_time_att = sim_time;
             }
 
-            if (takeoff == _argv[1]) {
+            // commanded actions
+            if (hover == _argv[1]) {
+                basic_hover();
+            } else if (steps == _argv[1]) {
                 setpoint_trajectory();
-                test_cl_takeoff();
-
-
-                if((ctr % 1000) == 0) {
-                    testdata << sim_time << "\n";
-                    testdata << std::fixed << std::setprecision(8) << _desired_pos << "\n";
-                    testdata << std::fixed << std::setprecision(8) << _sensor_pos << "\n";
-                    testdata << std::fixed << std::setprecision(8) << _desired_euler_att << "\n";
-                    testdata << std::fixed << std::setprecision(8) << _derived_euler_att << "\n";
-                    testdata << std::fixed << std::setprecision(8) << _desired_thrust << "\n";
-                    testdata << std::fixed << std::setprecision(8) << _final_att_deltas << "\n";
-
-                } // end if((ctr % 1000) == 0)
-
-                ctr++;          // iterate the logging counter
+            } else if (min_snap == _argv[1]) {
+                if(!_start_traj & ((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1)) {
+                    _desired_pos << _sensor_pos(0), _sensor_pos(1), _sensor_pos(2);
+                    if ((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1){
+                        _start_traj = 1;
+                    }
+                } else {
+                    minimum_snap_trajectory();
+                }
             } else {
                 test_ol_land();
             }
+
+            test_cl_takeoff();
+            ctr++;          // iterate the logging counter
+            if ((ctr % 1000) == 0) {
+                testdata << sim_time << "\n";
+                testdata << std::fixed << std::setprecision(8) << _desired_pos << "\n";
+                testdata << std::fixed << std::setprecision(8) << _sensor_pos << "\n";
+                testdata << std::fixed << std::setprecision(8) << _desired_euler_att << "\n";
+                testdata << std::fixed << std::setprecision(8) << _derived_euler_att << "\n";
+                testdata << std::fixed << std::setprecision(8) << _desired_thrust << "\n";
+                testdata << std::fixed << std::setprecision(8) << _final_att_deltas << "\n";
+
+            } // end if((ctr % 1000) == 0)
 
             // publish rotor commands
             pub0->Publish(ref_motor_vel0);
@@ -151,11 +160,18 @@ int main(int _argc, char **_argv)
     } // end while(1)
 } // end main()
 
+//// Basic takeoff and hover
+// gets the quadcopter hovering at a stable state
+void basic_hover()
+{
+    _desired_pos << 0.0, 0.0, 2.0;
+}
+
 //// Various step responses
 // 1m sized step responses to test controller response in the x, y, z directions
 void setpoint_trajectory()
 {
-    if(((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1) & _set_pt1 == 1)
+    if(((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1) & (_set_pt1 == 1))
     {
         _desired_pos << 1.0, 0.0, 2.0;
         std::cout << "New desired position: " << _desired_pos << std::endl;
@@ -163,19 +179,19 @@ void setpoint_trajectory()
         _set_pt1 = 0;
         _set_pt2 = 1;
 
-    } else if (((_desired_pos - _sensor_pos).lpNorm<2>() < 0.01) & _set_pt2 == 1)
+    } else if (((_desired_pos - _sensor_pos).lpNorm<2>() < 0.01) & (_set_pt2 == 1))
     {
         _desired_pos << 1.0, 1.0, 2.0;
         std::cout << "New desired position: " << _desired_pos << std::endl;
         _set_pt2 = 0;
         _set_pt3 = 1;
-    } else if (((_desired_pos - _sensor_pos).lpNorm<2>() < 0.01) & _set_pt3 == 1)
+    } else if (((_desired_pos - _sensor_pos).lpNorm<2>() < 0.01) & (_set_pt3 == 1))
     {
         _desired_pos << 1.0, 1.0, 3.0;
         std::cout << "New desired position: " << _desired_pos << std::endl;
         _set_pt3 = 0;
         _set_pt4 = 1;
-    } else if (((_desired_pos - _sensor_pos).lpNorm<2>() < 0.01) & _set_pt4 == 1)
+    } else if (((_desired_pos - _sensor_pos).lpNorm<2>() < 0.01) & (_set_pt4 == 1))
     {
         _desired_pos << 1.0, 1.0, 2.0;
         std::cout << "New desired position: " << _desired_pos << std::endl;
@@ -189,8 +205,72 @@ void setpoint_trajectory()
 // produces an array of nx9 states to track minimizing the snap of the linear movements
 void minimum_snap_trajectory()
 {
+    Eigen::Matrix<double, 1, 8> temp_;          // store desired position, velocity, and acceleration calc before assignment
 
-}
+    if(_is_optimized == 0)
+    {
+        // Waypoints set in initialize_variables()
+        generate_ts();          // stores the time-series goals in _ts
+        min_snap_optimization();
+        _is_optimized = 1;
+        _traj_start_time = sim_time;
+
+    } else if(_start_traj == 0) {
+        _traj_start_time = sim_time; // wait until trajectory call begins
+    } else if(_start_traj == 1)
+    {
+        //TODO: find the current time series index, eg: current waypoint
+
+        _ts = _ts.array() + _traj_start_time;        // shift the time series
+        int idx_ = 0;                    // _ts index of current operation
+        bool prev_idx_true = 0;          // was the previous index evaluated as true?
+
+        for(int i = 0; i < _ts.cols(); i++)
+        {
+            if(_ts(i) < sim_time)
+            {
+                prev_idx_true = 1;
+            } else if(prev_idx_true & (_ts(i) > sim_time)) {
+                idx_ = i - 1;
+                break;
+            } else if((sim_time > _ts(i)) & (i == (_ts.cols()-1))) {
+                std::cout << "Finished trajectory" << std::endl;
+                idx_ = _ts.cols() - 1;
+            } else {
+//                std::cout << "No good index found... setting to first value" << std::endl;
+                idx_ = 0;
+                break;
+            }
+        } // end time series search
+
+        // Apply optimized coefficients to the setpoints
+        // Generate desired position
+        temp_ << std::pow(sim_time, 7), std::pow(sim_time, 6), std::pow(sim_time, 5), std::pow(sim_time, 4),
+                    std::pow(sim_time, 3), std::pow(sim_time, 2), sim_time, 1.0;
+//        std::cout << temp_ << std::endl;
+//        std::cout << _coef.block(8*idx_, 0, 8, 3) << std::endl;
+//        std::cout << std::endl;
+//        std::cout << temp_ * _coef.block(8*idx_, 0, 8, 3) << std::endl;
+//        std::cout << std::endl;
+//        pause();
+        _desired_pos = temp_ * _coef.block(8*idx_, 0, 8, 3);
+
+        // Generate desired velocity
+        temp_ << 7.0 * std::pow(sim_time, 6), 6.0 * std::pow(sim_time, 5), 5.0 * std::pow(sim_time, 4),
+                    4.0 * std::pow(sim_time, 3), 3.0 * std::pow(sim_time, 2), 2.0 * sim_time, 1.0, 0.0;
+        _desired_vel = temp_ * _coef.block(8*idx_, 0, 8, 3);
+
+        // TODO: seems way too large
+        std::cout << _desired_vel << std::endl;
+        std::cout << std::endl;
+
+        // Generate desired acceleration
+        temp_ << 42.0 * std::pow(sim_time, 5), 30.0 * std::pow(sim_time, 4), 20.0 * std::pow(sim_time, 3),
+                    12.0 * std::pow(sim_time, 2), 6.0 * sim_time, 2.0, 0.0, 0.0;
+        _desired_acc = temp_ * _coef.block(8*idx_, 0, 8, 3);
+
+    } // end if
+} // end minimum_snap_trajectory()
 
 //// Generate time-series for the minimum snap trajectory
 // produces a nx1 array of times which the vehicle needs to waypoint
@@ -228,6 +308,240 @@ void generate_ts()
     _ts = _ts * _total_traj_time;      // final goal times for each waypoint (to be shifted later)
 
 } // end generate_ts()
+
+//// Minimum snap trajectory optimization
+// find the optimizing coefficients for the trajectory
+void min_snap_optimization()
+{
+    int m_ = _traj_setpoints.rows();            // wpts
+    int n_ = _traj_setpoints.cols();            // x,y,z
+    m_ = m_ - 1;                                // mathematical convenience
+    double eps_ = 2e-52;                        // TODO: can I use float here? if not... then limits?
+    _coef.resize(8*m_, 3);            // needs to match setpoints * constraints dimensions
+
+    // define template matrices
+    Eigen::MatrixXd X_(8*m_, n_);
+    Eigen::MatrixXd Y_(8*m_, n_);
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> A_;
+    A_.resize(8*m_, 8*m_);
+
+    // https://stackoverflow.com/questions/31159196/can-we-create-a-vector-of-eigen-matrix
+    std::vector<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > A_vec_;
+
+    // zero the matrices
+    X_.setZero();
+    Y_.setZero();
+    A_.setZero();
+    A_ = A_.setIdentity();
+    A_ = A_ * eps_;                 // condition the matix so inversions aren't singular
+
+    // initialize vector of A_ matrices
+    for(int i = 0; i < n_; i++)
+    {
+        A_vec_.push_back(A_);
+//        std::cout << A_vec_[i] << std::endl;
+//        std::cout << A_vec_[i](0,0) << std::endl;
+//        std::cout << std::endl;
+    }
+
+    // In a 7th order minimum-snap trajectory there are 8 parameters for each subpath
+    for(int i = 0; i < n_; i++)
+    {
+        int idx_ = 0;
+        Eigen::Matrix<double, 1, 8> temp_;
+//        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> temp_;
+//        temp_.resize(1, 8);         // this size stays fairly consistent
+
+        // Constraint 1: x_k(t_k) = x_{k+1}(t_k) = p_k, where p_k is a waypoint
+        for(int k = 0; k < m_-1; k++)
+        {
+            // A[idx, 8*k:8*(k+1), i]
+            temp_ << std::pow(_ts(k+1), 7), std::pow(_ts(k+1), 6), std::pow(_ts(k+1), 5), std::pow(_ts(k+1), 4),
+                        std::pow(_ts(k+1), 3), std::pow(_ts(k+1), 2), _ts(k+1), 1.0;
+            A_vec_[i].block(idx_, (8*k), 1, 8) = temp_;
+
+            // Y[idx, i] = path0[k+1, i]
+            Y_(idx_, i) = _traj_setpoints((k+1), i);
+            idx_ += 1;                                      // iterate
+
+            // A[idx, 8*(k+1):8*(k+2), i]
+            temp_ << std::pow(_ts(k+1), 7), std::pow(_ts(k+1), 6), std::pow(_ts(k+1), 5), std::pow(_ts(k+1), 4),
+            std::pow(_ts(k+1), 3), std::pow(_ts(k+1), 2), _ts(k+1), 1.0;
+            A_vec_[i].block(idx_, (8*(k+1)), 1, 8) = temp_;
+
+            // Y[idx, i] = path0[k+1, i]
+            Y_(idx_, i) = _traj_setpoints((k+1), i);
+            idx_ += 1;                                      // iterate
+
+        } // end contraint 1
+
+        // Constraint 2: \dot{x}_k(t_k) = \dot{x}_{k+1}(t_k)
+        for(int k = 0; k < m_-1; k++)
+        {
+            // A[idx, 8*k:8*(k+1), i]
+            temp_ << 7.0*std::pow(_ts(k+1), 6), 6.0*std::pow(_ts(k+1), 5), 5.0*std::pow(_ts(k+1), 4),
+                        4.0*std::pow(_ts(k+1), 3), 3.0*std::pow(_ts(k+1), 2), 2.0*_ts(k+1), 1.0, 0.0;
+            A_vec_[i].block(idx_, (8*k), 1, 8) = temp_;
+
+            // A[idx, 8*(k+1):8*(k+2), i]
+            temp_ << -7.0*std::pow(_ts(k+1), 6), -6.0*std::pow(_ts(k+1), 5), -5.0*std::pow(_ts(k+1), 4),
+                        -4.0*std::pow(_ts(k+1), 3), -3.0*std::pow(_ts(k+1), 2), -2.0*_ts(k+1), -1.0, 0.0;
+            A_vec_[i].block(idx_, (8*(k+1)), 1, 8) = temp_;
+            Y_(idx_, i) = 0.0;
+            idx_ += 1;                                      // iterate
+
+        } // end constraint 2
+
+        // Constraint 3: \ddot{x}_k(t_k) = \ddot{x}_{k+1}(t_k)
+        for(int k = 0; k < m_-1; k++)
+        {
+            // A[idx, 8*k:8*(k+1), i]
+            temp_ << 42.0*std::pow(_ts(k+1), 5), 30.0*std::pow(_ts(k+1), 4), 20.0*std::pow(_ts(k+1), 3),
+                        12.0*std::pow(_ts(k+1), 2), 6.0*_ts(k+1), 2.0, 0.0, 0.0;
+            A_vec_[i].block(idx_, (8*k), 1, 8) = temp_;
+
+            // A[idx, 8*(k+1):8*(k+2), i]
+            temp_ << -42.0*std::pow(_ts(k+1), 5), -30.0*std::pow(_ts(k+1), 4), -20.0*std::pow(_ts(k+1), 3),
+                        -12.0*std::pow(_ts(k+1), 2), -6.0*_ts(k+1), -2.0, 0.0, 0.0;
+            A_vec_[i].block(idx_, (8*(k+1)), 1, 8) = temp_;
+            Y_(idx_, i) = 0.0;
+            idx_ += 1;                                      // iterate
+
+        } // end constraint 3
+
+        // Constraint 4: x^(3)_k(t_k) = x^(3)_{k+1}(t_k)
+        for(int k = 0; k < m_-1; k++)
+        {
+            // A[idx, 8*k:8*(k+1), i]
+            temp_ << 210.0*std::pow(_ts(k+1), 4), 120.0*std::pow(_ts(k+1), 3), 60.0*std::pow(_ts(k+1), 2),
+                        24.0*_ts(k+1), 6.0, 0.0, 0.0, 0.0;
+            A_vec_[i].block(idx_, (8*k), 1, 8) = temp_;
+
+            // A[idx, 8*(k+1):8*(k+2), i]
+            temp_ << -210.0*std::pow(_ts(k+1), 4), -120.0*std::pow(_ts(k+1), 3), -60.0*std::pow(_ts(k+1), 2),
+                    -24.0*_ts(k+1), -6.0, 0.0, 0.0, 0.0;
+            A_vec_[i].block(idx_, (8*(k+1)), 1, 8) = temp_;
+            Y_(idx_, i) = 0.0;
+            idx_ += 1;                                      // iterate
+
+        } // end constraint 4
+
+        // Constraint 5: x^(4)_k(t_k) = x^(4)_{k+1}(t_k)
+        for(int k = 0; k < m_-1; k++)
+        {
+            // A[idx, 8*k:8*(k+1), i]
+            temp_ << 840.0*std::pow(_ts(k+1), 3), 360.0*std::pow(_ts(k+1), 2), 120.0*_ts(k+1), 24.0, 0.0, 0.0,
+                        0.0, 0.0;
+            A_vec_[i].block(idx_, (8*k), 1, 8) = temp_;
+
+            // A[idx, 8*(k+1):8*(k+2), i]
+            temp_ << -840.0*std::pow(_ts(k+1), 3), -360.0*std::pow(_ts(k+1), 2), -120.0*_ts(k+1), -24.0, 0.0, 0.0,
+                        0.0, 0.0;
+            A_vec_[i].block(idx_, (8*(k+1)), 1, 8) = temp_;
+            Y_(idx_, i) = 0.0;
+            idx_ += 1;                                      // iterate
+
+        } // end constraint 5
+
+        // Constraint 6: x^(5)_k(t_k) = x^(5)_{k+1}(t_k)
+        for(int k = 0; k < m_-1; k++)
+        {
+            // A[idx, 8*k:8*(k+1), i]
+            temp_ << 2520.0*std::pow(_ts(k+1), 2), 720.0*_ts(k+1), 120.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+            A_vec_[i].block(idx_, (8*k), 1, 8) = temp_;
+
+            // A[idx, 8*(k+1):8*(k+2), i]
+            temp_ << -2520.0*std::pow(_ts(k+1), 2), -720.0*_ts(k+1), -120.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+            A_vec_[i].block(idx_, (8*(k+1)), 1, 8) = temp_;
+            Y_(idx_, i) = 0.0;
+            idx_ += 1;                                      // iterate
+
+        } // end constraint 6
+
+        // Constraint 7: x^(6)_k(t_k) = x^(6)_{k+1}(t_k)
+        for(int k = 0; k < m_-1; k++)
+        {
+            // A[idx, 8*k:8*(k+1), i]
+            temp_ << 5040.0*_ts(k+1), 720.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+            A_vec_[i].block(idx_, (8*k), 1, 8) = temp_;
+
+            // A[idx, 8*(k+1):8*(k+2), i]
+            temp_ << -5040.0*_ts(k+1), -720.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+            A_vec_[i].block(idx_, (8*(k+1)), 1, 8) = temp_;
+            Y_(idx_, i) = 0.0;
+            idx_ += 1;                                      // iterate
+
+        } // end constraint 7
+
+        // 4 of the last 8 constraints to be added: (already 8(m-1) in place...
+        int k = 0;
+
+        // from constraint 1
+        temp_ << std::pow(_ts(k), 7), std::pow(_ts(k), 6), std::pow(_ts(k), 5), std::pow(_ts(k), 4),
+                    std::pow(_ts(k), 3), std::pow(_ts(k), 2), _ts(k), 1.0;
+        A_vec_[i].block(idx_, (8*k), 1, 8) = temp_;
+        Y_(idx_, i) = _traj_setpoints(k, i);
+        idx_ += 1;                                      // iterate
+
+        // from constraint 2
+        temp_ << 7.0*std::pow(_ts(k), 6), 6.0*std::pow(_ts(k), 5), 5.0*std::pow(_ts(k), 4),
+                    4.0*std::pow(_ts(k), 3), 3.0*std::pow(_ts(k), 2), 2.0*_ts(k), 1.0, 0.0;
+        A_vec_[i].block(idx_, (8*k), 1, 8) = temp_;
+        Y_(idx_, i) = 0.0;
+        idx_ += 1;                                      // iterate
+
+        // from constraint 3
+        temp_ << 42.0*std::pow(_ts(k), 5), 30.0*std::pow(_ts(k), 4), 20.0*std::pow(_ts(k), 3),
+                    12.0*std::pow(_ts(k), 2), 6.0*_ts(k), 2.0, 0.0, 0.0;
+        A_vec_[i].block(idx_, (8*k), 1, 8) = temp_;
+        Y_(idx_, i) = 0.0;
+        idx_ += 1;                                      // iterate
+
+        //from constraint 4
+        temp_ << 210.0*std::pow(_ts(k), 4), 120.0*std::pow(_ts(k), 3), 60.0*std::pow(_ts(k), 2),
+                24.0*_ts(k), 6.0, 0.0, 0.0, 0.0;
+        A_vec_[i].block(idx_, (8*k), 1, 8) = temp_;
+        Y_(idx_, i) = 0.0;
+        idx_ += 1;                                      // iterate
+
+        // Last 4 of the last 8 constraints to be added:
+        k = m_-1;
+
+        // from constraint 1
+        temp_ << std::pow(_ts(k+1), 7), std::pow(_ts(k+1), 6), std::pow(_ts(k+1), 5), std::pow(_ts(k+1), 4),
+                    std::pow(_ts(k+1), 3), std::pow(_ts(k+1), 2), _ts(k+1), 1.0;
+        A_vec_[i].block(idx_, (8*k), 1, 8) = temp_;
+        Y_(idx_, i) = _traj_setpoints(k+1, i);
+        idx_ += 1;                                      // iterate
+
+        // from constraint 2
+        temp_ << 7.0*std::pow(_ts(k+1), 6), 6.0*std::pow(_ts(k+1), 5), 5.0*std::pow(_ts(k+1), 4),
+                    4.0*std::pow(_ts(k+1), 3), 3.0*std::pow(_ts(k+1), 2), 2.0*_ts(k+1), 1.0, 0.0;
+        A_vec_[i].block(idx_, (8*k), 1, 8) = temp_;
+        Y_(idx_, i) = 0.0;
+        idx_ += 1;                                      // iterate
+
+        // from constraint 3
+        temp_ << 42.0*std::pow(_ts(k+1), 5), 30.0*std::pow(_ts(k+1), 4), 20.0*std::pow(_ts(k+1), 3),
+                    12.0*std::pow(_ts(k+1), 2), 6.0*_ts(k+1), 2.0, 0.0, 0.0;
+        A_vec_[i].block(idx_, (8*k), 1, 8) = temp_;
+        Y_(idx_, i) = 0.0;
+        idx_ += 1;                                      // iterate
+
+        //from constraint 4
+        temp_ << 210.0*std::pow(_ts(k+1), 4), 120.0*std::pow(_ts(k+1), 3), 60.0*std::pow(_ts(k+1), 2),
+                    24.0*_ts(k+1), 6.0, 0.0, 0.0, 0.0;
+        A_vec_[i].block(idx_, (8*k), 1, 8) = temp_;
+        Y_(idx_, i) = 0.0;
+        idx_ += 1;                                      // iterate
+
+        // solve linear system of equations
+        // https://stackoverflow.com/questions/53247078/c-eigen-for-solving-linear-systems-fast
+        // https://eigen.tuxfamily.org/dox/TopicUsingIntelMKL.html
+        _coef.col(i) = A_vec_[i].lu().solve(Y_.col(i));
+
+    } // end for(i)  -- position dimensions x, y, z
+} // end min_snap_optimization()
 
 //// Open-loop control for level take-off
 // theoretical take-off rotor rate is 655.0
