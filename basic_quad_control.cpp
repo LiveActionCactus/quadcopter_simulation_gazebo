@@ -6,6 +6,12 @@
 
 #include "include/basic_quad_control.hpp"
 
+// Eigen cheatsheets
+// https://gist.github.com/gocarlos/c91237b02c120c6319612e42fa196d77
+// http://dev.ipol.im/~yiqing/vj_old/vj/eigen/doc/AsciiQuickReference.txt
+// https://igl.ethz.ch/projects/libigl/matlab-to-eigen.html
+//
+
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"
 
@@ -126,8 +132,6 @@ int main(int _argc, char **_argv)
 
                 } else if (min_snap == _argv[1]) {
                     if (!_start_traj & ((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1)) {
-//                        _desired_pos << _sensor_pos(0), _sensor_pos(1), _sensor_pos(2);
-
                         if ((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1) {
                             _start_traj = 1;        // ensures vehicle is at hover first
                         }
@@ -138,9 +142,14 @@ int main(int _argc, char **_argv)
                             // conclude the trajectory by hovering in place
                             _desired_pos << _traj_setpoints(_traj_setpoints.rows()-1, 0), _traj_setpoints(_traj_setpoints.rows()-1, 1),
                                                 _traj_setpoints(_traj_setpoints.rows()-1, 2);
+                            _start_traj = 0;
                         }
                     }
-                } else {
+                } else if(_circle == _argv[1]){
+                    circling_trajectory();
+                } else if(_figure_eight == _argv[1]){
+                    figure_eight_trajectory();
+                }else {
                     test_ol_land();
                 } // end if hover, steps, or min_snap trajectories
             } // end trajectory loop
@@ -220,14 +229,76 @@ void setpoint_trajectory()
     }
 } // end setpoint_trajectory()
 
-// TODO: build circling trajectory (in research tracker)
-// TODO: build figure-eight trajectory (in research tracker)
+//// Basic continuous circling trajectory
+// circles around the origin (0.0, 0.0) at a constant altitude
+void circling_trajectory()
+{
+    // References:
+    // https://gamedev.stackexchange.com/questions/9607/moving-an-object-in-a-circular-path#:~:text=You%20can%20do%20that%20using,radius%20is%20its%20radius.
+    // https://math.stackexchange.com/questions/26329/formula-to-move-the-object-in-circular-path
+    // Fast Nonlinear Model Predictive Control for Multicopter Attitude Tracking on SO(3)
+
+    // TODO: have the yaw vector always pointing to the origin, maybe by transforming the euler att to world frame?
+    // TODO: either fix the random spikes in roll/pitch/yaw derived measurements or filter them
+    // TODO: figure out how to generate a constant desired velocity to be tracked with this trajectory method
+
+    double radius_ = 2.0;          // circle radius
+    if(!_start_traj) {
+        _desired_pos << 1.0, 0.0, _desired_pos(2);
+    }
+
+    if(!_start_traj & ((_desired_pos - _sensor_pos).lpNorm<2>() < 0.01))
+    {
+        std::cout << "Starting Circling Trajectory... " << std::endl;
+        _start_traj = 1;
+        _traj_start_time = sim_time;
+    } else if(_start_traj){
+        _traj_time = sim_time - _traj_start_time;
+        _desired_pos << radius_*cos(_traj_time), radius_*sin(_traj_time), _desired_pos(2);
+        _desired_vel << -radius_*sin(_traj_time), radius_*cos(_traj_time), 0.0;
+        _desired_acc << -radius_*cos(_traj_time), -radius_*sin(_traj_time), 0.0;
+    }
+}
+
+//// Generates a Gerono Lemniscate trajectory for tracking
+// centered on the origin at (0.0, 0.0)
+void figure_eight_trajectory() {
+    // References
+    // Differential Flatness of Quadrotor Dynamics Subject to Rotor Drag for Accurate Tracking of High-Speed Trajectories
+    //
+    // Also called: the Gerono Lemniscate trajectory
+    //
+
+    double pos_scaling_ = 2.5;          // larger scales the trajectory up in size
+    double time_scale_ = 1.0;           // lower is slower (all the way down to 0.0)
+
+    if (!_start_traj) {
+        _desired_pos << 1.0, 1.0, _desired_pos(2);
+    }
+
+    if (!_start_traj & ((_desired_pos - _sensor_pos).lpNorm<2>() < 0.01)) {
+        std::cout << "Starting Figure-8 Trajectory... " << std::endl;
+        _start_traj = 1;
+        _traj_start_time = sim_time;
+    } else if (_start_traj) {
+        _traj_time = sim_time - _traj_start_time;
+        _desired_pos << pos_scaling_ * cos(time_scale_*_traj_time), pos_scaling_ * sin(time_scale_*_traj_time) * cos(time_scale_*_traj_time), _desired_pos(2);
+        _desired_vel << -pos_scaling_*time_scale_ * sin(time_scale_*_traj_time),
+                pos_scaling_*time_scale_ * (pow(cos(time_scale_*_traj_time), 2) - pow(sin(time_scale_*_traj_time), 2)), 0.0;
+        _desired_acc << -pos_scaling_*time_scale_*time_scale_ * cos(time_scale_*_traj_time),
+                            -pos_scaling_*time_scale_*time_scale_ * 4.0* sin(time_scale_*_traj_time)*cos(time_scale_*_traj_time), 0.0;
+    }
+} // end figure_eight_trajectory()
 
 //// Generate minimum snap trajectory
 // produces an array of nx9 states to track minimizing the snap of the linear movements
 // TODO: the trajectory generator really doesn't like negative values for waypoints... can I fix this?
 void minimum_snap_trajectory()
 {
+    // References:
+    // Minimum Snap Trajectory Generation and Control for Quadrotors
+    //
+
     Eigen::Matrix<double, 1, 8> temp_;          // store desired position, velocity, and acceleration calc before assignment
 
     if(_is_optimized == 0)
@@ -265,7 +336,7 @@ void minimum_snap_trajectory()
         } // end index correction and error catching
 
         // check if this is the last index and if the quadcopter is there; then finish
-        if(((idx_+2) == _ts.rows()) & ((_traj_setpoints.block(idx_+1, 0, 1, 3) - _sensor_pos).lpNorm<2>() < 0.1))
+        if(((idx_+2) == _ts.rows()) & ((_traj_setpoints.block(idx_+1, 0, 1, 3) - _sensor_pos).lpNorm<2>() < 0.2))
         {
             std::cout << std::endl;
             std::cout << "*** Trajectory finished *** " << std::endl;
@@ -297,10 +368,7 @@ void minimum_snap_trajectory()
 // produces a nx1 array of times which the vehicle needs to waypoint
 void generate_ts()
 {
-    // TODO: need to shift this time series based on when action begins
-    // TODO: probably do this right after the takeoff routine?
-    // TODO: this shouldn't affect the trajectory itself, just the time-series goals
-    double speed_ = 1.0;         // m/s
+    double speed_ = 1.75;         // m/s                    // 1.75 m/s is pretty much the limit with hover-envelope, final error increased to 0.2m
     int _path_max_size = _traj_setpoints.rows();
     double path_len_;
     path_len_ = (_traj_setpoints.middleRows(1, _path_max_size-1)

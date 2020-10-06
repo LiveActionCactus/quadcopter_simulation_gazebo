@@ -1,9 +1,10 @@
-Goals (as of 27Sep)
+Goals (as of 06Oct)
 	- [DONE] tune the iris controller
 	- [DONE] comment the code for readability (this includes the README)
 	- [DONE] implement rudimentary waypointing
 	- [DONE] implement minimum snap trajectory following
-	- implement circling trajectory
-	- implement figure-8 trajectory
+	- [DONE] implement circling trajectory
+	- [DONE] implement figure-8 trajectory
 	- automate the data output of the iris (imagining a c++ real-time interface here)
 	- implement a fully non-linear controller
+	- Create video processing pipeline with on-board camera in Gazebo model

@@ -62,6 +62,8 @@ double prev_sensor_rot_w = 0.0;
 std::string steps ("steps");
 std::string hover ("hover");
 std::string min_snap ("min_snap");
+std::string _circle ("circle");
+std::string _figure_eight ("fig8");
 
 // TODO: I could probably pull this directly from the SDF file, not via head, but maybe dynamically at program start
 
@@ -138,6 +140,8 @@ void minimum_snap_trajectory();
 void generate_ts();
 void min_snap_optimization();
 void basic_hover();
+void circling_trajectory();
+void figure_eight_trajectory();
 
 // Measured motor speed values; callback functions
 void rotor0_cb(MotorSpeedPtr &rotor_vel);
