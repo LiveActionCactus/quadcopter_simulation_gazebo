@@ -87,7 +87,9 @@ Eigen::MatrixXd _coef(40, 3);               // 8*(m_-1) x 3; where m_ is the row
 double _total_traj_time;
 bool _is_optimized = 0;                           // 0 -- not yet optimized, 1 -- optimal coefficients found
 bool _start_traj = 0;                             // 0 -- not started,       1 -- started / in-progress
+double _traj_time = 0.0;                          // current trajectory time
 double _traj_start_time = 0.0;
+bool _traj_finished = 0;
 
 // Measured sensor values
 Eigen::Matrix<double,1,4> _sensor_quat((Eigen::Matrix<double,1,4>() << 1.0, 0.0, 0.0, 0.0).finished());
@@ -109,7 +111,7 @@ Eigen::Matrix<double,1,3> _desired_acc;
 Eigen::Matrix<double,1,3> _desired_euler_att;
 Eigen::Matrix<double,1,3> _orig_desired_euler_att;
 Eigen::Array<double,1,3> _desired_pqr_att;
-Eigen::Matrix<double,1,4> _desired_thrust((Eigen::Matrix<double,1,4>() << 1.0, 0.0, 0.0, 0.0).finished());
+Eigen::Matrix<double,1,4> _desired_thrust((Eigen::Matrix<double,1,4>() << 0.0, 0.0, 0.0, 0.0).finished());
 double _desired_tot_thrust_delta;
 
 // Helper variables

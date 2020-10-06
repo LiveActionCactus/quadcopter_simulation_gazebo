@@ -102,6 +102,10 @@ int main(int _argc, char **_argv)
         //  2 -- arm; full functionality, quadcopter is moving
         if(sim_state == 0)
         {
+            std::cout << "Initializing" << std::endl;
+            while(sim_time < 6.0){
+                ;       // wait for Gazebo
+            }
             // Initialize the quadcopter variables
             prev_sim_time = sim_time;
             prev_sim_time_pos = sim_time;
@@ -110,34 +114,52 @@ int main(int _argc, char **_argv)
             std::cout << "Armed" << std::endl;
         } else if(sim_state == 2) {
             derived_sensor_values();                        // called before a control decision; derive velocities
+
+            // higher-level trajectory loop
             if ((sim_time - prev_sim_time_pos) > 0.01) {
-                basic_position_controller();                // position controller
+                // commanded actions
+                if (hover == _argv[1]) {
+                    basic_hover();
+
+                } else if (steps == _argv[1]) {
+                    setpoint_trajectory();
+
+                } else if (min_snap == _argv[1]) {
+                    if (!_start_traj & ((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1)) {
+//                        _desired_pos << _sensor_pos(0), _sensor_pos(1), _sensor_pos(2);
+
+                        if ((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1) {
+                            _start_traj = 1;        // ensures vehicle is at hover first
+                        }
+                    } else {
+                        if(!_traj_finished) {
+                            minimum_snap_trajectory();
+                        } else {
+                            // conclude the trajectory by hovering in place
+                            _desired_pos << _traj_setpoints(_traj_setpoints.rows()-1, 0), _traj_setpoints(_traj_setpoints.rows()-1, 1),
+                                                _traj_setpoints(_traj_setpoints.rows()-1, 2);
+                        }
+                    }
+                } else {
+                    test_ol_land();
+                } // end if hover, steps, or min_snap trajectories
+            } // end trajectory loop
+
+            // position controller loop
+            if ((sim_time - prev_sim_time_pos) > 0.01) {
+                basic_position_controller();
                 prev_sim_time_pos = sim_time;
             }
+
+            // attitude controller loop
             if ((sim_time - prev_sim_time_att) > 0.001) {
-                basic_attitude_controller();                // attitude controller
+                basic_attitude_controller();
                 prev_sim_time_att = sim_time;
             }
 
-            // commanded actions
-            if (hover == _argv[1]) {
-                basic_hover();
-            } else if (steps == _argv[1]) {
-                setpoint_trajectory();
-            } else if (min_snap == _argv[1]) {
-                if(!_start_traj & ((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1)) {
-                    _desired_pos << _sensor_pos(0), _sensor_pos(1), _sensor_pos(2);
-                    if ((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1){
-                        _start_traj = 1;
-                    }
-                } else {
-                    minimum_snap_trajectory();
-                }
-            } else {
-                test_ol_land();
-            }
+            test_cl_takeoff();          // write derived motor commands to the message template
 
-            test_cl_takeoff();
+            // log data for later analysis
             ctr++;          // iterate the logging counter
             if ((ctr % 1000) == 0) {
                 testdata << sim_time << "\n";
@@ -171,11 +193,10 @@ void basic_hover()
 // 1m sized step responses to test controller response in the x, y, z directions
 void setpoint_trajectory()
 {
-    if(((_desired_pos - _sensor_pos).lpNorm<2>() < 0.1) & (_set_pt1 == 1))
+    if(((_desired_pos - _sensor_pos).lpNorm<2>() < 0.01) & (_set_pt1 == 1))
     {
         _desired_pos << 1.0, 0.0, 2.0;
         std::cout << "New desired position: " << _desired_pos << std::endl;
-//            _desired_euler_att << 0.0, 0.0, 0.2;
         _set_pt1 = 0;
         _set_pt2 = 1;
 
@@ -195,6 +216,7 @@ void setpoint_trajectory()
     {
         _desired_pos << 1.0, 1.0, 2.0;
         std::cout << "New desired position: " << _desired_pos << std::endl;
+        _set_pt4 = 0;
     }
 } // end setpoint_trajectory()
 
@@ -203,6 +225,7 @@ void setpoint_trajectory()
 
 //// Generate minimum snap trajectory
 // produces an array of nx9 states to track minimizing the snap of the linear movements
+// TODO: the trajectory generator really doesn't like negative values for waypoints... can I fix this?
 void minimum_snap_trajectory()
 {
     Eigen::Matrix<double, 1, 8> temp_;          // store desired position, velocity, and acceleration calc before assignment
@@ -213,60 +236,58 @@ void minimum_snap_trajectory()
         generate_ts();          // stores the time-series goals in _ts
         min_snap_optimization();
         _is_optimized = 1;
-        _traj_start_time = sim_time;
 
     } else if(_start_traj == 0) {
-        _traj_start_time = sim_time; // wait until trajectory call begins
+        ;                               // wait until trajectory call begins
+        _traj_start_time = sim_time;
     } else if(_start_traj == 1)
     {
-        //TODO: find the current time series index, eg: current waypoint
+        _traj_time = sim_time - _traj_start_time;   // track trajectory specific time
 
-        _ts = _ts.array() + _traj_start_time;        // shift the time series
         int idx_ = 0;                    // _ts index of current operation
-        bool prev_idx_true = 0;          // was the previous index evaluated as true?
 
-        for(int i = 0; i < _ts.cols(); i++)
+        // search the trajectory time-series to find the current index
+        for(int i = 0; i < _ts.rows(); i++)
         {
-            if(_ts(i) < sim_time)
-            {
-                prev_idx_true = 1;
-            } else if(prev_idx_true & (_ts(i) > sim_time)) {
-                idx_ = i - 1;
+            if(_traj_time < _ts(i)){
+                idx_ = i;
                 break;
-            } else if((sim_time > _ts(i)) & (i == (_ts.cols()-1))) {
-                std::cout << "Finished trajectory" << std::endl;
-                idx_ = _ts.cols() - 1;
-            } else {
-//                std::cout << "No good index found... setting to first value" << std::endl;
-                idx_ = 0;
-                break;
+            } else if ((_ts.rows()-1) == i) {
+                idx_ = i;       // capture final case
             }
         } // end time series search
 
+        // seems to work better when I do this; captures the 0 case
+        if(idx_ == 0){
+            idx_ = 0;
+        } else {
+            idx_ = idx_ - 1;
+        } // end index correction and error catching
+
+        // check if this is the last index and if the quadcopter is there; then finish
+        if(((idx_+2) == _ts.rows()) & ((_traj_setpoints.block(idx_+1, 0, 1, 3) - _sensor_pos).lpNorm<2>() < 0.1))
+        {
+            std::cout << std::endl;
+            std::cout << "*** Trajectory finished *** " << std::endl;
+            std::cout << "Desired finish time: " << _ts(idx_+1) << std::endl;
+            std::cout << "Actual finish time: " << _traj_time << std::endl;
+            _traj_finished = 1;
+        }
+
         // Apply optimized coefficients to the setpoints
         // Generate desired position
-        temp_ << std::pow(sim_time, 7), std::pow(sim_time, 6), std::pow(sim_time, 5), std::pow(sim_time, 4),
-                    std::pow(sim_time, 3), std::pow(sim_time, 2), sim_time, 1.0;
-//        std::cout << temp_ << std::endl;
-//        std::cout << _coef.block(8*idx_, 0, 8, 3) << std::endl;
-//        std::cout << std::endl;
-//        std::cout << temp_ * _coef.block(8*idx_, 0, 8, 3) << std::endl;
-//        std::cout << std::endl;
-//        pause();
+        temp_ << std::pow(_traj_time, 7), std::pow(_traj_time, 6), std::pow(_traj_time, 5), std::pow(_traj_time, 4),
+                    std::pow(_traj_time, 3), std::pow(_traj_time, 2), _traj_time, 1.0;
         _desired_pos = temp_ * _coef.block(8*idx_, 0, 8, 3);
 
         // Generate desired velocity
-        temp_ << 7.0 * std::pow(sim_time, 6), 6.0 * std::pow(sim_time, 5), 5.0 * std::pow(sim_time, 4),
-                    4.0 * std::pow(sim_time, 3), 3.0 * std::pow(sim_time, 2), 2.0 * sim_time, 1.0, 0.0;
+        temp_ << 7.0 * std::pow(_traj_time, 6), 6.0 * std::pow(_traj_time, 5), 5.0 * std::pow(_traj_time, 4),
+                    4.0 * std::pow(_traj_time, 3), 3.0 * std::pow(_traj_time, 2), 2.0 * _traj_time, 1.0, 0.0;
         _desired_vel = temp_ * _coef.block(8*idx_, 0, 8, 3);
 
-        // TODO: seems way too large
-        std::cout << _desired_vel << std::endl;
-        std::cout << std::endl;
-
         // Generate desired acceleration
-        temp_ << 42.0 * std::pow(sim_time, 5), 30.0 * std::pow(sim_time, 4), 20.0 * std::pow(sim_time, 3),
-                    12.0 * std::pow(sim_time, 2), 6.0 * sim_time, 2.0, 0.0, 0.0;
+        temp_ << 42.0 * std::pow(_traj_time, 5), 30.0 * std::pow(_traj_time, 4), 20.0 * std::pow(_traj_time, 3),
+                    12.0 * std::pow(_traj_time, 2), 6.0 * _traj_time, 2.0, 0.0, 0.0;
         _desired_acc = temp_ * _coef.block(8*idx_, 0, 8, 3);
 
     } // end if
@@ -279,7 +300,7 @@ void generate_ts()
     // TODO: need to shift this time series based on when action begins
     // TODO: probably do this right after the takeoff routine?
     // TODO: this shouldn't affect the trajectory itself, just the time-series goals
-    double speed_ = 0.5;         // m/s
+    double speed_ = 1.0;         // m/s
     int _path_max_size = _traj_setpoints.rows();
     double path_len_;
     path_len_ = (_traj_setpoints.middleRows(1, _path_max_size-1)
@@ -315,8 +336,10 @@ void min_snap_optimization()
 {
     int m_ = _traj_setpoints.rows();            // wpts
     int n_ = _traj_setpoints.cols();            // x,y,z
-    m_ = m_ - 1;                                // mathematical convenience
-    double eps_ = 2e-52;                        // TODO: can I use float here? if not... then limits?
+    m_ = m_ - 1;                                // mathematical convenience         // TODO: I think this is an error; cuts off last trajectory
+
+    //    double eps_ = 2e-52;                        // TODO: can I use float here? if not... then limits?
+    double eps_ = 2e-10;
     _coef.resize(8*m_, 3);            // needs to match setpoints * constraints dimensions
 
     // define template matrices
@@ -334,6 +357,8 @@ void min_snap_optimization()
     A_.setZero();
     A_ = A_.setIdentity();
     A_ = A_ * eps_;                 // condition the matix so inversions aren't singular
+
+//    m_ = m_ - 1;                                // mathematical convenience         // TODO: I think this is an error; cuts off last trajectory
 
     // initialize vector of A_ matrices
     for(int i = 0; i < n_; i++)
@@ -506,6 +531,14 @@ void min_snap_optimization()
 
         // Last 4 of the last 8 constraints to be added:
         k = m_-1;
+//        k = m_;
+//        std::cout << "vec: " << i << std::endl;
+//        std::cout << A_vec_[i] << std::endl;
+//        std::cout << std::endl;
+//        std::cout << A_vec_[i].size() << std::endl;
+//        std::cout << std::endl
+//        std::cout << _ts << std::endl;
+//        std::cout << std::endl;
 
         // from constraint 1
         temp_ << std::pow(_ts(k+1), 7), std::pow(_ts(k+1), 6), std::pow(_ts(k+1), 5), std::pow(_ts(k+1), 4),
@@ -581,13 +614,14 @@ void initialize_variables()
     //
     // Different controller gains for different purposes
     //
-//     Soft controller -- good for recovering from large disturbances
+
+     // Soft controller -- good for recovering from large disturbances
 //    _Kp_pos << 3.0, 3.0, 10.0;
 //    _Kd_pos << 3.0, 3.0, 6.0;
 //    _Kp_ang << 700.0, 700.0, 0.0;
-//    _Kd_ang << 100000.0, 100000.0, 0.0;
+//    _Kd_ang << 100000.0, 100000.0, 0.0;         // TODO: add in yaw tracking for a dedicated "front/forward"
 
-//    //  Testing/Intermediate Controller -- the in-between controller
+    //  Testing/Intermediate Controller -- the in-between controller
 //    _Kp_pos << 5.0, 5.0, 10.0;
 //    _Kd_pos << 3.0, 3.0, 6.0;
 //    _Kp_ang << 700.0, 700.0, 0.0;
@@ -596,7 +630,7 @@ void initialize_variables()
     // Fast/Stiff controller -- performance tracking for aggressive maneuvers
     _Kp_pos << 8.0, 8.0, 30.0;
     _Kd_pos << 3.8, 4.1, 10.0;
-    _Kp_ang << 1100.0, 1100.0, 1000.0;             // TODO: add in yaw tracking for a dedicated "front/forward"
+    _Kp_ang << 1100.0, 1100.0, 1000.0;
     _Kd_ang << 120000.0, 120000.0, 200000.0;
 
     // Initial setpoints to achieve
@@ -608,12 +642,20 @@ void initialize_variables()
     _desired_pqr_att << 0.0, 0.0, 0.0;          // angular rates (this is not the same as euler rate of change)
 
     // trajectory setpoints -- minimum snap
-    _traj_setpoints << _desired_pos(0), _desired_pos(1), _desired_pos(2),
-                    1.0,                  0.0,                  _desired_pos(2),
-                    1.0,                  1.0,                  _desired_pos(2),
-                    0.0,                  1.0,                  _desired_pos(2),
-                    -1.0,                 1.0,                  _desired_pos(2),
-                    -1.0,                 0.0,                  _desired_pos(2);
+//    _traj_setpoints << _desired_pos(0), _desired_pos(1), _desired_pos(2),
+//                    1.0,                  0.0,                  _desired_pos(2),
+//                    1.0,                  1.0,                  _desired_pos(2),
+//                    0.0,                  1.0,                  _desired_pos(2),
+//                    -1.0,                 1.0,                  _desired_pos(2),
+//                    -1.0,                 0.0,                  _desired_pos(2);
+
+    _traj_setpoints <<
+            _desired_pos(0),   _desired_pos(1),  _desired_pos(2),
+            2.0,                     1.0,                    _desired_pos(2),
+            3.0,                     2.0,                    _desired_pos(2),
+            2.0,                     3.0,                    _desired_pos(2),
+            3.0,                     5.0,                    _desired_pos(2),
+            5.0,                     5.0,                    _desired_pos(2);
 
     // Initialize data that will be changing through operation
     _sensor_quat << 1.0, 0.0, 0.0, 0.0;         // define upright zeroed orientation
@@ -662,6 +704,7 @@ void derived_sensor_values()
 void basic_position_controller()
 {
     // produce desired acceleration vector; includes feed-forward acceleration term
+
     Eigen::Array3d acc_des_ = _desired_acc + (1.0*_Kd_pos.cwiseProduct(_desired_vel - _derived_lin_vel))
                                 + (1.0*_Kp_pos.cwiseProduct(_desired_pos - _sensor_pos));
 
