@@ -13,4 +13,4 @@ How to build:
 8) For analysis and visualization, move the file "test_data.txt" from "build" to the path "iris_platform_analysis/sim_test_data" and in "iris_platform_analysis" run `python3 pos_att_analysis.py`
 
 
-![demo](vids/min_snap_slow.gif)
+![demo](vids/min_snap_fast.gif)
