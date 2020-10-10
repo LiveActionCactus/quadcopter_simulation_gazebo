@@ -104,7 +104,6 @@ ref_motor_sub_ = node_handle_->Subscribe<std_msgs::msgs::Float>("~/" + model_->G
 motor_velocity_pub_ = node_handle_->Advertise<std_msgs::msgs::Float>("~/" + model_->GetName() + "/sensor" + motor_speed_pub_topic_, 1);
 
 // disturbances
-wind_sub_ = node_handle_->Subscribe("~/" + wind_sub_topic_, &RotorModelPlugin::WindVelocityCallback, this);
 motor_failure_sub_ = node_handle_->Subscribe<msgs::Int>(motor_failure_sub_topic_, &RotorModelPlugin::MotorFailureCallback, this);
 
 // Create the first order filter
@@ -159,7 +158,7 @@ void RotorModelPlugin::UpdateForcesAndMoments()
     // - \omega * \lambda_1 * V_A^{\perp}
     ignition::math::Vector3d joint_axis = joint_->GlobalAxis(0);
 
-    ignition::math::Vector3d relative_wind_velocity = body_velocity - wind_vel_;
+    ignition::math::Vector3d relative_wind_velocity = body_velocity; // no wind velocity calculation being done "- wind_vel_";
     ignition::math::Vector3d body_velocity_perpendicular = relative_wind_velocity - (relative_wind_velocity.Dot(joint_axis)) * joint_axis;
     ignition::math::Vector3d air_drag = -std::abs(real_motor_velocity) * rotor_drag_coefficient_ * body_velocity_perpendicular;
 
@@ -239,16 +238,6 @@ void RotorModelPlugin::MotorFailureCallback(const boost::shared_ptr<const msgs::
 {
     motor_Failure_Number_ = fail_msg->data();
 }
-
-void RotorModelPlugin::WindVelocityCallback(WindPtr& msg)
-{
-    wind_vel_ = ignition::math::Vector3d(msg->velocity().x(),
-                                         msg->velocity().y(),
-                                         msg->velocity().z());
-
-    std::cout << "WindVelocityCallback" << std::endl;
-
-} // end RotorModelPlugin::WindVelocityCallback()
 
 // TODO: clip based on max rotational velocity
 void RotorModelPlugin::RefMotorCallback(const boost::shared_ptr<const std_msgs::msgs::Float> &ref_motor_vel_update)

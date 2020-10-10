@@ -4,7 +4,7 @@
 // Date: 01 October 2020
 //
 
-#include "include/basic_quad_control.hpp"
+#include "../include/hover_env_control.hpp"
 
 // Eigen cheatsheets
 // https://gist.github.com/gocarlos/c91237b02c120c6319612e42fa196d77
@@ -14,28 +14,6 @@
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"
-
-//// Subscriber callback functions
-// Provides measured motor velocity
-void rotor0_cb(MotorSpeedPtr &rotor_vel)
-{
-    sensor_motor_vel0 = static_cast<double>(rotor_vel->data());
-}
-
-void rotor1_cb(MotorSpeedPtr &rotor_vel)
-{
-    sensor_motor_vel1 = static_cast<double>(rotor_vel->data());
-}
-
-void rotor2_cb(MotorSpeedPtr &rotor_vel)
-{
-    sensor_motor_vel2 = static_cast<double>(rotor_vel->data());
-}
-
-void rotor3_cb(MotorSpeedPtr &rotor_vel)
-{
-    sensor_motor_vel3 = static_cast<double>(rotor_vel->data());
-}
 
 // TODO: not sure if "iris" is the same index every run, need to run a for loop to find it and its index
 // TODO: put in write lock here and read lock in derived_sensor_values()
@@ -78,13 +56,6 @@ int main(int _argc, char **_argv)
         node_handle->Advertise<std_msgs::msgs::Float>("/gazebo/default/iris/ref/motor_speed/2", 1);
     gazebo::transport::PublisherPtr pub3 =
         node_handle->Advertise<std_msgs::msgs::Float>("/gazebo/default/iris/ref/motor_speed/3", 1);
-
-    // TODO: implement a controller where the rotor velocities can be incorperated (I read this paper...)
-//    // Subscribe to measured rotor velocities
-//    gazebo::transport::SubscriberPtr sub0 = node_handle->Subscribe("/gazebo/default/iris/motor_speed/0", rotor0_cb);
-//    gazebo::transport::SubscriberPtr sub1 = node_handle->Subscribe("/gazebo/default/iris/motor_speed/1", rotor1_cb);
-//    gazebo::transport::SubscriberPtr sub2 = node_handle->Subscribe("/gazebo/default/iris/motor_speed/2", rotor2_cb);
-//    gazebo::transport::SubscriberPtr sub3 = node_handle->Subscribe("/gazebo/default/iris/motor_speed/3", rotor3_cb);
 
     // Subscribe to measured position and orientation values
     gazebo::transport::SubscriberPtr sub5 = node_handle->Subscribe("~/pose/local/info", local_poses_cb);
@@ -270,7 +241,7 @@ void figure_eight_trajectory() {
     //
 
     double pos_scaling_ = 2.5;          // larger scales the trajectory up in size
-    double time_scale_ = 1.0;           // lower is slower (all the way down to 0.0)
+    double time_scale_ = 0.9;           // lower is slower (all the way down to 0.0)
 
     if (!_start_traj) {
         _desired_pos << 1.0, 1.0, _desired_pos(2);
@@ -760,19 +731,25 @@ void derived_sensor_values()
         _prev_derived_euler_att(1) = euler_(1);
         _prev_derived_euler_att(2) = euler_(2);
 
+        // TODO: some of these pitch values are an order of magnitude or more off
+//        std::cout << "Pitch: " << euler_(1) << std::endl;
+//        std::cout << "Time slice: " << std::fixed << std::setprecision(8) << sim_time_delta << std::endl;
+
         prev_sim_time = sim_time;                   // should be the last thing run
 
     } // end if(sim_state == 2 and 1MHz clock cycle)
 } // end derived_sensor_values()
 
 //// Hover-envelope position controller
-// References (papers):
-// Trajectory Generation and Control for Precise Aggressive Maneuvers with Quadrotors
-// The GRASP Multiple Micro UAV Testbed
+
 void basic_position_controller()
 {
-    // produce desired acceleration vector; includes feed-forward acceleration term
+    // References (papers):
+    // Trajectory Generation and Control for Precise Aggressive Maneuvers with Quadrotors
+    // The GRASP Multiple Micro UAV Testbed
+    //
 
+    // produce desired acceleration vector; includes feed-forward acceleration term
     Eigen::Array3d acc_des_ = _desired_acc + (1.0*_Kd_pos.cwiseProduct(_desired_vel - _derived_lin_vel))
                                 + (1.0*_Kp_pos.cwiseProduct(_desired_pos - _sensor_pos));
 
@@ -844,10 +821,16 @@ Eigen::Matrix3d quat2rot(const Eigen::Ref<const Eigen::Matrix<double,1,4>>& q_)
 } // end quat2rot()
 
 //// Convert quaternions to euler angles
-// references are the papers in the controller comments
-// Nice approximation of atan2: https://www.dsprelated.com/showarticle/1052.php
+
 Eigen::Matrix<double,1,3> quat2euler(const Eigen::Ref<const Eigen::Matrix<double,1,4>>& q_)
 {
+    // References
+    // previously listed papers
+    // Nice approximation of atan2: https://www.dsprelated.com/showarticle/1052.php
+    // https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+    // http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
+    //
+
     Eigen::Matrix3d rotation_;
     Eigen::Matrix<double,1,3> euler_;
     euler_ << 0.0, 0.0, 0.0;
@@ -859,6 +842,12 @@ Eigen::Matrix<double,1,3> quat2euler(const Eigen::Ref<const Eigen::Matrix<double
     euler_(2) = atan2((-1.0*rotation_(1,0)) / cos(euler_(0)),
                       (rotation_(1,1) / cos(euler_(0))));
 
+    // TODO: this is another way to make the conversion; there are issues here though
+    // TODO: this other method does not fix the discontinuities in roll and pitch (I think it's a sensor value issue)
+//    euler_(0) = atan2((2*((-q_(0)*q_(1)) + (q_(2)*q_(3)))), (1-2*(q_(1)*q_(1) + q_(2)*q_(2))));
+//    euler_(1) = asin(2*(-q_(0)*q_(2) - q_(3)*q_(1)));
+//    euler_(2) = atan2((2*((-q_(0)*q_(3)) + (q_(1)*q_(2)))), (1-2*(q_(2)*q_(2) + q_(3)*q_(3))));
+
     return(euler_);
 
 } // end quat2euler()
@@ -866,10 +855,14 @@ Eigen::Matrix<double,1,3> quat2euler(const Eigen::Ref<const Eigen::Matrix<double
 //// Derives angular velocity vector from euler angles
 Eigen::Matrix<double,1,3> derive_ang_velocity(const Eigen::Ref<const Eigen::Matrix<double,1,3>>& e_)
 {
+    // References:
+    // The GRASP Multiple Micro UAV Testbed
+    //
+
     Eigen::Matrix<double,3,3> tfm_;             // transformation matrix
 
     tfm_(0,0) = cos(e_(1)); tfm_(0,1) = 0.0; tfm_(0,2) = (-1.0*cos(e_(0))*sin(e_(1)));
-    tfm_(1,0) = 0.0; tfm_(1,1) = 1.0; tfm_(1,2) = sin(e_(0));
+    tfm_(1,0) = 0.0;                 tfm_(1,1) = 1.0; tfm_(1,2) = sin(e_(0));
     tfm_(2,0) = sin(e_(1)); tfm_(2,1) = 0.0; tfm_(2,2) = (cos(e_(0))*cos(e_(1)));
 
     _derived_pqr_att = tfm_ * (e_ - _prev_derived_euler_att).transpose();       // angular velocity vector

@@ -33,11 +33,11 @@ file(GLOB PROTO_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/msgs/include/*.cc")
 # two ways to add_library here, I can add my own compiled protobuf files or I can grab the already compiled ones from gazebo's source
 # target_link_libraries(rotor_plugin ${GAZEBO_LIBRARIES} WindPlugin Eigen3::Eigen)
 
-add_library(rotor_plugin SHARED rotor_plugin.cpp ${PROTO_SRCS})
+add_library(rotor_plugin SHARED src/rotor_plugin.cpp ${PROTO_SRCS})
 target_link_libraries(rotor_plugin ${GAZEBO_LIBRARIES} Eigen3::Eigen)
 target_include_directories(rotor_plugin PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 # Build the test publisher
-add_executable(basic_quad_control basic_quad_control.cpp include/basic_quad_control.hpp ${PROTO_SRCS})
-target_link_libraries(basic_quad_control ${GAZEBO_LIBRARIES} Eigen3::Eigen)
+add_executable(hover_env_control src/hover_env_control.cpp include/hover_env_control.hpp ${PROTO_SRCS})
+target_link_libraries(hover_env_control ${GAZEBO_LIBRARIES} Eigen3::Eigen)
 #target_include_directories(set_rotor_vel PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/msgs/include/)

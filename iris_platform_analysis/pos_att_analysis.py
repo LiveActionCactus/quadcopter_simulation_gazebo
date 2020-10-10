@@ -155,20 +155,20 @@ def visualize_results():
 	plt.legend()
 	plt.grid(True)
 
-	plt.figure(400)
-	# plt.plot(time, (((desired_att[:,1]-actual_att[:,1]).square()).divide(len(desired_att[:,1]))).sqrt())
-	err = desired_att[:,1]-actual_att[:,1]
-	test = np.sqrt(err)
-	test1 = np.divide(test, len(desired_att[:,1]))
-	test2 = np.sqrt(test1)
-	plt.plot(time, np.square(err))
+	# plt.figure(400)
+	# # plt.plot(time, (((desired_att[:,1]-actual_att[:,1]).square()).divide(len(desired_att[:,1]))).sqrt())
+	# err = desired_att[:,1]-actual_att[:,1]
+	# test = np.sqrt(err)
+	# test1 = np.divide(test, len(desired_att[:,1]))
+	# test2 = np.sqrt(test1)
+	# plt.plot(time, np.square(err))
 
 
-	plt.xlabel('Sim time (s)')
-	plt.ylabel('RMS')
-	plt.title("RMS over time")
-	plt.legend()
-	plt.grid(True)
+	# plt.xlabel('Sim time (s)')
+	# plt.ylabel('RMS')
+	# plt.title("RMS over time")
+	# plt.legend()
+	# plt.grid(True)
 
 	plt.tight_layout()
 	plt.show()

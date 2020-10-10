@@ -26,9 +26,7 @@
 
 #include "common.hpp"
 #include "motor_model.hpp"
-#include "../msgs/include/CommandMotorSpeed.pb.h"
 #include "../msgs/include/Float.pb.h"
-#include "../msgs/include/Wind.pb.h"
 #include "../msgs/include/MotorSpeed.pb.h"
 
 // I can include the already compiled protobuf files from Gazebo's source
@@ -43,10 +41,6 @@ namespace gazebo {
 // Default values
 static const std::string kDefaultMotorFailureNumSubTopic = "/gazebo/motor_failure_num";
 static const std::string kDefaultMotorVelocityPubTopic = "/motor_speed";
-std::string wind_sub_topic_ = "/world_wind";
-
-typedef const boost::shared_ptr<const mav_msgs::msgs::CommandMotorSpeed> CommandMotorSpeedPtr;
-typedef const boost::shared_ptr<const physics_msgs::msgs::Wind> WindPtr;
 
 // Protobuf test
 typedef const boost::shared_ptr<const mav_msgs::msgs::MotorSpeed> MotorSpeedPtr;
@@ -115,12 +109,9 @@ private:
     transport::NodePtr node_handle_;
     transport::PublisherPtr motor_velocity_pub_;
     transport::SubscriberPtr motor_failure_sub_;
-    transport::SubscriberPtr wind_sub_;
     transport::SubscriberPtr ref_motor_sub_;
 
     event::ConnectionPtr updateConnection_;
-
-    ignition::math::Vector3d wind_vel_;
 
     std_msgs::msgs::Float turning_velocity_msg_;
 
@@ -145,7 +136,6 @@ private:
     bool reversible_;
 
     void MotorFailureCallback(const boost::shared_ptr<const msgs::Int> &fail_msg);  /*!< Callback for the motor_failure_sub_ subscriber */
-    void WindVelocityCallback(const boost::shared_ptr<const physics_msgs::msgs::Wind> &msg);
     std::unique_ptr<FirstOrderFilter<double>>  rotor_velocity_filter_;
     void RefMotorCallback(const boost::shared_ptr<const std_msgs::msgs::Float> &ref_motor_vel_update);
 

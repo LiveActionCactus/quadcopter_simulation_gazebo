@@ -21,8 +21,6 @@
 
 #include <gazebo/gazebo_client.hh>
 #include "../msgs/include/Float.pb.h"
-#include "../msgs/include/Wind.pb.h"
-#include "../msgs/include/CommandMotorSpeed.pb.h"
 #include "../msgs/include/local_poses_stamped.pb.h"
 
 // gazebo related variables
@@ -45,18 +43,6 @@ std_msgs::msgs::Float ref_motor_vel0;
 std_msgs::msgs::Float ref_motor_vel1;
 std_msgs::msgs::Float ref_motor_vel2;
 std_msgs::msgs::Float ref_motor_vel3;
-
-// Measured motor values
-double sensor_motor_vel0 = 0.0;
-double sensor_motor_vel1 = 0.0;
-double sensor_motor_vel2 = 0.0;
-double sensor_motor_vel3 = 0.0;
-
-// Previous position and orientation values
-double prev_sensor_rot_x = 0.0;
-double prev_sensor_rot_y = 0.0;
-double prev_sensor_rot_z = 0.0;
-double prev_sensor_rot_w = 0.0;
 
 // Actions; for the state machine
 std::string steps ("steps");
@@ -98,10 +84,10 @@ Eigen::Matrix<double,1,4> _sensor_quat((Eigen::Matrix<double,1,4>() << 1.0, 0.0,
 Eigen::Matrix<double,1,3> _sensor_pos;
 
 // Previous values for derivations
+Eigen::Matrix<double,1,3> _prev_sensor_pos;
 Eigen::Matrix<double,1,3> _prev_derived_euler_att;
 
 // Derived values from sensor measurments
-Eigen::Matrix<double,1,3> _prev_sensor_pos;
 Eigen::Matrix<double,1,3> _derived_lin_vel;
 Eigen::Matrix<double,1,3> _derived_euler_att;
 Eigen::Matrix<double,1,3> _derived_pqr_att;
@@ -111,7 +97,7 @@ Eigen::Matrix<double,1,3> _desired_pos;
 Eigen::Matrix<double,1,3> _desired_vel;
 Eigen::Matrix<double,1,3> _desired_acc;
 Eigen::Matrix<double,1,3> _desired_euler_att;
-Eigen::Matrix<double,1,3> _orig_desired_euler_att;
+Eigen::Matrix<double,1,3> _orig_desired_euler_att;          // for attitude troubleshooting
 Eigen::Array<double,1,3> _desired_pqr_att;
 Eigen::Matrix<double,1,4> _desired_thrust((Eigen::Matrix<double,1,4>() << 0.0, 0.0, 0.0, 0.0).finished());
 double _desired_tot_thrust_delta;
@@ -142,12 +128,6 @@ void min_snap_optimization();
 void basic_hover();
 void circling_trajectory();
 void figure_eight_trajectory();
-
-// Measured motor speed values; callback functions
-void rotor0_cb(MotorSpeedPtr &rotor_vel);
-void rotor1_cb(MotorSpeedPtr &rotor_vel);
-void rotor2_cb(MotorSpeedPtr &rotor_vel);
-void rotor3_cb(MotorSpeedPtr &rotor_vel);
 
 // Helper functions
 Eigen::Matrix3d quat2rot(const Eigen::Ref<const Eigen::Matrix<double,1,4>>& q);
