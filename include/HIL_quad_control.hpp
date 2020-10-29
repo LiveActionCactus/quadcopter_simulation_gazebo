@@ -20,10 +20,10 @@
 #include <fstream>
 
 #include <gazebo/gazebo_client.hh>
-#include "../msgs/include/Float.pb.h"
-#include "../msgs/include/Wind.pb.h"
-#include "../msgs/include/CommandMotorSpeed.pb.h"
-#include "../msgs/include/local_poses_stamped.pb.h"
+#include "../msgs/Float.pb.h"
+#include "../msgs/Wind.pb.h"
+#include "../msgs/CommandMotorSpeed.pb.h"
+#include "../msgs/local_poses_stamped.pb.h"
 
 // gazebo related variables
 gazebo::transport::NodePtr node_handle;
@@ -90,10 +90,11 @@ bool _start_traj = 0;                             // 0 -- not started,       1 -
 double _traj_time = 0.0;                          // current trajectory time
 double _traj_start_time = 0.0;
 bool _traj_finished = 0;
-
+int counter = 0;
 // Measured sensor values
 Eigen::Matrix<double,1,4> _sensor_quat((Eigen::Matrix<double,1,4>() << 1.0, 0.0, 0.0, 0.0).finished());
 Eigen::Matrix<double,1,3> _sensor_pos;
+Eigen::Matrix<double,1,3> _sensor_euler;
 
 // Previous values for derivations
 Eigen::Matrix<double,1,3> _prev_derived_euler_att;

@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named HIL_quad_control
+
+# Build rule for target.
+HIL_quad_control: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 HIL_quad_control
+.PHONY : HIL_quad_control
+
+# fast build rule for target.
+HIL_quad_control/fast:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/build
+.PHONY : HIL_quad_control/fast
+
+#=============================================================================
 # Target rules for targets named rotor_plugin
 
 # Build rule for target.
@@ -122,19 +135,6 @@ rotor_plugin: cmake_check_build_system
 rotor_plugin/fast:
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/build
 .PHONY : rotor_plugin/fast
-
-#=============================================================================
-# Target rules for targets named HIL-connect
-
-# Build rule for target.
-HIL-connect: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 HIL-connect
-.PHONY : HIL-connect
-
-# fast build rule for target.
-HIL-connect/fast:
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/build
-.PHONY : HIL-connect/fast
 
 #=============================================================================
 # Target rules for targets named set_rotor_vel
@@ -149,32 +149,32 @@ set_rotor_vel/fast:
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/build
 .PHONY : set_rotor_vel/fast
 
-HIL_connect.o: HIL_connect.cpp.o
+HIL_quad_control.o: HIL_quad_control.cpp.o
 
-.PHONY : HIL_connect.o
+.PHONY : HIL_quad_control.o
 
 # target to build an object file
-HIL_connect.cpp.o:
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/HIL_connect.cpp.o
-.PHONY : HIL_connect.cpp.o
+HIL_quad_control.cpp.o:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/HIL_quad_control.cpp.o
+.PHONY : HIL_quad_control.cpp.o
 
-HIL_connect.i: HIL_connect.cpp.i
+HIL_quad_control.i: HIL_quad_control.cpp.i
 
-.PHONY : HIL_connect.i
+.PHONY : HIL_quad_control.i
 
 # target to preprocess a source file
-HIL_connect.cpp.i:
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/HIL_connect.cpp.i
-.PHONY : HIL_connect.cpp.i
+HIL_quad_control.cpp.i:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/HIL_quad_control.cpp.i
+.PHONY : HIL_quad_control.cpp.i
 
-HIL_connect.s: HIL_connect.cpp.s
+HIL_quad_control.s: HIL_quad_control.cpp.s
 
-.PHONY : HIL_connect.s
+.PHONY : HIL_quad_control.s
 
 # target to generate assembly for a file
-HIL_connect.cpp.s:
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/HIL_connect.cpp.s
-.PHONY : HIL_connect.cpp.s
+HIL_quad_control.cpp.s:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/HIL_quad_control.cpp.s
+.PHONY : HIL_quad_control.cpp.s
 
 msgs/include/CommandMotorSpeed.pb.o: msgs/include/CommandMotorSpeed.pb.cc.o
 
@@ -182,8 +182,8 @@ msgs/include/CommandMotorSpeed.pb.o: msgs/include/CommandMotorSpeed.pb.cc.o
 
 # target to build an object file
 msgs/include/CommandMotorSpeed.pb.cc.o:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/CommandMotorSpeed.pb.cc.o
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/CommandMotorSpeed.pb.cc.o
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/CommandMotorSpeed.pb.cc.o
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/CommandMotorSpeed.pb.cc.o
 .PHONY : msgs/include/CommandMotorSpeed.pb.cc.o
 
@@ -193,8 +193,8 @@ msgs/include/CommandMotorSpeed.pb.i: msgs/include/CommandMotorSpeed.pb.cc.i
 
 # target to preprocess a source file
 msgs/include/CommandMotorSpeed.pb.cc.i:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/CommandMotorSpeed.pb.cc.i
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/CommandMotorSpeed.pb.cc.i
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/CommandMotorSpeed.pb.cc.i
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/CommandMotorSpeed.pb.cc.i
 .PHONY : msgs/include/CommandMotorSpeed.pb.cc.i
 
@@ -204,8 +204,8 @@ msgs/include/CommandMotorSpeed.pb.s: msgs/include/CommandMotorSpeed.pb.cc.s
 
 # target to generate assembly for a file
 msgs/include/CommandMotorSpeed.pb.cc.s:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/CommandMotorSpeed.pb.cc.s
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/CommandMotorSpeed.pb.cc.s
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/CommandMotorSpeed.pb.cc.s
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/CommandMotorSpeed.pb.cc.s
 .PHONY : msgs/include/CommandMotorSpeed.pb.cc.s
 
@@ -215,8 +215,8 @@ msgs/include/Float.pb.o: msgs/include/Float.pb.cc.o
 
 # target to build an object file
 msgs/include/Float.pb.cc.o:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/Float.pb.cc.o
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/Float.pb.cc.o
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/Float.pb.cc.o
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/Float.pb.cc.o
 .PHONY : msgs/include/Float.pb.cc.o
 
@@ -226,8 +226,8 @@ msgs/include/Float.pb.i: msgs/include/Float.pb.cc.i
 
 # target to preprocess a source file
 msgs/include/Float.pb.cc.i:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/Float.pb.cc.i
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/Float.pb.cc.i
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/Float.pb.cc.i
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/Float.pb.cc.i
 .PHONY : msgs/include/Float.pb.cc.i
 
@@ -237,8 +237,8 @@ msgs/include/Float.pb.s: msgs/include/Float.pb.cc.s
 
 # target to generate assembly for a file
 msgs/include/Float.pb.cc.s:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/Float.pb.cc.s
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/Float.pb.cc.s
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/Float.pb.cc.s
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/Float.pb.cc.s
 .PHONY : msgs/include/Float.pb.cc.s
 
@@ -248,8 +248,8 @@ msgs/include/MotorSpeed.pb.o: msgs/include/MotorSpeed.pb.cc.o
 
 # target to build an object file
 msgs/include/MotorSpeed.pb.cc.o:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/MotorSpeed.pb.cc.o
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/MotorSpeed.pb.cc.o
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/MotorSpeed.pb.cc.o
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/MotorSpeed.pb.cc.o
 .PHONY : msgs/include/MotorSpeed.pb.cc.o
 
@@ -259,8 +259,8 @@ msgs/include/MotorSpeed.pb.i: msgs/include/MotorSpeed.pb.cc.i
 
 # target to preprocess a source file
 msgs/include/MotorSpeed.pb.cc.i:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/MotorSpeed.pb.cc.i
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/MotorSpeed.pb.cc.i
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/MotorSpeed.pb.cc.i
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/MotorSpeed.pb.cc.i
 .PHONY : msgs/include/MotorSpeed.pb.cc.i
 
@@ -270,8 +270,8 @@ msgs/include/MotorSpeed.pb.s: msgs/include/MotorSpeed.pb.cc.s
 
 # target to generate assembly for a file
 msgs/include/MotorSpeed.pb.cc.s:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/MotorSpeed.pb.cc.s
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/MotorSpeed.pb.cc.s
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/MotorSpeed.pb.cc.s
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/MotorSpeed.pb.cc.s
 .PHONY : msgs/include/MotorSpeed.pb.cc.s
 
@@ -281,8 +281,8 @@ msgs/include/Wind.pb.o: msgs/include/Wind.pb.cc.o
 
 # target to build an object file
 msgs/include/Wind.pb.cc.o:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/Wind.pb.cc.o
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/Wind.pb.cc.o
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/Wind.pb.cc.o
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/Wind.pb.cc.o
 .PHONY : msgs/include/Wind.pb.cc.o
 
@@ -292,8 +292,8 @@ msgs/include/Wind.pb.i: msgs/include/Wind.pb.cc.i
 
 # target to preprocess a source file
 msgs/include/Wind.pb.cc.i:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/Wind.pb.cc.i
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/Wind.pb.cc.i
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/Wind.pb.cc.i
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/Wind.pb.cc.i
 .PHONY : msgs/include/Wind.pb.cc.i
 
@@ -303,8 +303,8 @@ msgs/include/Wind.pb.s: msgs/include/Wind.pb.cc.s
 
 # target to generate assembly for a file
 msgs/include/Wind.pb.cc.s:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/Wind.pb.cc.s
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/Wind.pb.cc.s
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/Wind.pb.cc.s
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/Wind.pb.cc.s
 .PHONY : msgs/include/Wind.pb.cc.s
 
@@ -314,8 +314,8 @@ msgs/include/header.pb.o: msgs/include/header.pb.cc.o
 
 # target to build an object file
 msgs/include/header.pb.cc.o:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/header.pb.cc.o
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/header.pb.cc.o
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/header.pb.cc.o
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/header.pb.cc.o
 .PHONY : msgs/include/header.pb.cc.o
 
@@ -325,8 +325,8 @@ msgs/include/header.pb.i: msgs/include/header.pb.cc.i
 
 # target to preprocess a source file
 msgs/include/header.pb.cc.i:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/header.pb.cc.i
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/header.pb.cc.i
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/header.pb.cc.i
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/header.pb.cc.i
 .PHONY : msgs/include/header.pb.cc.i
 
@@ -336,10 +336,142 @@ msgs/include/header.pb.s: msgs/include/header.pb.cc.s
 
 # target to generate assembly for a file
 msgs/include/header.pb.cc.s:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/header.pb.cc.s
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/header.pb.cc.s
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/header.pb.cc.s
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/header.pb.cc.s
 .PHONY : msgs/include/header.pb.cc.s
+
+msgs/include/local_pose.pb.o: msgs/include/local_pose.pb.cc.o
+
+.PHONY : msgs/include/local_pose.pb.o
+
+# target to build an object file
+msgs/include/local_pose.pb.cc.o:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/local_pose.pb.cc.o
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o
+.PHONY : msgs/include/local_pose.pb.cc.o
+
+msgs/include/local_pose.pb.i: msgs/include/local_pose.pb.cc.i
+
+.PHONY : msgs/include/local_pose.pb.i
+
+# target to preprocess a source file
+msgs/include/local_pose.pb.cc.i:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/local_pose.pb.cc.i
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.i
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.i
+.PHONY : msgs/include/local_pose.pb.cc.i
+
+msgs/include/local_pose.pb.s: msgs/include/local_pose.pb.cc.s
+
+.PHONY : msgs/include/local_pose.pb.s
+
+# target to generate assembly for a file
+msgs/include/local_pose.pb.cc.s:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/local_pose.pb.cc.s
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.s
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.s
+.PHONY : msgs/include/local_pose.pb.cc.s
+
+msgs/include/local_poses_stamped.pb.o: msgs/include/local_poses_stamped.pb.cc.o
+
+.PHONY : msgs/include/local_poses_stamped.pb.o
+
+# target to build an object file
+msgs/include/local_poses_stamped.pb.cc.o:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/local_poses_stamped.pb.cc.o
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o
+.PHONY : msgs/include/local_poses_stamped.pb.cc.o
+
+msgs/include/local_poses_stamped.pb.i: msgs/include/local_poses_stamped.pb.cc.i
+
+.PHONY : msgs/include/local_poses_stamped.pb.i
+
+# target to preprocess a source file
+msgs/include/local_poses_stamped.pb.cc.i:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/local_poses_stamped.pb.cc.i
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.i
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.i
+.PHONY : msgs/include/local_poses_stamped.pb.cc.i
+
+msgs/include/local_poses_stamped.pb.s: msgs/include/local_poses_stamped.pb.cc.s
+
+.PHONY : msgs/include/local_poses_stamped.pb.s
+
+# target to generate assembly for a file
+msgs/include/local_poses_stamped.pb.cc.s:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/local_poses_stamped.pb.cc.s
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.s
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.s
+.PHONY : msgs/include/local_poses_stamped.pb.cc.s
+
+msgs/include/local_quaternion.pb.o: msgs/include/local_quaternion.pb.cc.o
+
+.PHONY : msgs/include/local_quaternion.pb.o
+
+# target to build an object file
+msgs/include/local_quaternion.pb.cc.o:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/local_quaternion.pb.cc.o
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o
+.PHONY : msgs/include/local_quaternion.pb.cc.o
+
+msgs/include/local_quaternion.pb.i: msgs/include/local_quaternion.pb.cc.i
+
+.PHONY : msgs/include/local_quaternion.pb.i
+
+# target to preprocess a source file
+msgs/include/local_quaternion.pb.cc.i:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/local_quaternion.pb.cc.i
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.i
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.i
+.PHONY : msgs/include/local_quaternion.pb.cc.i
+
+msgs/include/local_quaternion.pb.s: msgs/include/local_quaternion.pb.cc.s
+
+.PHONY : msgs/include/local_quaternion.pb.s
+
+# target to generate assembly for a file
+msgs/include/local_quaternion.pb.cc.s:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/local_quaternion.pb.cc.s
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.s
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.s
+.PHONY : msgs/include/local_quaternion.pb.cc.s
+
+msgs/include/local_vector3d.pb.o: msgs/include/local_vector3d.pb.cc.o
+
+.PHONY : msgs/include/local_vector3d.pb.o
+
+# target to build an object file
+msgs/include/local_vector3d.pb.cc.o:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/local_vector3d.pb.cc.o
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o
+.PHONY : msgs/include/local_vector3d.pb.cc.o
+
+msgs/include/local_vector3d.pb.i: msgs/include/local_vector3d.pb.cc.i
+
+.PHONY : msgs/include/local_vector3d.pb.i
+
+# target to preprocess a source file
+msgs/include/local_vector3d.pb.cc.i:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/local_vector3d.pb.cc.i
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.i
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.i
+.PHONY : msgs/include/local_vector3d.pb.cc.i
+
+msgs/include/local_vector3d.pb.s: msgs/include/local_vector3d.pb.cc.s
+
+.PHONY : msgs/include/local_vector3d.pb.s
+
+# target to generate assembly for a file
+msgs/include/local_vector3d.pb.cc.s:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/local_vector3d.pb.cc.s
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.s
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.s
+.PHONY : msgs/include/local_vector3d.pb.cc.s
 
 msgs/include/time.pb.o: msgs/include/time.pb.cc.o
 
@@ -347,8 +479,8 @@ msgs/include/time.pb.o: msgs/include/time.pb.cc.o
 
 # target to build an object file
 msgs/include/time.pb.cc.o:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/time.pb.cc.o
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/time.pb.cc.o
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/time.pb.cc.o
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/time.pb.cc.o
 .PHONY : msgs/include/time.pb.cc.o
 
@@ -358,8 +490,8 @@ msgs/include/time.pb.i: msgs/include/time.pb.cc.i
 
 # target to preprocess a source file
 msgs/include/time.pb.cc.i:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/time.pb.cc.i
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/time.pb.cc.i
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/time.pb.cc.i
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/time.pb.cc.i
 .PHONY : msgs/include/time.pb.cc.i
 
@@ -369,8 +501,8 @@ msgs/include/time.pb.s: msgs/include/time.pb.cc.s
 
 # target to generate assembly for a file
 msgs/include/time.pb.cc.s:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/time.pb.cc.s
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/time.pb.cc.s
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/time.pb.cc.s
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/time.pb.cc.s
 .PHONY : msgs/include/time.pb.cc.s
 
@@ -380,8 +512,8 @@ msgs/include/vector3d.pb.o: msgs/include/vector3d.pb.cc.o
 
 # target to build an object file
 msgs/include/vector3d.pb.cc.o:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/vector3d.pb.cc.o
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/vector3d.pb.cc.o
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/vector3d.pb.cc.o
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/vector3d.pb.cc.o
 .PHONY : msgs/include/vector3d.pb.cc.o
 
@@ -391,8 +523,8 @@ msgs/include/vector3d.pb.i: msgs/include/vector3d.pb.cc.i
 
 # target to preprocess a source file
 msgs/include/vector3d.pb.cc.i:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/vector3d.pb.cc.i
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/vector3d.pb.cc.i
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/vector3d.pb.cc.i
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/vector3d.pb.cc.i
 .PHONY : msgs/include/vector3d.pb.cc.i
 
@@ -402,8 +534,8 @@ msgs/include/vector3d.pb.s: msgs/include/vector3d.pb.cc.s
 
 # target to generate assembly for a file
 msgs/include/vector3d.pb.cc.s:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/msgs/include/vector3d.pb.cc.s
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/vector3d.pb.cc.s
-	$(MAKE) -f CMakeFiles/HIL-connect.dir/build.make CMakeFiles/HIL-connect.dir/msgs/include/vector3d.pb.cc.s
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/vector3d.pb.cc.s
 .PHONY : msgs/include/vector3d.pb.cc.s
 
@@ -469,12 +601,12 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... HIL_quad_control"
 	@echo "... rotor_plugin"
-	@echo "... HIL-connect"
 	@echo "... set_rotor_vel"
-	@echo "... HIL_connect.o"
-	@echo "... HIL_connect.i"
-	@echo "... HIL_connect.s"
+	@echo "... HIL_quad_control.o"
+	@echo "... HIL_quad_control.i"
+	@echo "... HIL_quad_control.s"
 	@echo "... msgs/include/CommandMotorSpeed.pb.o"
 	@echo "... msgs/include/CommandMotorSpeed.pb.i"
 	@echo "... msgs/include/CommandMotorSpeed.pb.s"
@@ -490,6 +622,18 @@ help:
 	@echo "... msgs/include/header.pb.o"
 	@echo "... msgs/include/header.pb.i"
 	@echo "... msgs/include/header.pb.s"
+	@echo "... msgs/include/local_pose.pb.o"
+	@echo "... msgs/include/local_pose.pb.i"
+	@echo "... msgs/include/local_pose.pb.s"
+	@echo "... msgs/include/local_poses_stamped.pb.o"
+	@echo "... msgs/include/local_poses_stamped.pb.i"
+	@echo "... msgs/include/local_poses_stamped.pb.s"
+	@echo "... msgs/include/local_quaternion.pb.o"
+	@echo "... msgs/include/local_quaternion.pb.i"
+	@echo "... msgs/include/local_quaternion.pb.s"
+	@echo "... msgs/include/local_vector3d.pb.o"
+	@echo "... msgs/include/local_vector3d.pb.i"
+	@echo "... msgs/include/local_vector3d.pb.s"
 	@echo "... msgs/include/time.pb.o"
 	@echo "... msgs/include/time.pb.i"
 	@echo "... msgs/include/time.pb.s"

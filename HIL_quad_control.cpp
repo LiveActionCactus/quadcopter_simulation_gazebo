@@ -5,6 +5,9 @@
 //
 
 #include "include/HIL_quad_control.hpp"
+#include <boost/thread.hpp>
+// #include <boost/thread/condition>.
+
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"
@@ -12,9 +15,83 @@
 
  int globalfiledescriptor;
  Eigen::Matrix<double,1,3> _euler;
+ char str1[200] = "<";
+ boost::mutex threadRunning;
+  boost::mutex writeData;
+   boost::mutex readData;
+     char buf [100];
+    Eigen::Matrix<double,1,4> motor_values ;
 
+    FILE* rwfile;
 //// Subscriber callback functions
 // Provides measured motor velocity
+
+
+ void wait(int seconds)
+{
+  boost::this_thread::sleep_for(boost::chrono::seconds{seconds});
+}
+
+
+ void waitMillis(int seconds)
+{
+  boost::this_thread::sleep_for(boost::chrono::milliseconds{seconds});
+}
+
+void writeThread()
+{
+    int i =0;
+    Eigen::Matrix<double,1,4> _write_quat((Eigen::Matrix<double,1,4>() << 1.0, 0.0, 0.0, 0.0).finished());
+    Eigen::Matrix<double,1,3> _write_pos;
+    Eigen::Matrix<double,1,3> _write_euler;
+  while(!threadRunning.try_lock())
+  {
+        writeData.lock();
+        _write_quat = _sensor_quat;
+        _write_pos = _sensor_pos;
+        writeData.unlock();
+
+        _write_euler = quat2euler(_write_quat);
+
+    //<$OA008,10,20,30,2,3,4>
+
+        int leng = snprintf(str1,sizeof(str1),"<$OA008,%f,%f,%f,%f,%f,%f>",_write_euler(0),_write_euler(1),_write_euler(2),_write_pos(0),_write_pos(1),_write_pos(2));
+
+        write (globalfiledescriptor, str1, leng);
+        fsync(globalfiledescriptor);
+        // std::cout<<str1<<std::endl;
+        waitMillis(20);
+
+  }
+  threadRunning.unlock();
+}
+
+void readThread()
+{
+
+    std::stringstream ss;
+    std::string substr;
+
+  while(!threadRunning.try_lock())
+  {
+        fgets (buf, sizeof(buf),rwfile);
+        ss.str(buf);
+        // std::cout  <<ss.str() ;
+        readData.lock(); 
+        for( int i=0;ss.good()&&i<4;i++ )
+        {
+            
+            getline( ss, substr, ',' );
+            // std::cout<<substr;
+            motor_values[i]= std::stoi(substr);
+        }
+        readData.unlock();
+        ss.clear();
+  }
+    threadRunning.unlock();
+}
+
+
 void rotor0_cb(MotorSpeedPtr &rotor_vel)
 {
     sensor_motor_vel0 = static_cast<double>(rotor_vel->data());
@@ -100,9 +177,9 @@ void set_blocking (int fd, int should_block){
 // pulls from Gazebo: sim time (seconds), linear position from origin (meters), and orientation (quaternion)
 void local_poses_cb(ConstLocalPosesStampedPtr &local_pose)
 {
-    char str1[200] = "<";
+   
     sim_time = local_pose->time().sec() + (local_pose->time().nsec() * 10E-10);
-
+    writeData.lock();
     _sensor_pos(0) = local_pose->pose(0).position().x();
     _sensor_pos(1) = local_pose->pose(0).position().y();
     _sensor_pos(2) = local_pose->pose(0).position().z();
@@ -111,10 +188,9 @@ void local_poses_cb(ConstLocalPosesStampedPtr &local_pose)
     _sensor_quat(1) = local_pose->pose(0).orientation().x();
     _sensor_quat(2) = local_pose->pose(0).orientation().y();
     _sensor_quat(3) = local_pose->pose(0).orientation().z();
-    _euler = quat2euler(_sensor_quat);
-
-    int leng = snprintf(str1,sizeof(str1),"<%f,%f,%f,%f,%f,%f>",_sensor_pos(0),_sensor_pos(1),_sensor_pos(2),euler_(0),euler_(1),euler_(2));
-    write (globalfiledescriptor, str1, leng);
+   writeData.unlock();
+   
+    
 
 } // end local_poses_cb()
 
@@ -123,9 +199,12 @@ void local_poses_cb(ConstLocalPosesStampedPtr &local_pose)
 // Second portion is the while(1) loop that runs for duration of quadcopter manuevers
 int main(int _argc, char **_argv)
 {
-
+     motor_values[0]=0;
+      motor_values[1]=0;
+       motor_values[2]=0;
+        motor_values[3]=0;
     //set up HIL
-    const char* portname = "/dev/ttyACM4";
+    const char* portname = "/dev/ttyACM0";
 
     globalfiledescriptor = open (portname, O_RDWR | O_NOCTTY | O_SYNC);
     if (globalfiledescriptor < 0)
@@ -135,11 +214,10 @@ int main(int _argc, char **_argv)
             return -1;
     }
 
-    set_interface_attribs (globalfiledescriptor, B115200, 0);  // set speed to 115,200 bps, 8n1 (no parity)
+    set_interface_attribs (globalfiledescriptor, B2000000, 0);  // set speed to 115,200 bps, 8n1 (no parity)
     set_blocking (globalfiledescriptor, 0);                // set no blocking
-    FILE* rwfile = fdopen(globalfiledescriptor,"rw");
-    char buf [100];
-    
+    rwfile = fdopen(globalfiledescriptor,"rw");
+
     
     
     // Load gazebo as a client
@@ -162,55 +240,48 @@ int main(int _argc, char **_argv)
     // Subscribe to measured position and orientation values
     gazebo::transport::SubscriberPtr sub5 = node_handle->Subscribe("~/pose/local/info", local_poses_cb);
 
+    threadRunning.lock();
+    boost::thread readT{readThread};
+    boost::thread writeT{writeThread};
+    // readT.join();
+    // writeT.join();
 
     // open file handle for storing test data for later analysis
     std::ofstream testdata;
     testdata.open("test_data.txt");
     u_int64_t ctr = 0;                  // timing counter, good for 2^64 bits (essentially infinite)
 
-    std::vector<int> vect;
-    int val;
-    std::stringstream ss;
-    std::string substr;
 
-    fgets (buf, sizeof(buf),rwfile); 
-    fgets (buf, sizeof(buf),rwfile); 
-    fgets (buf, sizeof(buf),rwfile); 
-    fgets (buf, sizeof(buf),rwfile); 
-    fgets (buf, sizeof(buf),rwfile); 
+
+
     
     while(1)
     {
-        fgets (buf, sizeof(buf),rwfile);
-        ss.str(buf);
-        std::cout  <<ss.str() ; 
-        while( ss.good() )
-        {
-            
-            getline( ss, substr, ',' );
-            // std::cout<<substr;
-            vect.push_back( std::stoi(substr) );
-        }
 
-        ref_motor_vel0.set_data(vect[0]);
-        ref_motor_vel1.set_data(vect[1]);
-        ref_motor_vel2.set_data(vect[2]);
-        ref_motor_vel3.set_data(vect[3]);
-
+        readData.lock();
+        ref_motor_vel0.set_data(motor_values[0]);
+        ref_motor_vel1.set_data(motor_values[1]);
+        ref_motor_vel2.set_data(motor_values[2]);
+        ref_motor_vel3.set_data(motor_values[3]);
+        readData.unlock();
         pub0->Publish(ref_motor_vel0);
         pub1->Publish(ref_motor_vel1);
         pub2->Publish(ref_motor_vel2);
         pub3->Publish(ref_motor_vel3);
-        vect.clear();
-        ss.clear();
-//        std::cout << "sensor motor 0: " << sensor_motor_vel0 << std::endl;
-//        std::cout << "sensor motor 1: " << sensor_motor_vel1 << std::endl;
-//        std::cout << "sensor motor 2: " << sensor_motor_vel2 << std::endl;
-//        std::cout << "sensor motor 3: " << sensor_motor_vel3 << std::endl;
-//        std::cout << std::endl;
+        
 
+
+
+
+       // std::cout << "sensor motor 0: " << motor_values[0] << std::endl;
+       // std::cout << "sensor motor 1: " << motor_values[1] << std::endl;
+       // // std::cout << "sensor motor 2: " << sensor_motor_vel2 << std::endl;
+       // // std::cout << "sensor motor 3: " << sensor_motor_vel3 << std::endl;
+       // std::cout << std::endl;
+       waitMillis(5);
     } // end while(1)
 
+    threadRunning.unlock();
     return(0);
 
 } // end main()

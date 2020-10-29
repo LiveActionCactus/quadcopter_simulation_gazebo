@@ -10,6 +10,10 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/jules/drone/quadcopter_simulation_gazebo/msgs/include/MotorSpeed.pb.cc" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL-connect.dir/msgs/include/MotorSpeed.pb.cc.o"
   "/home/jules/drone/quadcopter_simulation_gazebo/msgs/include/Wind.pb.cc" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL-connect.dir/msgs/include/Wind.pb.cc.o"
   "/home/jules/drone/quadcopter_simulation_gazebo/msgs/include/header.pb.cc" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL-connect.dir/msgs/include/header.pb.cc.o"
+  "/home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_pose.pb.cc" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL-connect.dir/msgs/include/local_pose.pb.cc.o"
+  "/home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_poses_stamped.pb.cc" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL-connect.dir/msgs/include/local_poses_stamped.pb.cc.o"
+  "/home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_quaternion.pb.cc" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL-connect.dir/msgs/include/local_quaternion.pb.cc.o"
+  "/home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_vector3d.pb.cc" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL-connect.dir/msgs/include/local_vector3d.pb.cc.o"
   "/home/jules/drone/quadcopter_simulation_gazebo/msgs/include/time.pb.cc" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL-connect.dir/msgs/include/time.pb.cc.o"
   "/home/jules/drone/quadcopter_simulation_gazebo/msgs/include/vector3d.pb.cc" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL-connect.dir/msgs/include/vector3d.pb.cc.o"
   )

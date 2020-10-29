@@ -20,6 +20,24 @@ CMakeFiles/set_rotor_vel.dir/msgs/include/header.pb.cc.o
  /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/header.pb.cc
  /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/header.pb.h
  /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/time.pb.h
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o
+ /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_pose.pb.cc
+ /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_pose.pb.h
+ /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_quaternion.pb.h
+ /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_vector3d.pb.h
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o
+ /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_pose.pb.h
+ /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_poses_stamped.pb.cc
+ /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_poses_stamped.pb.h
+ /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_quaternion.pb.h
+ /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_vector3d.pb.h
+ /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/time.pb.h
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o
+ /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_quaternion.pb.cc
+ /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_quaternion.pb.h
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o
+ /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_vector3d.pb.cc
+ /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_vector3d.pb.h
 CMakeFiles/set_rotor_vel.dir/msgs/include/time.pb.cc.o
  /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/time.pb.cc
  /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/time.pb.h

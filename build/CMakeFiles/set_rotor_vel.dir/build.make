@@ -201,9 +201,105 @@ CMakeFiles/set_rotor_vel.dir/msgs/include/header.pb.cc.o.provides: CMakeFiles/se
 CMakeFiles/set_rotor_vel.dir/msgs/include/header.pb.cc.o.provides.build: CMakeFiles/set_rotor_vel.dir/msgs/include/header.pb.cc.o
 
 
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o: CMakeFiles/set_rotor_vel.dir/flags.make
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o: ../msgs/include/local_pose.pb.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_pose.pb.cc
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_pose.pb.cc > CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.i
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_pose.pb.cc -o CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.s
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o.requires:
+
+.PHONY : CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o.requires
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o.provides: CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o.requires
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o.provides.build
+.PHONY : CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o.provides
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o.provides.build: CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o
+
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o: CMakeFiles/set_rotor_vel.dir/flags.make
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o: ../msgs/include/local_poses_stamped.pb.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_poses_stamped.pb.cc
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_poses_stamped.pb.cc > CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.i
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_poses_stamped.pb.cc -o CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.s
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o.requires:
+
+.PHONY : CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o.requires
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o.provides: CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o.requires
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o.provides.build
+.PHONY : CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o.provides
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o.provides.build: CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o
+
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o: CMakeFiles/set_rotor_vel.dir/flags.make
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o: ../msgs/include/local_quaternion.pb.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_quaternion.pb.cc
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_quaternion.pb.cc > CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.i
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_quaternion.pb.cc -o CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.s
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o.requires:
+
+.PHONY : CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o.requires
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o.provides: CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o.requires
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o.provides.build
+.PHONY : CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o.provides
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o.provides.build: CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o
+
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o: CMakeFiles/set_rotor_vel.dir/flags.make
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o: ../msgs/include/local_vector3d.pb.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_vector3d.pb.cc
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_vector3d.pb.cc > CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.i
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_vector3d.pb.cc -o CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.s
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o.requires:
+
+.PHONY : CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o.requires
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o.provides: CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o.requires
+	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o.provides.build
+.PHONY : CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o.provides
+
+CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o.provides.build: CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o
+
+
 CMakeFiles/set_rotor_vel.dir/msgs/include/time.pb.cc.o: CMakeFiles/set_rotor_vel.dir/flags.make
 CMakeFiles/set_rotor_vel.dir/msgs/include/time.pb.cc.o: ../msgs/include/time.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/set_rotor_vel.dir/msgs/include/time.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/set_rotor_vel.dir/msgs/include/time.pb.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/set_rotor_vel.dir/msgs/include/time.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/time.pb.cc
 
 CMakeFiles/set_rotor_vel.dir/msgs/include/time.pb.cc.i: cmake_force
@@ -227,7 +323,7 @@ CMakeFiles/set_rotor_vel.dir/msgs/include/time.pb.cc.o.provides.build: CMakeFile
 
 CMakeFiles/set_rotor_vel.dir/msgs/include/vector3d.pb.cc.o: CMakeFiles/set_rotor_vel.dir/flags.make
 CMakeFiles/set_rotor_vel.dir/msgs/include/vector3d.pb.cc.o: ../msgs/include/vector3d.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/set_rotor_vel.dir/msgs/include/vector3d.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/set_rotor_vel.dir/msgs/include/vector3d.pb.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/set_rotor_vel.dir/msgs/include/vector3d.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/vector3d.pb.cc
 
 CMakeFiles/set_rotor_vel.dir/msgs/include/vector3d.pb.cc.i: cmake_force
@@ -257,6 +353,10 @@ set_rotor_vel_OBJECTS = \
 "CMakeFiles/set_rotor_vel.dir/msgs/include/MotorSpeed.pb.cc.o" \
 "CMakeFiles/set_rotor_vel.dir/msgs/include/Wind.pb.cc.o" \
 "CMakeFiles/set_rotor_vel.dir/msgs/include/header.pb.cc.o" \
+"CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o" \
+"CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o" \
+"CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o" \
+"CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o" \
 "CMakeFiles/set_rotor_vel.dir/msgs/include/time.pb.cc.o" \
 "CMakeFiles/set_rotor_vel.dir/msgs/include/vector3d.pb.cc.o"
 
@@ -269,6 +369,10 @@ set_rotor_vel: CMakeFiles/set_rotor_vel.dir/msgs/include/Float.pb.cc.o
 set_rotor_vel: CMakeFiles/set_rotor_vel.dir/msgs/include/MotorSpeed.pb.cc.o
 set_rotor_vel: CMakeFiles/set_rotor_vel.dir/msgs/include/Wind.pb.cc.o
 set_rotor_vel: CMakeFiles/set_rotor_vel.dir/msgs/include/header.pb.cc.o
+set_rotor_vel: CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o
+set_rotor_vel: CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o
+set_rotor_vel: CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o
+set_rotor_vel: CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o
 set_rotor_vel: CMakeFiles/set_rotor_vel.dir/msgs/include/time.pb.cc.o
 set_rotor_vel: CMakeFiles/set_rotor_vel.dir/msgs/include/vector3d.pb.cc.o
 set_rotor_vel: CMakeFiles/set_rotor_vel.dir/build.make
@@ -377,7 +481,7 @@ set_rotor_vel: /usr/lib/x86_64-linux-gnu/libavcodec.so
 set_rotor_vel: /usr/lib/x86_64-linux-gnu/libavutil.so
 set_rotor_vel: /usr/lib/x86_64-linux-gnu/libavutil.so
 set_rotor_vel: CMakeFiles/set_rotor_vel.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable set_rotor_vel"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX executable set_rotor_vel"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/set_rotor_vel.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -391,6 +495,10 @@ CMakeFiles/set_rotor_vel.dir/requires: CMakeFiles/set_rotor_vel.dir/msgs/include
 CMakeFiles/set_rotor_vel.dir/requires: CMakeFiles/set_rotor_vel.dir/msgs/include/MotorSpeed.pb.cc.o.requires
 CMakeFiles/set_rotor_vel.dir/requires: CMakeFiles/set_rotor_vel.dir/msgs/include/Wind.pb.cc.o.requires
 CMakeFiles/set_rotor_vel.dir/requires: CMakeFiles/set_rotor_vel.dir/msgs/include/header.pb.cc.o.requires
+CMakeFiles/set_rotor_vel.dir/requires: CMakeFiles/set_rotor_vel.dir/msgs/include/local_pose.pb.cc.o.requires
+CMakeFiles/set_rotor_vel.dir/requires: CMakeFiles/set_rotor_vel.dir/msgs/include/local_poses_stamped.pb.cc.o.requires
+CMakeFiles/set_rotor_vel.dir/requires: CMakeFiles/set_rotor_vel.dir/msgs/include/local_quaternion.pb.cc.o.requires
+CMakeFiles/set_rotor_vel.dir/requires: CMakeFiles/set_rotor_vel.dir/msgs/include/local_vector3d.pb.cc.o.requires
 CMakeFiles/set_rotor_vel.dir/requires: CMakeFiles/set_rotor_vel.dir/msgs/include/time.pb.cc.o.requires
 CMakeFiles/set_rotor_vel.dir/requires: CMakeFiles/set_rotor_vel.dir/msgs/include/vector3d.pb.cc.o.requires
 

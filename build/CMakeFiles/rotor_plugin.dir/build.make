@@ -201,9 +201,105 @@ CMakeFiles/rotor_plugin.dir/msgs/include/header.pb.cc.o.provides: CMakeFiles/rot
 CMakeFiles/rotor_plugin.dir/msgs/include/header.pb.cc.o.provides.build: CMakeFiles/rotor_plugin.dir/msgs/include/header.pb.cc.o
 
 
+CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o: CMakeFiles/rotor_plugin.dir/flags.make
+CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o: ../msgs/include/local_pose.pb.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_pose.pb.cc
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_pose.pb.cc > CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.i
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_pose.pb.cc -o CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.s
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o.requires:
+
+.PHONY : CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o.requires
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o.provides: CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o.requires
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o.provides.build
+.PHONY : CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o.provides
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o.provides.build: CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o
+
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o: CMakeFiles/rotor_plugin.dir/flags.make
+CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o: ../msgs/include/local_poses_stamped.pb.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_poses_stamped.pb.cc
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_poses_stamped.pb.cc > CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.i
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_poses_stamped.pb.cc -o CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.s
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o.requires:
+
+.PHONY : CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o.requires
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o.provides: CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o.requires
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o.provides.build
+.PHONY : CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o.provides
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o.provides.build: CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o
+
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o: CMakeFiles/rotor_plugin.dir/flags.make
+CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o: ../msgs/include/local_quaternion.pb.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_quaternion.pb.cc
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_quaternion.pb.cc > CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.i
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_quaternion.pb.cc -o CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.s
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o.requires:
+
+.PHONY : CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o.requires
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o.provides: CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o.requires
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o.provides.build
+.PHONY : CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o.provides
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o.provides.build: CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o
+
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o: CMakeFiles/rotor_plugin.dir/flags.make
+CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o: ../msgs/include/local_vector3d.pb.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_vector3d.pb.cc
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_vector3d.pb.cc > CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.i
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_vector3d.pb.cc -o CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.s
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o.requires:
+
+.PHONY : CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o.requires
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o.provides: CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o.requires
+	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o.provides.build
+.PHONY : CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o.provides
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o.provides.build: CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o
+
+
 CMakeFiles/rotor_plugin.dir/msgs/include/time.pb.cc.o: CMakeFiles/rotor_plugin.dir/flags.make
 CMakeFiles/rotor_plugin.dir/msgs/include/time.pb.cc.o: ../msgs/include/time.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/rotor_plugin.dir/msgs/include/time.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/rotor_plugin.dir/msgs/include/time.pb.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/rotor_plugin.dir/msgs/include/time.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/time.pb.cc
 
 CMakeFiles/rotor_plugin.dir/msgs/include/time.pb.cc.i: cmake_force
@@ -227,7 +323,7 @@ CMakeFiles/rotor_plugin.dir/msgs/include/time.pb.cc.o.provides.build: CMakeFiles
 
 CMakeFiles/rotor_plugin.dir/msgs/include/vector3d.pb.cc.o: CMakeFiles/rotor_plugin.dir/flags.make
 CMakeFiles/rotor_plugin.dir/msgs/include/vector3d.pb.cc.o: ../msgs/include/vector3d.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/rotor_plugin.dir/msgs/include/vector3d.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/rotor_plugin.dir/msgs/include/vector3d.pb.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/rotor_plugin.dir/msgs/include/vector3d.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/vector3d.pb.cc
 
 CMakeFiles/rotor_plugin.dir/msgs/include/vector3d.pb.cc.i: cmake_force
@@ -257,6 +353,10 @@ rotor_plugin_OBJECTS = \
 "CMakeFiles/rotor_plugin.dir/msgs/include/MotorSpeed.pb.cc.o" \
 "CMakeFiles/rotor_plugin.dir/msgs/include/Wind.pb.cc.o" \
 "CMakeFiles/rotor_plugin.dir/msgs/include/header.pb.cc.o" \
+"CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o" \
+"CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o" \
+"CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o" \
+"CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o" \
 "CMakeFiles/rotor_plugin.dir/msgs/include/time.pb.cc.o" \
 "CMakeFiles/rotor_plugin.dir/msgs/include/vector3d.pb.cc.o"
 
@@ -269,6 +369,10 @@ librotor_plugin.so: CMakeFiles/rotor_plugin.dir/msgs/include/Float.pb.cc.o
 librotor_plugin.so: CMakeFiles/rotor_plugin.dir/msgs/include/MotorSpeed.pb.cc.o
 librotor_plugin.so: CMakeFiles/rotor_plugin.dir/msgs/include/Wind.pb.cc.o
 librotor_plugin.so: CMakeFiles/rotor_plugin.dir/msgs/include/header.pb.cc.o
+librotor_plugin.so: CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o
+librotor_plugin.so: CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o
+librotor_plugin.so: CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o
+librotor_plugin.so: CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o
 librotor_plugin.so: CMakeFiles/rotor_plugin.dir/msgs/include/time.pb.cc.o
 librotor_plugin.so: CMakeFiles/rotor_plugin.dir/msgs/include/vector3d.pb.cc.o
 librotor_plugin.so: CMakeFiles/rotor_plugin.dir/build.make
@@ -377,7 +481,7 @@ librotor_plugin.so: /usr/lib/x86_64-linux-gnu/libavcodec.so
 librotor_plugin.so: /usr/lib/x86_64-linux-gnu/libavutil.so
 librotor_plugin.so: /usr/lib/x86_64-linux-gnu/libavutil.so
 librotor_plugin.so: CMakeFiles/rotor_plugin.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX shared library librotor_plugin.so"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX shared library librotor_plugin.so"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/rotor_plugin.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -391,6 +495,10 @@ CMakeFiles/rotor_plugin.dir/requires: CMakeFiles/rotor_plugin.dir/msgs/include/F
 CMakeFiles/rotor_plugin.dir/requires: CMakeFiles/rotor_plugin.dir/msgs/include/MotorSpeed.pb.cc.o.requires
 CMakeFiles/rotor_plugin.dir/requires: CMakeFiles/rotor_plugin.dir/msgs/include/Wind.pb.cc.o.requires
 CMakeFiles/rotor_plugin.dir/requires: CMakeFiles/rotor_plugin.dir/msgs/include/header.pb.cc.o.requires
+CMakeFiles/rotor_plugin.dir/requires: CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o.requires
+CMakeFiles/rotor_plugin.dir/requires: CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o.requires
+CMakeFiles/rotor_plugin.dir/requires: CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o.requires
+CMakeFiles/rotor_plugin.dir/requires: CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o.requires
 CMakeFiles/rotor_plugin.dir/requires: CMakeFiles/rotor_plugin.dir/msgs/include/time.pb.cc.o.requires
 CMakeFiles/rotor_plugin.dir/requires: CMakeFiles/rotor_plugin.dir/msgs/include/vector3d.pb.cc.o.requires
 

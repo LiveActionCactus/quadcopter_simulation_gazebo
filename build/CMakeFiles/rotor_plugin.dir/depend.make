@@ -20,6 +20,24 @@ CMakeFiles/rotor_plugin.dir/msgs/include/header.pb.cc.o: ../msgs/include/header.
 CMakeFiles/rotor_plugin.dir/msgs/include/header.pb.cc.o: ../msgs/include/header.pb.h
 CMakeFiles/rotor_plugin.dir/msgs/include/header.pb.cc.o: ../msgs/include/time.pb.h
 
+CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o: ../msgs/include/local_pose.pb.cc
+CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o: ../msgs/include/local_pose.pb.h
+CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o: ../msgs/include/local_quaternion.pb.h
+CMakeFiles/rotor_plugin.dir/msgs/include/local_pose.pb.cc.o: ../msgs/include/local_vector3d.pb.h
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o: ../msgs/include/local_pose.pb.h
+CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o: ../msgs/include/local_poses_stamped.pb.cc
+CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o: ../msgs/include/local_poses_stamped.pb.h
+CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o: ../msgs/include/local_quaternion.pb.h
+CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o: ../msgs/include/local_vector3d.pb.h
+CMakeFiles/rotor_plugin.dir/msgs/include/local_poses_stamped.pb.cc.o: ../msgs/include/time.pb.h
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o: ../msgs/include/local_quaternion.pb.cc
+CMakeFiles/rotor_plugin.dir/msgs/include/local_quaternion.pb.cc.o: ../msgs/include/local_quaternion.pb.h
+
+CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o: ../msgs/include/local_vector3d.pb.cc
+CMakeFiles/rotor_plugin.dir/msgs/include/local_vector3d.pb.cc.o: ../msgs/include/local_vector3d.pb.h
+
 CMakeFiles/rotor_plugin.dir/msgs/include/time.pb.cc.o: ../msgs/include/time.pb.cc
 CMakeFiles/rotor_plugin.dir/msgs/include/time.pb.cc.o: ../msgs/include/time.pb.h
 

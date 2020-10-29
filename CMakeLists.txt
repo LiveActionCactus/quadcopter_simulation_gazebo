@@ -42,5 +42,5 @@ add_executable(set_rotor_vel set_rotor_vel.cpp include/set_rotor_vel.hpp ${PROTO
 target_link_libraries(set_rotor_vel ${GAZEBO_LIBRARIES})
 #target_include_directories(set_rotor_vel PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/msgs/include/)
 
-add_executable(HIL-connect HIL_connect.cpp include/hil_connect.hpp ${PROTO_SRCS})
-target_link_libraries(HIL-connect ${GAZEBO_LIBRARIES})
+add_executable(HIL_quad_control HIL_quad_control.cpp  include/HIL_quad_control.hpp ${PROTO_SRCS})
+target_link_libraries(HIL_quad_control ${GAZEBO_LIBRARIES})
