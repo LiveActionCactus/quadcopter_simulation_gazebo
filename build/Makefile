@@ -176,6 +176,33 @@ HIL_quad_control.cpp.s:
 	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/HIL_quad_control.cpp.s
 .PHONY : HIL_quad_control.cpp.s
 
+autopilot_interface.o: autopilot_interface.cpp.o
+
+.PHONY : autopilot_interface.o
+
+# target to build an object file
+autopilot_interface.cpp.o:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o
+.PHONY : autopilot_interface.cpp.o
+
+autopilot_interface.i: autopilot_interface.cpp.i
+
+.PHONY : autopilot_interface.i
+
+# target to preprocess a source file
+autopilot_interface.cpp.i:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.i
+.PHONY : autopilot_interface.cpp.i
+
+autopilot_interface.s: autopilot_interface.cpp.s
+
+.PHONY : autopilot_interface.s
+
+# target to generate assembly for a file
+autopilot_interface.cpp.s:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.s
+.PHONY : autopilot_interface.cpp.s
+
 msgs/include/CommandMotorSpeed.pb.o: msgs/include/CommandMotorSpeed.pb.cc.o
 
 .PHONY : msgs/include/CommandMotorSpeed.pb.o
@@ -566,6 +593,33 @@ rotor_plugin.cpp.s:
 	$(MAKE) -f CMakeFiles/rotor_plugin.dir/build.make CMakeFiles/rotor_plugin.dir/rotor_plugin.cpp.s
 .PHONY : rotor_plugin.cpp.s
 
+serial_port.o: serial_port.cpp.o
+
+.PHONY : serial_port.o
+
+# target to build an object file
+serial_port.cpp.o:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o
+.PHONY : serial_port.cpp.o
+
+serial_port.i: serial_port.cpp.i
+
+.PHONY : serial_port.i
+
+# target to preprocess a source file
+serial_port.cpp.i:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/serial_port.cpp.i
+.PHONY : serial_port.cpp.i
+
+serial_port.s: serial_port.cpp.s
+
+.PHONY : serial_port.s
+
+# target to generate assembly for a file
+serial_port.cpp.s:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/serial_port.cpp.s
+.PHONY : serial_port.cpp.s
+
 set_rotor_vel.o: set_rotor_vel.cpp.o
 
 .PHONY : set_rotor_vel.o
@@ -593,6 +647,33 @@ set_rotor_vel.cpp.s:
 	$(MAKE) -f CMakeFiles/set_rotor_vel.dir/build.make CMakeFiles/set_rotor_vel.dir/set_rotor_vel.cpp.s
 .PHONY : set_rotor_vel.cpp.s
 
+udp_port.o: udp_port.cpp.o
+
+.PHONY : udp_port.o
+
+# target to build an object file
+udp_port.cpp.o:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o
+.PHONY : udp_port.cpp.o
+
+udp_port.i: udp_port.cpp.i
+
+.PHONY : udp_port.i
+
+# target to preprocess a source file
+udp_port.cpp.i:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/udp_port.cpp.i
+.PHONY : udp_port.cpp.i
+
+udp_port.s: udp_port.cpp.s
+
+.PHONY : udp_port.s
+
+# target to generate assembly for a file
+udp_port.cpp.s:
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/udp_port.cpp.s
+.PHONY : udp_port.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -607,6 +688,9 @@ help:
 	@echo "... HIL_quad_control.o"
 	@echo "... HIL_quad_control.i"
 	@echo "... HIL_quad_control.s"
+	@echo "... autopilot_interface.o"
+	@echo "... autopilot_interface.i"
+	@echo "... autopilot_interface.s"
 	@echo "... msgs/include/CommandMotorSpeed.pb.o"
 	@echo "... msgs/include/CommandMotorSpeed.pb.i"
 	@echo "... msgs/include/CommandMotorSpeed.pb.s"
@@ -643,9 +727,15 @@ help:
 	@echo "... rotor_plugin.o"
 	@echo "... rotor_plugin.i"
 	@echo "... rotor_plugin.s"
+	@echo "... serial_port.o"
+	@echo "... serial_port.i"
+	@echo "... serial_port.s"
 	@echo "... set_rotor_vel.o"
 	@echo "... set_rotor_vel.i"
 	@echo "... set_rotor_vel.s"
+	@echo "... udp_port.o"
+	@echo "... udp_port.i"
+	@echo "... udp_port.s"
 .PHONY : help
 
 

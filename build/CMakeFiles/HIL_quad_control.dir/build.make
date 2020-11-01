@@ -81,9 +81,81 @@ CMakeFiles/HIL_quad_control.dir/HIL_quad_control.cpp.o.provides: CMakeFiles/HIL_
 CMakeFiles/HIL_quad_control.dir/HIL_quad_control.cpp.o.provides.build: CMakeFiles/HIL_quad_control.dir/HIL_quad_control.cpp.o
 
 
+CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o: CMakeFiles/HIL_quad_control.dir/flags.make
+CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o: ../serial_port.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o -c /home/jules/drone/quadcopter_simulation_gazebo/serial_port.cpp
+
+CMakeFiles/HIL_quad_control.dir/serial_port.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/HIL_quad_control.dir/serial_port.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jules/drone/quadcopter_simulation_gazebo/serial_port.cpp > CMakeFiles/HIL_quad_control.dir/serial_port.cpp.i
+
+CMakeFiles/HIL_quad_control.dir/serial_port.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/HIL_quad_control.dir/serial_port.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jules/drone/quadcopter_simulation_gazebo/serial_port.cpp -o CMakeFiles/HIL_quad_control.dir/serial_port.cpp.s
+
+CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o.requires:
+
+.PHONY : CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o.requires
+
+CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o.provides: CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o.requires
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o.provides.build
+.PHONY : CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o.provides
+
+CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o.provides.build: CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o
+
+
+CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o: CMakeFiles/HIL_quad_control.dir/flags.make
+CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o: ../udp_port.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o -c /home/jules/drone/quadcopter_simulation_gazebo/udp_port.cpp
+
+CMakeFiles/HIL_quad_control.dir/udp_port.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/HIL_quad_control.dir/udp_port.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jules/drone/quadcopter_simulation_gazebo/udp_port.cpp > CMakeFiles/HIL_quad_control.dir/udp_port.cpp.i
+
+CMakeFiles/HIL_quad_control.dir/udp_port.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/HIL_quad_control.dir/udp_port.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jules/drone/quadcopter_simulation_gazebo/udp_port.cpp -o CMakeFiles/HIL_quad_control.dir/udp_port.cpp.s
+
+CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o.requires:
+
+.PHONY : CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o.requires
+
+CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o.provides: CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o.requires
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o.provides.build
+.PHONY : CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o.provides
+
+CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o.provides.build: CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o
+
+
+CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o: CMakeFiles/HIL_quad_control.dir/flags.make
+CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o: ../autopilot_interface.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o -c /home/jules/drone/quadcopter_simulation_gazebo/autopilot_interface.cpp
+
+CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jules/drone/quadcopter_simulation_gazebo/autopilot_interface.cpp > CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.i
+
+CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jules/drone/quadcopter_simulation_gazebo/autopilot_interface.cpp -o CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.s
+
+CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o.requires:
+
+.PHONY : CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o.requires
+
+CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o.provides: CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o.requires
+	$(MAKE) -f CMakeFiles/HIL_quad_control.dir/build.make CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o.provides.build
+.PHONY : CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o.provides
+
+CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o.provides.build: CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o
+
+
 CMakeFiles/HIL_quad_control.dir/msgs/include/CommandMotorSpeed.pb.cc.o: CMakeFiles/HIL_quad_control.dir/flags.make
 CMakeFiles/HIL_quad_control.dir/msgs/include/CommandMotorSpeed.pb.cc.o: ../msgs/include/CommandMotorSpeed.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/CommandMotorSpeed.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/CommandMotorSpeed.pb.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/HIL_quad_control.dir/msgs/include/CommandMotorSpeed.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/CommandMotorSpeed.pb.cc
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/CommandMotorSpeed.pb.cc.i: cmake_force
@@ -107,7 +179,7 @@ CMakeFiles/HIL_quad_control.dir/msgs/include/CommandMotorSpeed.pb.cc.o.provides.
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/Float.pb.cc.o: CMakeFiles/HIL_quad_control.dir/flags.make
 CMakeFiles/HIL_quad_control.dir/msgs/include/Float.pb.cc.o: ../msgs/include/Float.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/Float.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/Float.pb.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/HIL_quad_control.dir/msgs/include/Float.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/Float.pb.cc
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/Float.pb.cc.i: cmake_force
@@ -131,7 +203,7 @@ CMakeFiles/HIL_quad_control.dir/msgs/include/Float.pb.cc.o.provides.build: CMake
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/MotorSpeed.pb.cc.o: CMakeFiles/HIL_quad_control.dir/flags.make
 CMakeFiles/HIL_quad_control.dir/msgs/include/MotorSpeed.pb.cc.o: ../msgs/include/MotorSpeed.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/MotorSpeed.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/MotorSpeed.pb.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/HIL_quad_control.dir/msgs/include/MotorSpeed.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/MotorSpeed.pb.cc
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/MotorSpeed.pb.cc.i: cmake_force
@@ -155,7 +227,7 @@ CMakeFiles/HIL_quad_control.dir/msgs/include/MotorSpeed.pb.cc.o.provides.build: 
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/Wind.pb.cc.o: CMakeFiles/HIL_quad_control.dir/flags.make
 CMakeFiles/HIL_quad_control.dir/msgs/include/Wind.pb.cc.o: ../msgs/include/Wind.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/Wind.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/Wind.pb.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/HIL_quad_control.dir/msgs/include/Wind.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/Wind.pb.cc
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/Wind.pb.cc.i: cmake_force
@@ -179,7 +251,7 @@ CMakeFiles/HIL_quad_control.dir/msgs/include/Wind.pb.cc.o.provides.build: CMakeF
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/header.pb.cc.o: CMakeFiles/HIL_quad_control.dir/flags.make
 CMakeFiles/HIL_quad_control.dir/msgs/include/header.pb.cc.o: ../msgs/include/header.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/header.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/header.pb.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/HIL_quad_control.dir/msgs/include/header.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/header.pb.cc
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/header.pb.cc.i: cmake_force
@@ -203,7 +275,7 @@ CMakeFiles/HIL_quad_control.dir/msgs/include/header.pb.cc.o.provides.build: CMak
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/local_pose.pb.cc.o: CMakeFiles/HIL_quad_control.dir/flags.make
 CMakeFiles/HIL_quad_control.dir/msgs/include/local_pose.pb.cc.o: ../msgs/include/local_pose.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/local_pose.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/local_pose.pb.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/HIL_quad_control.dir/msgs/include/local_pose.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_pose.pb.cc
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/local_pose.pb.cc.i: cmake_force
@@ -227,7 +299,7 @@ CMakeFiles/HIL_quad_control.dir/msgs/include/local_pose.pb.cc.o.provides.build: 
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/local_poses_stamped.pb.cc.o: CMakeFiles/HIL_quad_control.dir/flags.make
 CMakeFiles/HIL_quad_control.dir/msgs/include/local_poses_stamped.pb.cc.o: ../msgs/include/local_poses_stamped.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/local_poses_stamped.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/local_poses_stamped.pb.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/HIL_quad_control.dir/msgs/include/local_poses_stamped.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_poses_stamped.pb.cc
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/local_poses_stamped.pb.cc.i: cmake_force
@@ -251,7 +323,7 @@ CMakeFiles/HIL_quad_control.dir/msgs/include/local_poses_stamped.pb.cc.o.provide
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/local_quaternion.pb.cc.o: CMakeFiles/HIL_quad_control.dir/flags.make
 CMakeFiles/HIL_quad_control.dir/msgs/include/local_quaternion.pb.cc.o: ../msgs/include/local_quaternion.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/local_quaternion.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/local_quaternion.pb.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/HIL_quad_control.dir/msgs/include/local_quaternion.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_quaternion.pb.cc
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/local_quaternion.pb.cc.i: cmake_force
@@ -275,7 +347,7 @@ CMakeFiles/HIL_quad_control.dir/msgs/include/local_quaternion.pb.cc.o.provides.b
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/local_vector3d.pb.cc.o: CMakeFiles/HIL_quad_control.dir/flags.make
 CMakeFiles/HIL_quad_control.dir/msgs/include/local_vector3d.pb.cc.o: ../msgs/include/local_vector3d.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/local_vector3d.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/local_vector3d.pb.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/HIL_quad_control.dir/msgs/include/local_vector3d.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_vector3d.pb.cc
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/local_vector3d.pb.cc.i: cmake_force
@@ -299,7 +371,7 @@ CMakeFiles/HIL_quad_control.dir/msgs/include/local_vector3d.pb.cc.o.provides.bui
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/time.pb.cc.o: CMakeFiles/HIL_quad_control.dir/flags.make
 CMakeFiles/HIL_quad_control.dir/msgs/include/time.pb.cc.o: ../msgs/include/time.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/time.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/time.pb.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/HIL_quad_control.dir/msgs/include/time.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/time.pb.cc
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/time.pb.cc.i: cmake_force
@@ -323,7 +395,7 @@ CMakeFiles/HIL_quad_control.dir/msgs/include/time.pb.cc.o.provides.build: CMakeF
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/vector3d.pb.cc.o: CMakeFiles/HIL_quad_control.dir/flags.make
 CMakeFiles/HIL_quad_control.dir/msgs/include/vector3d.pb.cc.o: ../msgs/include/vector3d.pb.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/vector3d.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/HIL_quad_control.dir/msgs/include/vector3d.pb.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/HIL_quad_control.dir/msgs/include/vector3d.pb.cc.o -c /home/jules/drone/quadcopter_simulation_gazebo/msgs/include/vector3d.pb.cc
 
 CMakeFiles/HIL_quad_control.dir/msgs/include/vector3d.pb.cc.i: cmake_force
@@ -348,6 +420,9 @@ CMakeFiles/HIL_quad_control.dir/msgs/include/vector3d.pb.cc.o.provides.build: CM
 # Object files for target HIL_quad_control
 HIL_quad_control_OBJECTS = \
 "CMakeFiles/HIL_quad_control.dir/HIL_quad_control.cpp.o" \
+"CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o" \
+"CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o" \
+"CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o" \
 "CMakeFiles/HIL_quad_control.dir/msgs/include/CommandMotorSpeed.pb.cc.o" \
 "CMakeFiles/HIL_quad_control.dir/msgs/include/Float.pb.cc.o" \
 "CMakeFiles/HIL_quad_control.dir/msgs/include/MotorSpeed.pb.cc.o" \
@@ -364,6 +439,9 @@ HIL_quad_control_OBJECTS = \
 HIL_quad_control_EXTERNAL_OBJECTS =
 
 HIL_quad_control: CMakeFiles/HIL_quad_control.dir/HIL_quad_control.cpp.o
+HIL_quad_control: CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o
+HIL_quad_control: CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o
+HIL_quad_control: CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o
 HIL_quad_control: CMakeFiles/HIL_quad_control.dir/msgs/include/CommandMotorSpeed.pb.cc.o
 HIL_quad_control: CMakeFiles/HIL_quad_control.dir/msgs/include/Float.pb.cc.o
 HIL_quad_control: CMakeFiles/HIL_quad_control.dir/msgs/include/MotorSpeed.pb.cc.o
@@ -481,7 +559,7 @@ HIL_quad_control: /usr/lib/x86_64-linux-gnu/libavcodec.so
 HIL_quad_control: /usr/lib/x86_64-linux-gnu/libavutil.so
 HIL_quad_control: /usr/lib/x86_64-linux-gnu/libavutil.so
 HIL_quad_control: CMakeFiles/HIL_quad_control.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX executable HIL_quad_control"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Linking CXX executable HIL_quad_control"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/HIL_quad_control.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -490,6 +568,9 @@ CMakeFiles/HIL_quad_control.dir/build: HIL_quad_control
 .PHONY : CMakeFiles/HIL_quad_control.dir/build
 
 CMakeFiles/HIL_quad_control.dir/requires: CMakeFiles/HIL_quad_control.dir/HIL_quad_control.cpp.o.requires
+CMakeFiles/HIL_quad_control.dir/requires: CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o.requires
+CMakeFiles/HIL_quad_control.dir/requires: CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o.requires
+CMakeFiles/HIL_quad_control.dir/requires: CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o.requires
 CMakeFiles/HIL_quad_control.dir/requires: CMakeFiles/HIL_quad_control.dir/msgs/include/CommandMotorSpeed.pb.cc.o.requires
 CMakeFiles/HIL_quad_control.dir/requires: CMakeFiles/HIL_quad_control.dir/msgs/include/Float.pb.cc.o.requires
 CMakeFiles/HIL_quad_control.dir/requires: CMakeFiles/HIL_quad_control.dir/msgs/include/MotorSpeed.pb.cc.o.requires

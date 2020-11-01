@@ -1,5 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/HIL_quad_control.dir/HIL_quad_control.cpp.o"
+  "CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o"
+  "CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o"
+  "CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o"
   "CMakeFiles/HIL_quad_control.dir/msgs/include/CommandMotorSpeed.pb.cc.o"
   "CMakeFiles/HIL_quad_control.dir/msgs/include/Float.pb.cc.o"
   "CMakeFiles/HIL_quad_control.dir/msgs/include/MotorSpeed.pb.cc.o"

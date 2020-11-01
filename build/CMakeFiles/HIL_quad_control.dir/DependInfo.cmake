@@ -5,6 +5,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/jules/drone/quadcopter_simulation_gazebo/HIL_quad_control.cpp" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL_quad_control.dir/HIL_quad_control.cpp.o"
+  "/home/jules/drone/quadcopter_simulation_gazebo/autopilot_interface.cpp" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL_quad_control.dir/autopilot_interface.cpp.o"
   "/home/jules/drone/quadcopter_simulation_gazebo/msgs/include/CommandMotorSpeed.pb.cc" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL_quad_control.dir/msgs/include/CommandMotorSpeed.pb.cc.o"
   "/home/jules/drone/quadcopter_simulation_gazebo/msgs/include/Float.pb.cc" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL_quad_control.dir/msgs/include/Float.pb.cc.o"
   "/home/jules/drone/quadcopter_simulation_gazebo/msgs/include/MotorSpeed.pb.cc" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL_quad_control.dir/msgs/include/MotorSpeed.pb.cc.o"
@@ -16,6 +17,8 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/jules/drone/quadcopter_simulation_gazebo/msgs/include/local_vector3d.pb.cc" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL_quad_control.dir/msgs/include/local_vector3d.pb.cc.o"
   "/home/jules/drone/quadcopter_simulation_gazebo/msgs/include/time.pb.cc" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL_quad_control.dir/msgs/include/time.pb.cc.o"
   "/home/jules/drone/quadcopter_simulation_gazebo/msgs/include/vector3d.pb.cc" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL_quad_control.dir/msgs/include/vector3d.pb.cc.o"
+  "/home/jules/drone/quadcopter_simulation_gazebo/serial_port.cpp" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL_quad_control.dir/serial_port.cpp.o"
+  "/home/jules/drone/quadcopter_simulation_gazebo/udp_port.cpp" "/home/jules/drone/quadcopter_simulation_gazebo/build/CMakeFiles/HIL_quad_control.dir/udp_port.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
