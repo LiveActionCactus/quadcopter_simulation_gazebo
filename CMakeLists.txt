@@ -37,7 +37,11 @@ add_library(rotor_plugin SHARED src/rotor_plugin.cpp ${PROTO_SRCS})
 target_link_libraries(rotor_plugin ${GAZEBO_LIBRARIES} Eigen3::Eigen)
 target_include_directories(rotor_plugin PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
-# Build the test publisher
-add_executable(hover_env_control src/hover_env_control.cpp include/hover_env_control.hpp ${PROTO_SRCS})
+# Build the hover envelope control module
+add_executable(hover_env_control src/hover_env_src/hover_env_control.cpp include/hover_env_include/hover_env_control.hpp ${PROTO_SRCS})
 target_link_libraries(hover_env_control ${GAZEBO_LIBRARIES} Eigen3::Eigen)
 #target_include_directories(set_rotor_vel PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/msgs/include/)
+
+# Build the geometric control module
+add_executable(geometric_control src/geometric_src/geometric_control.cpp include/geometric_include/geometric_control.h ${PROTO_SRCS})
+target_link_libraries(geometric_control ${GAZEBO_LIBRARIES} Eigen3::Eigen)

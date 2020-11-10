@@ -20,8 +20,8 @@
 #include <fstream>
 
 #include <gazebo/gazebo_client.hh>
-#include "../msgs/include/Float.pb.h"
-#include "../msgs/include/local_poses_stamped.pb.h"
+#include "../../msgs/include/Float.pb.h"
+#include "../../msgs/include/local_poses_stamped.pb.h"
 
 // gazebo related variables
 gazebo::transport::NodePtr node_handle;
