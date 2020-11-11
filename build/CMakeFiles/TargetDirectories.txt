@@ -1,0 +1,5 @@
+/home/odysseus/projects/inprogress/gazebo_code/iris_testing/build/CMakeFiles/edit_cache.dir
+/home/odysseus/projects/inprogress/gazebo_code/iris_testing/build/CMakeFiles/rebuild_cache.dir
+/home/odysseus/projects/inprogress/gazebo_code/iris_testing/build/CMakeFiles/geometric_control.dir
+/home/odysseus/projects/inprogress/gazebo_code/iris_testing/build/CMakeFiles/rotor_plugin.dir
+/home/odysseus/projects/inprogress/gazebo_code/iris_testing/build/CMakeFiles/hover_env_control.dir

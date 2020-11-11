@@ -43,5 +43,6 @@ target_link_libraries(hover_env_control ${GAZEBO_LIBRARIES} Eigen3::Eigen)
 #target_include_directories(set_rotor_vel PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/msgs/include/)
 
 # Build the geometric control module
-add_executable(geometric_control src/geometric_src/geometric_control.cpp include/geometric_include/geometric_control.h ${PROTO_SRCS})
+add_executable(geometric_control src/geometric_src/geometric_control.cpp src/geometric_src/quadcopter.cpp src/geometric_src/trajectory.cpp
+        include/geometric_include/geometric_control.h include/geometric_include/quadcopter.h include/geometric_include/trajectory.h ${PROTO_SRCS})
 target_link_libraries(geometric_control ${GAZEBO_LIBRARIES} Eigen3::Eigen)

@@ -1,7 +1,14 @@
 <?xml version="1.0"?>
   <sdf version="1.4">
     <world name="default">
-
+    <!-- http://sdformat.org/spec?ver=1.7&elem=physics -->
+    
+<!--     <physics type="default">
+      <max_step_size>0.0001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>10000</real_time_update_rate>
+    </physics>
+ -->
     <!-- A ground plane -->
     <include>
       <uri>model://ground_plane</uri>

@@ -1,4 +1,4 @@
-Goals (as of 09Nov)
+Goals (as of 06Oct)
 	- [DONE] tune the iris controller
 	- [DONE] comment the code for readability (this includes the README)
 	- [DONE] implement rudimentary waypointing

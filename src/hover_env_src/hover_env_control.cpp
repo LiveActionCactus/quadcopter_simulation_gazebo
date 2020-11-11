@@ -708,7 +708,7 @@ void initialize_variables()
 void derived_sensor_values()
 {
     // Base clock defined here at 1MHz
-    if ((sim_state == 2) & ((sim_time - prev_sim_time) > 0.000001))                      // currently running at the micro-second scale
+    if ((sim_state == 2) & ((sim_time - prev_sim_time) > 0.000001))                      // currently running at the micro-second scale TODO: actually at ms rate; default Gazebo
     {
         // TODO: sometimes I get a 0.0 evaluation for lin_vel_z between otherwise good values, not sure why
         sim_time_delta = sim_time - prev_sim_time;              // time slice used to derive velocity values
@@ -821,7 +821,6 @@ Eigen::Matrix3d quat2rot(const Eigen::Ref<const Eigen::Matrix<double,1,4>>& q_)
 } // end quat2rot()
 
 //// Convert quaternions to euler angles
-
 Eigen::Matrix<double,1,3> quat2euler(const Eigen::Ref<const Eigen::Matrix<double,1,4>>& q_)
 {
     // References
