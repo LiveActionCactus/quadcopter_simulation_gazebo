@@ -4,12 +4,14 @@
 // Date: 11 November 2020
 //
 
-#include "../../include/geometric_include/quadcopter.h"
+#include "../../include/geometric_include/quadcopter.hpp"
 
 //// Quadcopter class initializations and definitions
 Quadcopter::Quadcopter()
-    :   sim_time_(0.0),                      // seconds
+    :   trajectory(Trajectory()),
+        sim_time_(0.0),                      // seconds
         prev_sim_time_(0.0),
+        sim_time_delta_(0.0),
         sim_state_(0),
         ref_motor_vel0_(),                   // default constructed Float protobuf messages
         ref_motor_vel1_(),
@@ -19,7 +21,9 @@ Quadcopter::Quadcopter()
         mass_(1.5),                         // kg
         hover_point_(665.0),                // rad/s for one motor only
         motor_force_const_(8.54858e-06),
-        motor_mapping_(),                   // default constructed Eigen matrices (all zeros)
+        motor_torque_const_(0.016),
+        arm_length_(0.1784),                // m
+        motor_force_mapping_(),             // default constructed Eigen matrices (all zeros)
         sensor_pos_(),                      // m
         prev_sensor_pos_(),
         derived_lin_vel_(),                 // m/s
@@ -33,8 +37,7 @@ Quadcopter::Quadcopter()
         desired_euler_att_(),               // rad
         desired_pqr_att_(),                 // rad/s
         desired_thrust_(),                  // rad/s
-        final_att_deltas_(),
-        desired_rotor_rates_()              // rad/s
+        final_att_deltas_()
 {
     // Initialize Gazebo variables
     node_handle_ = gazebo::transport::NodePtr(new gazebo::transport::Node());
@@ -46,11 +49,11 @@ Quadcopter::Quadcopter()
     pub3 = node_handle_->Advertise<std_msgs::msgs::Float>("/gazebo/default/iris/ref/motor_speed/3", 1);
 
     // Initialize remaining variables
-    motor_mapping_ << 1.0,  0.5,  0.5,  1.0,
-            1.0, -0.5,  0.5, -1.0,
-            1.0, -0.5, -0.5,  1.0,
-            1.0,  0.5, -0.5, -1.0;
-    sensor_quat_ << 1.0, 0.0, 0.0, 0.0;
+    motor_force_mapping_ << 1.0,                      0.5,                      0.5,                      1.0,
+                            0.5*arm_length_,         -0.5*arm_length_,         -0.5*arm_length_,          0.5*arm_length_,
+                            0.5*arm_length_,          0.5*arm_length_,         -0.5*arm_length_,         -0.5*arm_length_,
+                            1.0*motor_torque_const_,  0.5*motor_torque_const_, -0.5*motor_torque_const_, -1.0*motor_torque_const_;
+    sensor_quat_ << 1.0, -1.0, 1.0, -1.0;
 } // end Quadcopter::Quadcopter()
 
 Quadcopter::~Quadcopter()
@@ -61,7 +64,6 @@ Quadcopter::~Quadcopter()
 //// Gazebo subscriber callback function -- stores quadcopter states
 void Quadcopter::local_poses_cb(ConstLocalPosesStampedPtr &local_pose)
 {
-//    sim_time_ = local_pose->time().sec() + (local_pose->time().nsec() * 10E-10);
     sim_time_ = local_pose->time().sec() + (local_pose->time().nsec() * 10E-10);
 
     sensor_pos_(0) = local_pose->pose(0).position().x();
@@ -74,7 +76,17 @@ void Quadcopter::local_poses_cb(ConstLocalPosesStampedPtr &local_pose)
     sensor_quat_(3) = local_pose->pose(0).orientation().z();
 } // end Quadcopter::local_poses_cb()
 
-//// publically accessible run loop of the quadcopter; need to control state transitions
+//// run parent loop of the vehicle
+void Quadcopter::run()
+{
+    update_state_and_data();
+    trajectory.run_trajectory_update();
+    controller.position_control(*this);
+    controller.attitude_control(*this);
+    publish_rotor_cmds();
+}
+
+//// update data and state machine
 void Quadcopter::update_state_and_data()
 {
     // TODO: implement check for state updates....
@@ -111,6 +123,7 @@ void Quadcopter::derived_sensor_values()
     derived_lin_vel_(1) = (sensor_pos_(1) - prev_sensor_pos_(1)) / sim_time_delta_;
     derived_lin_vel_(2) = (sensor_pos_(2) - prev_sensor_pos_(2)) / sim_time_delta_;
 
+    derived_rot_ = quat2rot(sensor_quat_);
     derived_euler_att_ = quat2euler(sensor_quat_);                      // convert from quaternion to euler angles
 
     derived_pqr_att_ = derive_ang_velocity(derived_euler_att_, prev_derived_euler_att_);         // produces angular velocity vector
@@ -128,14 +141,13 @@ void Quadcopter::derived_sensor_values()
     prev_sim_time_ = sim_time_;                   // should be the last thing run
 } // end Quadcopter::derived_sensor_values()
 
+//
+// Helper member functions
+//
+
 //// Publish commanded rotor velocities (rad/s)
 void Quadcopter::publish_rotor_cmds()
 {
-    ref_motor_vel0_.set_data(desired_rotor_rates_(0));
-    ref_motor_vel1_.set_data(desired_rotor_rates_(1));
-    ref_motor_vel2_.set_data(desired_rotor_rates_(2));
-    ref_motor_vel3_.set_data(desired_rotor_rates_(3));
-
     pub0->Publish(ref_motor_vel0_);
     pub1->Publish(ref_motor_vel1_);
     pub2->Publish(ref_motor_vel2_);
