@@ -149,10 +149,15 @@ private:
         Eigen::Matrix<double, 1, 3> Krot_;
         Eigen::Matrix<double, 1, 3> Kang_;
 
+        //// error vectors
+        Eigen::Matrix<double,1,3> pos_err_;
+        Eigen::Matrix<double,1,3> vel_err_;
+
         //// desired values
         Eigen::Matrix<double,1,4> desired_rotor_forces_;        // N?
         Eigen::Matrix<double,1,4> desired_rotor_rates_;         // rad/s
-        double thrust_magnitude_;                               // sum of rotor forces
+        double desired_thrust_magnitude_;                       // sum of rotor forces
+        Eigen::Matrix<double,1,3> desired_moments_;
 
         //// helper function definitions
         void set_rotor_rates(Quadcopter &q);
