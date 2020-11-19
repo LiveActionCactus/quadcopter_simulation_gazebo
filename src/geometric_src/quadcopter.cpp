@@ -105,7 +105,6 @@ void Quadcopter::update_state_and_data()
             if ((sim_time_ - prev_sim_time_) > 0.000001)
             {
                 derived_sensor_values();
-                publish_rotor_cmds();
             }
             break;
     } // end switch(sim_state_)

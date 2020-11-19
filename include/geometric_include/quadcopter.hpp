@@ -152,6 +152,18 @@ private:
         //// error vectors
         Eigen::Matrix<double,1,3> pos_err_;
         Eigen::Matrix<double,1,3> vel_err_;
+        Eigen::Matrix<double,1,3> rot_err_;
+        Eigen::Matrix<double,1,3> ang_vel_err_;
+
+        //// inherent properties
+        double pos_time_;
+        double att_time_;
+
+        //// derived values
+        Eigen::Matrix<double,3,3> Rc_;
+        Eigen::Matrix<double,3,3> Rc_prev_;
+        Eigen::Matrix<double,1,3> omegac_;
+        Eigen::Matrix<double,1,3> omegac_prev_;
 
         //// desired values
         Eigen::Matrix<double,1,4> desired_rotor_forces_;        // N?
