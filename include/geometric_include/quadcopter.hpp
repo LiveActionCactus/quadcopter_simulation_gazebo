@@ -62,7 +62,9 @@ private:
     double motor_force_const_;
     double motor_torque_const_;
     double arm_length_;
-    Eigen::Matrix4d motor_force_mapping_;
+    Eigen::Matrix<double,4,4> motor_force_mapping_;
+    Eigen::Matrix<double,4,4> inv_motor_force_mapping_;
+    Eigen::Matrix<double,3,3> J_;           // vehicle inertial tensor          // TODO: does this make the controller sensitive to errors in J_??
 
     //// measured position and orientation
     Eigen::Matrix<double,1,3> sensor_pos_;                  // m
@@ -144,10 +146,14 @@ private:
     private:
         // controller specific data/properties; bounds checking (geometric modes; ctrl gains)
         //// controller gains
-        Eigen::Matrix<double, 1, 3> Kpos_;
-        Eigen::Matrix<double, 1, 3> Kvel_;
-        Eigen::Matrix<double, 1, 3> Krot_;
-        Eigen::Matrix<double, 1, 3> Kang_;
+//        Eigen::Matrix<double, 1, 3> Kpos_;                // I'm assigning the diagonal elements the same...
+//        Eigen::Matrix<double, 1, 3> Kvel_;                // TODO: come back here and implement the matrix version
+//        Eigen::Matrix<double, 1, 3> Krot_;
+//        Eigen::Matrix<double, 1, 3> Kang_;
+        double Kpos_;
+        double Kvel_;
+        double Krot_;
+        double Kang_;
 
         //// error vectors
         Eigen::Matrix<double,1,3> pos_err_;
@@ -158,6 +164,8 @@ private:
         //// inherent properties
         double pos_time_;
         double att_time_;
+        double pos_time_loop_;
+        double att_time_loop_;
 
         //// derived values
         Eigen::Matrix<double,3,3> Rc_;

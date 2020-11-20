@@ -68,7 +68,5 @@ void Quadcopter::Trajectory::set_new_trajectory(std::string new_traj_)
 void Quadcopter::Trajectory::basic_hover()
 {
     // gets the quadcopter hovering at a stable state
-    desired_pos_ << 0.0, 0.0, 2.0;
-    std::cout << "i'm setting hover" << std::endl;
-
+    desired_pos_ << 0.0, 0.0, 1.0;
 } // end Quadcopter::Trajectory::basic_hover()

@@ -53,6 +53,10 @@ Quadcopter::Quadcopter()
                             0.5*arm_length_,         -0.5*arm_length_,         -0.5*arm_length_,          0.5*arm_length_,
                             0.5*arm_length_,          0.5*arm_length_,         -0.5*arm_length_,         -0.5*arm_length_,
                             1.0*motor_torque_const_,  0.5*motor_torque_const_, -0.5*motor_torque_const_, -1.0*motor_torque_const_;
+    inv_motor_force_mapping_ = motor_force_mapping_.inverse();
+    J_ << 0.029125,  0.0,       0.0,
+          0.0,       0.029125,  0.0,
+          0.0,       0.0,       0.055225;
     sensor_quat_ << 1.0, -1.0, 1.0, -1.0;
 } // end Quadcopter::Quadcopter()
 
@@ -80,6 +84,9 @@ void Quadcopter::local_poses_cb(ConstLocalPosesStampedPtr &local_pose)
 void Quadcopter::run()
 {
     update_state_and_data();
+    if(sim_time_ > 5.0){
+        trajectory.set_new_trajectory("hover");
+    }
     trajectory.run_trajectory_update();
     controller.position_control(*this);
     controller.attitude_control(*this);
@@ -147,6 +154,12 @@ void Quadcopter::derived_sensor_values()
 //// Publish commanded rotor velocities (rad/s)
 void Quadcopter::publish_rotor_cmds()
 {
+    std::cout << ref_motor_vel0_.data() << std::endl;
+    std::cout << ref_motor_vel1_.data() << std::endl;
+    std::cout << ref_motor_vel2_.data() << std::endl;
+    std::cout << ref_motor_vel3_.data() << std::endl;
+    std::cout << std::endl;
+
     pub0->Publish(ref_motor_vel0_);
     pub1->Publish(ref_motor_vel1_);
     pub2->Publish(ref_motor_vel2_);
