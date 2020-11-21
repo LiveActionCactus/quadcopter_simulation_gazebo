@@ -77,12 +77,12 @@ private:
     Eigen::Matrix<double,1,3> derived_pqr_att_;             // rad/s
 
     //// desired position and orientation
-    Eigen::Matrix<double,1,3> desired_pos_;                 // m
-    Eigen::Matrix<double,1,3> desired_vel_;                 // m/s
-    Eigen::Matrix<double,1,3> desired_acc_;                 // m/s^{2}
-    Eigen::Matrix<double,1,3> desired_euler_att_;           // rad
-    Eigen::Matrix<double,1,3> desired_pqr_att_;             // rad/s
-    Eigen::Matrix<double,1,4> desired_thrust_;              // rad/s
+//    Eigen::Matrix<double,1,3> desired_pos_;                 // m
+//    Eigen::Matrix<double,1,3> desired_vel_;                 // m/s
+//    Eigen::Matrix<double,1,3> desired_acc_;                 // m/s^{2}
+//    Eigen::Matrix<double,1,3> desired_euler_att_;           // rad
+//    Eigen::Matrix<double,1,3> desired_pqr_att_;             // rad/s
+//    Eigen::Matrix<double,1,4> desired_thrust_;              // rad/s
 
     //// helper variables
     Eigen::Matrix<double,1,3> final_att_deltas_;
@@ -106,6 +106,9 @@ private:
         Trajectory(std::string traj_ = "none");           // need to specify the trajectory chosen here; can inherit desired position from Quadcopter; need to do some error checking though
         void run_trajectory_update();
         void set_new_trajectory(std::string new_traj_);
+        Eigen::Matrix<double,1,3> get_desired_pos();             // TODO: make "desired_lin" into a struct of pos, vel, acc
+        Eigen::Matrix<double,1,3> get_desired_vel();
+        Eigen::Matrix<double,1,3> get_desired_acc();
 
     private:
         // trajectory specific data; stats; optimization algorithm
@@ -140,8 +143,9 @@ private:
 
     public:
         Controller();
-        void position_control(Quadcopter &q);
-        void attitude_control(Quadcopter &q);
+        void position_control(Quadcopter &q, Trajectory &t);
+        void attitude_control(Quadcopter &q, Trajectory &t);
+        void set_rotor_rates(Quadcopter &q);
 
     private:
         // controller specific data/properties; bounds checking (geometric modes; ctrl gains)
@@ -180,7 +184,7 @@ private:
         Eigen::Matrix<double,1,3> desired_moments_;
 
         //// helper function definitions
-        void set_rotor_rates(Quadcopter &q);
+//        void set_rotor_rates(Quadcopter &q);
 
     }; // end class Controller
 

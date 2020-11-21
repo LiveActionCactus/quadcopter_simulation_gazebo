@@ -31,12 +31,12 @@ Quadcopter::Quadcopter()
         derived_euler_att_(),               // rad
         prev_derived_euler_att_(),
         derived_pqr_att_(),                 // rad/s
-        desired_pos_(),                     // m
-        desired_vel_(),                     // m/s
-        desired_acc_(),                     // m/s^{2}
-        desired_euler_att_(),               // rad
-        desired_pqr_att_(),                 // rad/s
-        desired_thrust_(),                  // rad/s
+//        desired_pos_(),                     // m
+//        desired_vel_(),                     // m/s
+//        desired_acc_(),                     // m/s^{2}
+//        desired_euler_att_(),               // rad
+//        desired_pqr_att_(),                 // rad/s
+//        desired_thrust_(),                  // rad/s
         final_att_deltas_()
 {
     // Initialize Gazebo variables
@@ -88,8 +88,9 @@ void Quadcopter::run()
         trajectory.set_new_trajectory("hover");
     }
     trajectory.run_trajectory_update();
-    controller.position_control(*this);
-    controller.attitude_control(*this);
+    controller.position_control(*this, trajectory);
+    controller.attitude_control(*this, trajectory);
+    controller.set_rotor_rates(*this);
     publish_rotor_cmds();
 }
 
@@ -154,16 +155,24 @@ void Quadcopter::derived_sensor_values()
 //// Publish commanded rotor velocities (rad/s)
 void Quadcopter::publish_rotor_cmds()
 {
-    std::cout << ref_motor_vel0_.data() << std::endl;
-    std::cout << ref_motor_vel1_.data() << std::endl;
-    std::cout << ref_motor_vel2_.data() << std::endl;
-    std::cout << ref_motor_vel3_.data() << std::endl;
-    std::cout << std::endl;
+//    std::cout << "rotor rates: " << std::endl;
+//    std::cout << ref_motor_vel0_.data() << std::endl;
+//    std::cout << ref_motor_vel1_.data() << std::endl;
+//    std::cout << ref_motor_vel2_.data() << std::endl;
+//    std::cout << ref_motor_vel3_.data() << std::endl;
+//    std::cout << std::endl;
 
     pub0->Publish(ref_motor_vel0_);
     pub1->Publish(ref_motor_vel1_);
     pub2->Publish(ref_motor_vel2_);
     pub3->Publish(ref_motor_vel3_);
+
+//    std_msgs::msgs::Float test;
+//    test.set_data(100.0);
+//    pub0->Publish(test);
+//    pub1->Publish(test);
+//    pub2->Publish(test);
+//    pub3->Publish(test);
 }
 
 //// Convert quaternions to euler angles

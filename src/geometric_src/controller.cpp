@@ -8,18 +8,18 @@
 
 // Controller class initializations and definitions
 Quadcopter::Controller::Controller()
-    : Kpos_(16.0),                         // controller gains
-      Kvel_(5.6),
-      Krot_(8.81),
-      Kang_(2.54),
+    : Kpos_(0.0),                          // controller gains; 16.0
+      Kvel_(0.0),                          // 5.6
+      Krot_(0.0),                          // 8.81
+      Kang_(0.0),                          // 2.54
       pos_err_(),                          // pos/vel/rot/angvel errors
       vel_err_(),
       rot_err_(),
       ang_vel_err_(),
       pos_time_(0.0),                      // time-keeping
       att_time_(0.0),
-      pos_time_loop_(0.01),
-      att_time_loop_(0.001),
+      pos_time_loop_(0.01),                // 0.01
+      att_time_loop_(0.001),               // 0.001
       Rc_(),                               // "computed" values
       Rc_prev_(),
       omegac_(),
@@ -29,32 +29,53 @@ Quadcopter::Controller::Controller()
       desired_thrust_magnitude_(),         // sum of rotor forces
       desired_moments_()                   // output from attitude controller
 {
-    ;    // don't forget the : initializers
+    desired_rotor_rates_ << 0.0, 0.0, 0.0, 0.0;
 }
 
 //// Calculate geometric position control
-void Quadcopter::Controller::position_control(Quadcopter &q)
+void Quadcopter::Controller::position_control(Quadcopter &q, Trajectory &t)
 {
     // only run loop if enough time has passed
     if ((q.sim_time_ - pos_time_) > pos_time_loop_)
     {
         // for position controlled flight mode
         Eigen::Matrix<double, 1, 3> e3_basis;
+        Eigen::Matrix<double,1,3> desired_pos_ = t.get_desired_pos();
+        Eigen::Matrix<double,1,3> desired_vel_ = t.get_desired_vel();
+        Eigen::Matrix<double,1,3> desired_acc_ = t.get_desired_acc();
 
         e3_basis << 0.0, 0.0, 1.0;
-        pos_err_ = q.sensor_pos_ - q.desired_pos_;
-        vel_err_ = q.derived_lin_vel_ - q.desired_vel_;
+        pos_err_ = (q.sensor_pos_ - desired_pos_);
+        vel_err_ = (q.derived_lin_vel_ - desired_vel_);
 
+        // TODO: I flipped these signs to align with gazebo coordinate frame better
+        pos_err_(1) = -pos_err_(1); pos_err_(2) = -pos_err_(2);
+        vel_err_(1) = -vel_err_(1); vel_err_(2) = -vel_err_(2);
+
+        // TODO: it's possible the coordinate frames are wrong, especially with z-axis
+        // TODO: maybe just change the signs on the pos/vel error calculations?
         desired_thrust_magnitude_ =
-                (Kpos_ * pos_err_ + Kvel_ * vel_err_ + q.mass_ * q.gravity_ * e3_basis - q.mass_ * q.desired_acc_) *
+                (Kpos_ * pos_err_ + Kvel_ * vel_err_ + q.mass_ * q.gravity_ * e3_basis - q.mass_ * desired_acc_) *
                 q.derived_rot_ * e3_basis.transpose();
+//        desired_thrust_magnitude_ = - desired_thrust_magnitude_;
 
+//        std::cout << Kpos_ * pos_err_ << std::endl;
+//        std::cout << Kvel_ * vel_err_ << std::endl;
+//        std::cout << q.mass_ * q.gravity_ * e3_basis << std::endl;
+//        std::cout << q.derived_rot_ << std::endl;
+//        std::cout << e3_basis.transpose() << std::endl;
+//        std::cout << (q.sim_time_ - pos_time_) << std::endl;
+//        std::cout << desired_thrust_magnitude_ << std::endl;
+
+//        std::cout << std::endl;
         pos_time_ = q.sim_time_;                // should be the last thing run
+
     } // end pos timing check
+
 } // end Quadcopter::Controller:position_control()
 
 //// Calculate geometric attitude control
-void Quadcopter::Controller::attitude_control(Quadcopter &q)
+void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
 {
     // only run loop if enough time has passed
     if((q.sim_time_ - att_time_) > att_time_loop_)
@@ -79,13 +100,28 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q)
         Eigen::Matrix<double, 1, 3> e3_basis;
         Eigen::Matrix<double, 1, 3> temp_vec;
         Eigen::Matrix<double, 3, 3> temp_mat;
+        Eigen::Matrix<double,1,3> desired_pos_ = t.get_desired_pos();
+        Eigen::Matrix<double,1,3> desired_vel_ = t.get_desired_vel();
+        Eigen::Matrix<double,1,3> desired_acc_ = t.get_desired_acc();
+        Eigen::Matrix<double,1,3> b1d;
+        b1d << 1.0, 0.0, 0.0;               // how does this tuning parameter behave? how should it be set intelligently?
 
         e3_basis << 0.0, 0.0, 1.0;
-        temp_vec = -Kpos_ * pos_err_ - Kvel_ * vel_err_ - q.mass_ * q.gravity_ * e3_basis + q.mass_ * q.desired_acc_;
+        temp_vec = -Kpos_ * pos_err_ - Kvel_ * vel_err_ - q.mass_ * q.gravity_ * e3_basis + q.mass_ * desired_acc_;
 
         b3c = temp_vec / temp_vec.squaredNorm();
-        b1c = -(1.0 / (b3c.cross(q.desired_pos_)).squaredNorm()) * b3c.cross((b3c.cross(q.desired_pos_)));
+        b1c = -(1.0 / (b3c.cross(b1d)).squaredNorm()) * b3c.cross((b3c.cross(b1d)));
         b2c = b3c.cross(b1c);
+
+        // TODO: I flipped these signs to align with gazebo coordinate frame better
+        b2c = -b2c;
+        b3c = -b3c;
+
+//        std::cout << "computed basis vectors: " << std::endl;
+//        std::cout << b1c << std::endl;
+//        std::cout << b2c << std::endl;
+//        std::cout << b3c << std::endl;      // should have a negative 3rd component at start
+//        std::cout << std::endl;
 
         // 2) calculate computed attitude Rc
         Rc_ << b1c(0), b2c(0), b3c(0),
@@ -95,6 +131,10 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q)
         // 3) calculated derivative of the computed attitude Rc
         Eigen::Matrix<double, 3, 3> Rc_dot;
         Rc_dot = (Rc_ - Rc_prev_) / (q.sim_time_ - att_time_);
+
+//        std::cout << Rc_ << std::endl;
+//        std::cout << Rc_dot << std::endl;
+//        std::cout << std::endl;
 
         // 4) calculate computed angular velocity omegac
         Eigen::Matrix<double, 3, 3> omegac_hat;
@@ -139,21 +179,32 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q)
         desired_rotor_rates_ = (desired_rotor_forces_ / q.motor_force_const_).cwiseSqrt();  // uses F = kf \omega^{2}
 
         // 8) set rotor rates (not publishing yet)
-        set_rotor_rates(q);
+//        set_rotor_rates(q);
 
         // 9) set "memory" variables for time derivations
         Rc_prev_ = Rc_;
         omegac_prev_ = omegac_;
         att_time_ = q.sim_time_;            // should be the last thing run
-    }
+
+    } // end att timing check
+
+//    set_rotor_rates(q);                 // needs to be set every loop!
+
 } // end Quadcopter::Controller_attitude_control()
 
 //// Set the rotor rates of the pass quadcopter object
 void Quadcopter::Controller::set_rotor_rates(Quadcopter &q)
 {
-    q.ref_motor_vel0_.set_data(desired_rotor_rates_(0));
-    q.ref_motor_vel1_.set_data(desired_rotor_rates_(1));
-    q.ref_motor_vel2_.set_data(desired_rotor_rates_(2));
-    q.ref_motor_vel3_.set_data(desired_rotor_rates_(3));
+//    desired_rotor_rates_ << 100.0, 100.0, 100.0, 100.0;
+//    std::cout << desired_rotor_rates_ << std::endl;
+//    std::cout << std::endl;
+//    pause();
+
+    q.ref_motor_vel0_.set_data(desired_rotor_rates_(0)/10.0);
+    q.ref_motor_vel1_.set_data(desired_rotor_rates_(1)/10.0);
+    q.ref_motor_vel2_.set_data(desired_rotor_rates_(2)/10.0);
+    q.ref_motor_vel3_.set_data(desired_rotor_rates_(3)/10.0);
+
+//    q.publish_rotor_cmds();
 
 } // end Quadcopter::Controller::set_rotor_rates()
