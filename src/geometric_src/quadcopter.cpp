@@ -9,10 +9,13 @@
 //// Quadcopter class initializations and definitions
 Quadcopter::Quadcopter()
     :   trajectory(Trajectory()),
+        controller(Controller()),
+        test(1.0),
         sim_time_(0.0),                      // seconds
         prev_sim_time_(0.0),
         sim_time_delta_(0.0),
         sim_state_(0),
+//        desired_rotor_rates_(),
         ref_motor_vel0_(),                   // default constructed Float protobuf messages
         ref_motor_vel1_(),
         ref_motor_vel2_(),
@@ -87,12 +90,22 @@ void Quadcopter::run()
     if(sim_time_ > 5.0){
         trajectory.set_new_trajectory("hover");
     }
-    trajectory.run_trajectory_update();
-    controller.position_control(*this, trajectory);
-    controller.attitude_control(*this, trajectory);
-    controller.set_rotor_rates(*this);
-    publish_rotor_cmds();
-}
+    if(sim_time_ > 6.0) {                                       // this offset clears the first few calculations that are erroneous
+        trajectory.run_trajectory_update();
+        controller.position_control(*this, trajectory);
+        controller.attitude_control(*this, trajectory);
+        controller.set_rotor_rates(*this);
+
+        if(sim_time_ > 7.0) {
+            pub0->Publish(ref_motor_vel0_);
+            pub1->Publish(ref_motor_vel1_);
+            pub2->Publish(ref_motor_vel2_);
+            pub3->Publish(ref_motor_vel3_);
+        }
+//    publish_rotor_cmds();
+    }
+
+} // end Quadcopter::run()
 
 //// update data and state machine
 void Quadcopter::update_state_and_data()
@@ -155,13 +168,6 @@ void Quadcopter::derived_sensor_values()
 //// Publish commanded rotor velocities (rad/s)
 void Quadcopter::publish_rotor_cmds()
 {
-//    std::cout << "rotor rates: " << std::endl;
-//    std::cout << ref_motor_vel0_.data() << std::endl;
-//    std::cout << ref_motor_vel1_.data() << std::endl;
-//    std::cout << ref_motor_vel2_.data() << std::endl;
-//    std::cout << ref_motor_vel3_.data() << std::endl;
-//    std::cout << std::endl;
-
     pub0->Publish(ref_motor_vel0_);
     pub1->Publish(ref_motor_vel1_);
     pub2->Publish(ref_motor_vel2_);

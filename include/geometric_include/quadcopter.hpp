@@ -32,6 +32,9 @@ public:
     void run();
 
 private:
+    //// testing
+    double test;
+
     //// gazebo variables
     gazebo::transport::NodePtr node_handle_;         // TODO:: maybe "Node" vs "NodePtr"; different errors
     typedef const boost::shared_ptr<const gazebo::msgs::LocalPosesStamped> ConstLocalPosesStampedPtr;
@@ -50,6 +53,7 @@ private:
     int sim_state_;                  // 0 - not armed, 1 - pre-armed, 2 - armed
 
     //// publish variables
+//    Eigen::Matrix<double,1,4> desired_rotor_rates_;
     std_msgs::msgs::Float ref_motor_vel0_;
     std_msgs::msgs::Float ref_motor_vel1_;
     std_msgs::msgs::Float ref_motor_vel2_;
@@ -146,8 +150,12 @@ private:
         void position_control(Quadcopter &q, Trajectory &t);
         void attitude_control(Quadcopter &q, Trajectory &t);
         void set_rotor_rates(Quadcopter &q);
+//        Eigen::Matrix<double,1,4> get_desired_rotor_rates();
 
     private:
+        //// logging variables
+        std::ofstream testdata_controller;
+
         // controller specific data/properties; bounds checking (geometric modes; ctrl gains)
         //// controller gains
 //        Eigen::Matrix<double, 1, 3> Kpos_;                // I'm assigning the diagonal elements the same...
@@ -185,6 +193,11 @@ private:
 
         //// helper function definitions
 //        void set_rotor_rates(Quadcopter &q);
+        Eigen::Matrix<double,1,3> vec3d_check(float _min, float _max, Eigen::Matrix<double,1,3> _vec);
+        Eigen::Matrix<double,4,1> vec4d_check(float _min, float _max, Eigen::Matrix<double,4,1> _vec);
+        Eigen::Matrix<double,3,3> mat3d_check(float _min, float _max, Eigen::Matrix<double,3,3> _mat);
+
+
 
     }; // end class Controller
 

@@ -26,7 +26,7 @@ Quadcopter::Trajectory::Trajectory(std::string traj_)
         desired_pqr_att_()          // 1x4 eigen matrix
 {
     // don't forget the : initializers
-    ;
+//    desired_traj_ = "hover";
 } // end Quadcopter::Trajectory::Trajectory()
 
 //// Run trajectory loop in forward direction
