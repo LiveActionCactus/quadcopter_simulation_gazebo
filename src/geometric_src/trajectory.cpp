@@ -69,19 +69,23 @@ void Quadcopter::Trajectory::basic_hover()
 {
     // gets the quadcopter hovering at a stable state
     desired_pos_ << 0.0, 0.0, 1.0;
+
 } // end Quadcopter::Trajectory::basic_hover()
 
 Eigen::Matrix<double,1,3> Quadcopter::Trajectory::get_desired_pos()
 {
     return(desired_pos_);
+
 }
 
 Eigen::Matrix<double,1,3> Quadcopter::Trajectory::get_desired_vel()
 {
     return(desired_vel_);
+
 }
 
 Eigen::Matrix<double,1,3> Quadcopter::Trajectory::get_desired_acc()
 {
     return(desired_acc_);
+
 }

@@ -52,15 +52,22 @@ Quadcopter::Quadcopter()
     pub3 = node_handle_->Advertise<std_msgs::msgs::Float>("/gazebo/default/iris/ref/motor_speed/3", 1);
 
     // Initialize remaining variables
-    motor_force_mapping_ << 1.0,                      0.5,                      0.5,                      1.0,
-                            0.5*arm_length_,         -0.5*arm_length_,         -0.5*arm_length_,          0.5*arm_length_,
-                            0.5*arm_length_,          0.5*arm_length_,         -0.5*arm_length_,         -0.5*arm_length_,
-                            1.0*motor_torque_const_,  0.5*motor_torque_const_, -0.5*motor_torque_const_, -1.0*motor_torque_const_;
+//    motor_force_mapping_ << 1.0,                      0.5,                      0.5,                      1.0,
+//                            0.5*arm_length_,         -0.5*arm_length_,         -0.5*arm_length_,          0.5*arm_length_,
+//                            0.5*arm_length_,          0.5*arm_length_,         -0.5*arm_length_,         -0.5*arm_length_,
+//                            1.0*motor_torque_const_,  0.5*motor_torque_const_, -0.5*motor_torque_const_, -1.0*motor_torque_const_;
+    motor_force_mapping_ <<
+            motor_force_const_,                    motor_force_const_,                    motor_force_const_,                   motor_force_const_,
+            0.5*arm_length_*motor_force_const_,   -0.5*arm_length_*motor_force_const_,   -0.5*arm_length_*motor_force_const_,   0.5*arm_length_*motor_force_const_,
+            0.5*arm_length_*motor_force_const_,    0.5*arm_length_*motor_force_const_,   -0.5*arm_length_*motor_force_const_,  -0.5*arm_length_*motor_force_const_,
+            motor_torque_const_,                  -motor_torque_const_,                   motor_torque_const_,                 -motor_torque_const_;
+
     inv_motor_force_mapping_ = motor_force_mapping_.inverse();
     J_ << 0.029125,  0.0,       0.0,
           0.0,       0.029125,  0.0,
           0.0,       0.0,       0.055225;
-    sensor_quat_ << 1.0, -1.0, 1.0, -1.0;
+    sensor_quat_ << 1.0, 0.0, 0.0, 0.0;
+
 } // end Quadcopter::Quadcopter()
 
 Quadcopter::~Quadcopter()

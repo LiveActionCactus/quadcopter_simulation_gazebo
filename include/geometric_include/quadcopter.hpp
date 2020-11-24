@@ -186,7 +186,7 @@ private:
         Eigen::Matrix<double,1,3> omegac_prev_;
 
         //// desired values
-        Eigen::Matrix<double,1,4> desired_rotor_forces_;        // N?
+//        Eigen::Matrix<double,1,4> desired_rotor_forces_;        // N?
         Eigen::Matrix<double,1,4> desired_rotor_rates_;         // rad/s
         double desired_thrust_magnitude_;                       // sum of rotor forces
         Eigen::Matrix<double,1,3> desired_moments_;

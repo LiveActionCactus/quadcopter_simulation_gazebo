@@ -10,7 +10,7 @@
 Quadcopter::Controller::Controller()
     : Kpos_(6.0),                          // controller gains; 16.0
       Kvel_(2.0),                          // 5.6
-      Krot_(0.0),                          // 8.81
+      Krot_(0.5),                          // 8.81
       Kang_(0.0),                          // 2.54
       pos_err_(),                          // pos/vel/rot/angvel errors
       vel_err_(),
@@ -24,7 +24,7 @@ Quadcopter::Controller::Controller()
       Rc_prev_(),
       omegac_(),
       omegac_prev_(),
-      desired_rotor_forces_(),             // N?
+//      desired_rotor_forces_(),             // N?
       desired_rotor_rates_(),              // rad/s
       desired_thrust_magnitude_(),         // sum of rotor forces
       desired_moments_()                   // output from attitude controller
@@ -48,13 +48,13 @@ void Quadcopter::Controller::position_control(Quadcopter &q, Trajectory &t)
         Eigen::Matrix<double,1,3> desired_vel_ = t.get_desired_vel();
         Eigen::Matrix<double,1,3> desired_acc_ = t.get_desired_acc();
 
-        e3_basis << 0.0, 0.0, 1.0;
+        e3_basis << 0.0, 0.0, -1.0;          // TODO: 1.0 (orig) or -1.0 (paper)?
         pos_err_ = (q.sensor_pos_ - desired_pos_);
         vel_err_ = (q.derived_lin_vel_ - desired_vel_);
 
-        // TODO: I flipped these signs to align with gazebo coordinate frame better
-        pos_err_(1) = -pos_err_(1); pos_err_(2) = -pos_err_(2);
-        vel_err_(1) = -vel_err_(1); vel_err_(2) = -vel_err_(2);
+//        // TODO: I flipped these signs to align with gazebo coordinate frame better
+//        pos_err_(1) = -pos_err_(1); pos_err_(2) = -pos_err_(2);
+//        vel_err_(1) = -vel_err_(1); vel_err_(2) = -vel_err_(2);
 
         // TODO: it's possible the coordinate frames are wrong, especially with z-axis
         // TODO: maybe just change the signs on the pos/vel error calculations?
@@ -110,21 +110,24 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
         Eigen::Matrix<double,1,3> b1d;
         b1d << 1.0, 0.0, 0.0;               // how does this tuning parameter behave? how should it be set intelligently?
 
-        e3_basis << 0.0, 0.0, 1.0;
+        e3_basis << 0.0, 0.0, -1.0;
         temp_vec = -Kpos_ * pos_err_ - Kvel_ * vel_err_ - q.mass_ * q.gravity_ * e3_basis + q.mass_ * desired_acc_;
 
         b3c = temp_vec / temp_vec.squaredNorm();
         b1c = -(1.0 / (b3c.cross(b1d)).squaredNorm()) * b3c.cross((b3c.cross(b1d)));
         b2c = b3c.cross(b1c);
 
-        // TODO: I flipped these signs to align with gazebo coordinate frame better
-        b2c = -b2c;
-        b3c = -b3c;
+//        // TODO: I flipped these signs to align with gazebo coordinate frame better
+//        b2c = -b2c;
+//        b3c = -b3c;       // TODO: the position and velocity errors are defined in pos control
 
         // 2) calculate computed attitude Rc
-        Rc_ << b1c(0), b2c(0), b3c(0),
+        Rc_ <<  b1c(0), b2c(0), b3c(0),   // most likely (column vectors)
                 b1c(1), b2c(1), b3c(1),
                 b1c(2), b2c(2), b3c(2);
+//        Rc_ << b1c(0), b1c(1), b1c(2),                    // TODO: testing row vectors
+//               b2c(0), b2c(1), b2c(2),
+//               b3c(0), b3c(1), b3c(2);
 
         // 3) calculated derivative of the computed attitude Rc
         Eigen::Matrix<double, 3, 3> Rc_dot;
@@ -146,6 +149,7 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
         rot_err_(1) = temp_mat(0, 2);
         rot_err_(2) = -temp_mat(0, 1);
         rot_err_ = 0.5 * rot_err_;
+        rot_err_ = vec3d_check(-2*3.14, 2*3.14, rot_err_);
 
         ang_vel_err_ = q.derived_pqr_att_ - (q.derived_rot_.transpose() * Rc_ * omegac_.transpose()).transpose();
         ang_vel_err_ = vec3d_check(-10.0, 10.0, ang_vel_err_);          // bounds checking
@@ -179,9 +183,10 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
         temp(2) = desired_moments_(1);
         temp(3) = desired_moments_(2);
 
-        desired_rotor_forces_ = q.inv_motor_force_mapping_ * temp;
-        desired_rotor_rates_ = (desired_rotor_forces_ / q.motor_force_const_).cwiseSqrt();  // uses F = kf \omega^{2}
-        desired_rotor_rates_= vec4d_check(0.0, 1000.0, desired_rotor_rates_);                 // bounds checking
+        desired_rotor_rates_ = q.inv_motor_force_mapping_ * temp;
+        desired_rotor_rates_ = desired_rotor_rates_.cwiseSqrt();
+//        desired_rotor_rates_ = (desired_rotor_forces_ / q.motor_force_const_).cwiseSqrt();  // uses F = kf \omega^{2}
+        desired_rotor_rates_= vec4d_check(0.0, 1500.0, desired_rotor_rates_);                 // bounds checking
 
         // 8) set rotor rates (not publishing yet)
 //        set_rotor_rates(q);
@@ -195,20 +200,20 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
 //    set_rotor_rates(q);                 // needs to be set every loop!
 
         testdata_controller << q.sim_time_ << "\n";
-        testdata_controller << "actual pos: " << std::fixed << std::setprecision(8) << q.sensor_pos_ << "\n";
-        testdata_controller << "desired pos: " << std::fixed << std::setprecision(8) << desired_pos_ << "\n";
-        testdata_controller << "position error: " << std::fixed << std::setprecision(8) << pos_err_ << "\n";
-        testdata_controller << "omegac hat: " << std::fixed << std::setprecision(8) << omegac_hat << "\n";
+        testdata_controller << "actual_pos: " << std::fixed << std::setprecision(8) << q.sensor_pos_ << "\n";
+        testdata_controller << "desired_pos: " << std::fixed << std::setprecision(8) << desired_pos_ << "\n";
+        testdata_controller << "position_error: " << std::fixed << std::setprecision(8) << pos_err_ << "\n";
+        testdata_controller << "omegac_hat: " << std::fixed << std::setprecision(8) << omegac_hat << "\n";
         testdata_controller << "omegac: " << std::fixed << std::setprecision(8) << omegac_ << "\n";
-        testdata_controller << "rot err: " << std::fixed << std::setprecision(8) << temp_mat << "\n";
-        testdata_controller << "ang vel err: " << std::fixed << std::setprecision(8) << ang_vel_err_ << "\n";
-        testdata_controller << "omega hat: " << std::fixed << std::setprecision(8) << omega_hat << "\n";
-        testdata_controller << "omegac dot " << std::fixed << std::setprecision(8) << omegac_dot << "\n";
-        testdata_controller << "des thrust mag: " << std::fixed << std::setprecision(8) << desired_thrust_magnitude_ << "\n";
-        testdata_controller << "desired moments: " << std::fixed << std::setprecision(8) << desired_moments_ << "\n";
-        testdata_controller << "motor mapping: " << std::fixed << std::setprecision(8) << q.inv_motor_force_mapping_ << "\n";
-        testdata_controller << "desired rotor forces: " << std::fixed << std::setprecision(8) << desired_rotor_forces_ << "\n";
-        testdata_controller << "desired rotor rates: " << std::fixed << std::setprecision(8) << desired_rotor_rates_ << "\n";
+        testdata_controller << "rot_err: " << std::fixed << std::setprecision(8) << temp_mat << "\n";
+        testdata_controller << "ang_vel_err: " << std::fixed << std::setprecision(8) << ang_vel_err_ << "\n";
+        testdata_controller << "omega_hat: " << std::fixed << std::setprecision(8) << omega_hat << "\n";
+        testdata_controller << "omegac_dot " << std::fixed << std::setprecision(8) << omegac_dot << "\n";
+        testdata_controller << "des_thrust_mag: " << std::fixed << std::setprecision(8) << desired_thrust_magnitude_ << "\n";
+        testdata_controller << "desired_moments: " << std::fixed << std::setprecision(8) << desired_moments_ << "\n";
+//        testdata_controller << "motor mapping: " << std::fixed << std::setprecision(8) << q.inv_motor_force_mapping_ << "\n";
+//        testdata_controller << "desired rotor forces: " << std::fixed << std::setprecision(8) << desired_rotor_forces_ << "\n";
+        testdata_controller << "desired_rotor_rates: " << std::fixed << std::setprecision(8) << desired_rotor_rates_ << "\n";
         testdata_controller  << "\n";
 
     } // end att timing check
