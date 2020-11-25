@@ -200,20 +200,20 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
 //    set_rotor_rates(q);                 // needs to be set every loop!
 
         testdata_controller << q.sim_time_ << "\n";
-        testdata_controller << "actual_pos: " << std::fixed << std::setprecision(8) << q.sensor_pos_ << "\n";
-        testdata_controller << "desired_pos: " << std::fixed << std::setprecision(8) << desired_pos_ << "\n";
-        testdata_controller << "position_error: " << std::fixed << std::setprecision(8) << pos_err_ << "\n";
-        testdata_controller << "omegac_hat: " << std::fixed << std::setprecision(8) << omegac_hat << "\n";
-        testdata_controller << "omegac: " << std::fixed << std::setprecision(8) << omegac_ << "\n";
-        testdata_controller << "rot_err: " << std::fixed << std::setprecision(8) << temp_mat << "\n";
-        testdata_controller << "ang_vel_err: " << std::fixed << std::setprecision(8) << ang_vel_err_ << "\n";
-        testdata_controller << "omega_hat: " << std::fixed << std::setprecision(8) << omega_hat << "\n";
-        testdata_controller << "omegac_dot " << std::fixed << std::setprecision(8) << omegac_dot << "\n";
-        testdata_controller << "des_thrust_mag: " << std::fixed << std::setprecision(8) << desired_thrust_magnitude_ << "\n";
-        testdata_controller << "desired_moments: " << std::fixed << std::setprecision(8) << desired_moments_ << "\n";
+        testdata_controller << std::fixed << std::setprecision(8) << q.sensor_pos_ << "\n";
+        testdata_controller << std::fixed << std::setprecision(8) << desired_pos_ << "\n";
+        testdata_controller << std::fixed << std::setprecision(8) << pos_err_ << "\n";
+        testdata_controller << std::fixed << std::setprecision(8) << omegac_hat << "\n";
+        testdata_controller << std::fixed << std::setprecision(8) << omegac_ << "\n";
+        testdata_controller << std::fixed << std::setprecision(8) << temp_mat << "\n";
+        testdata_controller << std::fixed << std::setprecision(8) << ang_vel_err_ << "\n";
+        testdata_controller << std::fixed << std::setprecision(8) << omega_hat << "\n";
+        testdata_controller << std::fixed << std::setprecision(8) << omegac_dot << "\n";
+        testdata_controller << std::fixed << std::setprecision(8) << desired_thrust_magnitude_ << "\n";
+        testdata_controller << std::fixed << std::setprecision(8) << desired_moments_ << "\n";
 //        testdata_controller << "motor mapping: " << std::fixed << std::setprecision(8) << q.inv_motor_force_mapping_ << "\n";
 //        testdata_controller << "desired rotor forces: " << std::fixed << std::setprecision(8) << desired_rotor_forces_ << "\n";
-        testdata_controller << "desired_rotor_rates: " << std::fixed << std::setprecision(8) << desired_rotor_rates_ << "\n";
+        testdata_controller << std::fixed << std::setprecision(8) << desired_rotor_rates_ << "\n";
         testdata_controller  << "\n";
 
     } // end att timing check
