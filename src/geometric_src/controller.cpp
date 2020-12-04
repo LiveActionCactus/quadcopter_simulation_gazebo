@@ -6,11 +6,24 @@
 
 #include "../../include/geometric_include/quadcopter.hpp"
 
+//TODO: Testing
+// 1) compare no attitude controller plots to modest attitude controller plots; I'm not sure it's doing anything
+//      03Dec: Krot_ 5 -- causes pitch flop, -5 -- roll flop, 0 -- hover then slow drift off
+//              points to an issue in the implementation
+//      SUCCESS (sort of): no "computed" vector sign changes, just Krot_ = -5 for "okay" hover that slowly goes unstable in roll
+// 2) review the math + coding to make sure it's implemented correctly
+//      03Dec: +x goes forward like is supposed to but the pitch controller goes unstable (positive feedback)
+//             +y goes to the right which is opposite to what it should
+//              MAYBE LOOK INTO ALTERING "rot_err_" elements
+// 3) it's possible that the position + velocity controller is too high, i'm getting 20N thrust magnitude at start
+// 4) try to critically damp the results for hover trajectory (is this even a thing for geometric controllers?)
+// 5) are the motors being mapped properly? no issue in the roll control, but pitch is wild...
+
 // Controller class initializations and definitions
 Quadcopter::Controller::Controller()
-    : Kpos_(6.0),                          // controller gains; 16.0
-      Kvel_(2.0),                          // 5.6
-      Krot_(0.5),                          // 8.81
+    : Kpos_(8.0),                          // controller gains; 16.0
+      Kvel_(4.0),                          // 5.6
+      Krot_(-0.25),                         // 8.81             // motors are saturating at 10.0
       Kang_(0.0),                          // 2.54
       pos_err_(),                          // pos/vel/rot/angvel errors
       vel_err_(),
@@ -121,10 +134,11 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
 //        b2c = -b2c;
 //        b3c = -b3c;       // TODO: the position and velocity errors are defined in pos control
 
+        // TODO: I changed the signs on b2c and b3c to negative to try to better align the frames
         // 2) calculate computed attitude Rc
-        Rc_ <<  b1c(0), b2c(0), b3c(0),   // most likely (column vectors)
-                b1c(1), b2c(1), b3c(1),
-                b1c(2), b2c(2), b3c(2);
+        Rc_ <<  b1c(0), -b2c(0), -b3c(0),   // most likely (column vectors)
+                b1c(1), -b2c(1), -b3c(1),
+                b1c(2), -b2c(2), -b3c(2);
 //        Rc_ << b1c(0), b1c(1), b1c(2),                    // TODO: testing row vectors
 //               b2c(0), b2c(1), b2c(2),
 //               b3c(0), b3c(1), b3c(2);
@@ -205,14 +219,12 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
         testdata_controller << std::fixed << std::setprecision(8) << pos_err_ << "\n";
         testdata_controller << std::fixed << std::setprecision(8) << omegac_hat << "\n";
         testdata_controller << std::fixed << std::setprecision(8) << omegac_ << "\n";
-        testdata_controller << std::fixed << std::setprecision(8) << temp_mat << "\n";
+        testdata_controller << std::fixed << std::setprecision(8) << rot_err_ << "\n";
         testdata_controller << std::fixed << std::setprecision(8) << ang_vel_err_ << "\n";
         testdata_controller << std::fixed << std::setprecision(8) << omega_hat << "\n";
         testdata_controller << std::fixed << std::setprecision(8) << omegac_dot << "\n";
         testdata_controller << std::fixed << std::setprecision(8) << desired_thrust_magnitude_ << "\n";
         testdata_controller << std::fixed << std::setprecision(8) << desired_moments_ << "\n";
-//        testdata_controller << "motor mapping: " << std::fixed << std::setprecision(8) << q.inv_motor_force_mapping_ << "\n";
-//        testdata_controller << "desired rotor forces: " << std::fixed << std::setprecision(8) << desired_rotor_forces_ << "\n";
         testdata_controller << std::fixed << std::setprecision(8) << desired_rotor_rates_ << "\n";
         testdata_controller  << "\n";
 
