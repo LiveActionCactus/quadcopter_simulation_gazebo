@@ -145,44 +145,44 @@ def resize_data_in():
 	if min_size == 0:
 		print("Invalid 'min_size' -- value is 0")
 
-	time_ref = time_ref[0:min_size]
-	time_ref = np.array(time_ref)[0:min_size]
+	time_ref = time_ref[1:min_size]
+	time_ref = np.array(time_ref)[1:min_size]
 
-	actual_pos = actual_pos[0:min_size]
-	actual_pos = np.array(actual_pos)[0:min_size,:]
+	actual_pos = actual_pos[1:min_size]
+	actual_pos = np.array(actual_pos)[1:min_size,:]
 	
-	desired_pos = desired_pos[0:min_size]
-	desired_pos = np.array(desired_pos)[0:min_size,:]
+	desired_pos = desired_pos[1:min_size]
+	desired_pos = np.array(desired_pos)[1:min_size,:]
 	
-	pos_err = pos_err[0:min_size]
-	pos_err = np.array(pos_err)[0:min_size,:]
+	pos_err = pos_err[1:min_size]
+	pos_err = np.array(pos_err)[1:min_size,:]
 	
-	omegac_hat_resize = omegac_hat_resize[0:min_size] 								# matrix
-	omegac_hat_resize = np.array(omegac_hat_resize)[0:min_size]
+	omegac_hat_resize = omegac_hat_resize[1:min_size] 								# matrix
+	omegac_hat_resize = np.array(omegac_hat_resize)[1:min_size]
 	
-	omegac = omegac[0:min_size]
-	omegac = np.array(omegac)[0:min_size]
+	omegac = omegac[1:min_size]
+	omegac = np.array(omegac)[1:min_size]
 	
-	rot_err = rot_err[0:min_size]
-	rot_err = np.array(rot_err)[0:min_size]
+	rot_err = rot_err[1:min_size]
+	rot_err = np.array(rot_err)[1:min_size]
 
-	ang_vel_err = ang_vel_err[0:min_size]
-	ang_vel_err = np.array(ang_vel_err)[0:min_size,:]
+	ang_vel_err = ang_vel_err[1:min_size]
+	ang_vel_err = np.array(ang_vel_err)[1:min_size,:]
 
-	omega_hat_resize = omega_hat_resize[0:min_size] 								# matrix
-	omega_hat_resize = np.array(omegac_hat_resize)[0:min_size]
+	omega_hat_resize = omega_hat_resize[1:min_size] 								# matrix
+	omega_hat_resize = np.array(omegac_hat_resize)[1:min_size]
 
-	omegac_dot = omegac_dot[0:min_size]
-	omegac_dot = np.array(omegac_dot)[0:min_size]
+	omegac_dot = omegac_dot[1:min_size]
+	omegac_dot = np.array(omegac_dot)[1:min_size]
 	
-	desired_thrust_mag = desired_thrust_mag[0:min_size]
-	desired_thrust_mag = np.array(desired_thrust_mag)[0:min_size,:]
+	desired_thrust_mag = desired_thrust_mag[1:min_size]
+	desired_thrust_mag = np.array(desired_thrust_mag)[1:min_size,:]
 	
-	desired_moments = desired_moments[0:min_size]
-	desired_moments = np.array(desired_moments)[0:min_size,:]
+	desired_moments = desired_moments[1:min_size]
+	desired_moments = np.array(desired_moments)[1:min_size,:]
 
-	desired_rotor_rates = desired_rotor_rates[0:min_size]
-	desired_rotor_rates = np.array(desired_rotor_rates)[0:min_size,:]
+	desired_rotor_rates = desired_rotor_rates[1:min_size]
+	desired_rotor_rates = np.array(desired_rotor_rates)[1:min_size,:]
 
 
 def visualize_results():
@@ -236,7 +236,7 @@ def visualize_results():
 	plt.grid(True)
 
 	plt.subplot(1,2,2)
-	plt.plot(time_ref[:], desired_thrust_mag[:], label="thrust mag")
+	# plt.plot(time_ref[:], desired_thrust_mag[:], label="thrust mag")
 	plt.plot(time_ref[:], desired_moments[:,0], label="roll force")
 	plt.plot(time_ref[:], desired_moments[:,1], label="pitch force")
 	plt.plot(time_ref[:], desired_moments[:,2], label="yaw force")

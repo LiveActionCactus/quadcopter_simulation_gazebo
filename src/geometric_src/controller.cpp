@@ -18,13 +18,15 @@
 // 3) it's possible that the position + velocity controller is too high, i'm getting 20N thrust magnitude at start
 // 4) try to critically damp the results for hover trajectory (is this even a thing for geometric controllers?)
 // 5) are the motors being mapped properly? no issue in the roll control, but pitch is wild...
+// !) THE rot_err_ SEEMS TO BE LOOPING VERY SLOWLY (look at the chopping in the plots)
+// 7) maybe the timining not being consistent is causing issues with the variable updates (the derived ones)
 
 // Controller class initializations and definitions
 Quadcopter::Controller::Controller()
-    : Kpos_(8.0),                          // controller gains; 16.0
-      Kvel_(4.0),                          // 5.6
-      Krot_(-0.25),                         // 8.81             // motors are saturating at 10.0
-      Kang_(0.0),                          // 2.54
+    : Kpos_(25.0),                          // controller gains; 8.0
+      Kvel_(12.0),                          // 4.0
+      Krot_(-1.5),                         // -1.5             // motors are saturating at 10.0
+      Kang_(1.0),                          // 1.0
       pos_err_(),                          // pos/vel/rot/angvel errors
       vel_err_(),
       rot_err_(),
@@ -43,6 +45,7 @@ Quadcopter::Controller::Controller()
       desired_moments_()                   // output from attitude controller
 {
     testdata_controller.open("testdata_cont.txt");
+    troubleshooting.open("troubleshooting.txt");
 //    desired_rotor_forces_ << 0.0, 0.0, 0.0, 0.0;
 //    desired_rotor_rates_ << 0.0, 0.0, 0.0, 0.0;
 //    desired_thrust_magnitude_ = 0.0;
@@ -136,9 +139,14 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
 
         // TODO: I changed the signs on b2c and b3c to negative to try to better align the frames
         // 2) calculate computed attitude Rc
+//        Rc_ <<  b1c(0), b2c(0), b3c(0),   // most likely (column vectors)
+//                b1c(1), b2c(1), b3c(1),
+//                b1c(2), b2c(2), b3c(2);
+
         Rc_ <<  b1c(0), -b2c(0), -b3c(0),   // most likely (column vectors)
                 b1c(1), -b2c(1), -b3c(1),
                 b1c(2), -b2c(2), -b3c(2);
+
 //        Rc_ << b1c(0), b1c(1), b1c(2),                    // TODO: testing row vectors
 //               b2c(0), b2c(1), b2c(2),
 //               b3c(0), b3c(1), b3c(2);
@@ -159,9 +167,14 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
 
         // 5) calculate rotation error and angular velocity error
         temp_mat = Rc_.transpose() * q.derived_rot_ - q.derived_rot_.transpose() * Rc_;
-        rot_err_(0) = -temp_mat(1, 2);
+//        rot_err_(0) = -temp_mat(1, 2);            // TODO: original errors
+//        rot_err_(1) = temp_mat(0, 2);
+//        rot_err_(2) = -temp_mat(0, 1);
+
+        rot_err_(0) = temp_mat(1, 2);
         rot_err_(1) = temp_mat(0, 2);
         rot_err_(2) = -temp_mat(0, 1);
+
         rot_err_ = 0.5 * rot_err_;
         rot_err_ = vec3d_check(-2*3.14, 2*3.14, rot_err_);
 
@@ -188,6 +201,24 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
                            q.derived_pqr_att_.cross((q.J_ * q.derived_pqr_att_.transpose()).transpose())
                            - (q.J_ * (omega_hat * q.derived_rot_.transpose() * Rc_ * omegac_.transpose() -
                                       q.derived_rot_.transpose() * Rc_ * omegac_dot.transpose())).transpose();
+
+        // TODO: look at individual variables used in the attitude update
+        Eigen::Matrix<double,3,3> test_Rc;
+        Eigen::Matrix<double,1,3> test_omegacdot;
+        Eigen::Matrix<double,3,3> test_derived_rot_;
+//        Eigen::Matrix<double,1,3> test_omegac_;
+//        Eigen::Matrix<double,3,3> test_J;
+//        Eigen::Matrix<double,1,3> test_derived_pqr_att_;
+//        Eigen::Matrix<double,1,3> test_ang_vel_err;
+
+        test_Rc = Rc_;
+        test_omegacdot = omegac_dot;
+        test_derived_rot_ = q.derived_rot_;
+
+        // TODO: troubleshooting spiking behavior
+        Eigen::Matrix<double,1,3> test_desired_moments;
+        test_desired_moments = desired_moments_;
+
         desired_moments_ = vec3d_check(-10.0, 10.0, desired_moments_);      // bounds checking
 
         // 7) calculate desired rotor rates
@@ -213,20 +244,29 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
 //
 //    set_rotor_rates(q);                 // needs to be set every loop!
 
-        testdata_controller << q.sim_time_ << "\n";
-        testdata_controller << std::fixed << std::setprecision(8) << q.sensor_pos_ << "\n";
-        testdata_controller << std::fixed << std::setprecision(8) << desired_pos_ << "\n";
-        testdata_controller << std::fixed << std::setprecision(8) << pos_err_ << "\n";
-        testdata_controller << std::fixed << std::setprecision(8) << omegac_hat << "\n";
-        testdata_controller << std::fixed << std::setprecision(8) << omegac_ << "\n";
-        testdata_controller << std::fixed << std::setprecision(8) << rot_err_ << "\n";
-        testdata_controller << std::fixed << std::setprecision(8) << ang_vel_err_ << "\n";
-        testdata_controller << std::fixed << std::setprecision(8) << omega_hat << "\n";
-        testdata_controller << std::fixed << std::setprecision(8) << omegac_dot << "\n";
-        testdata_controller << std::fixed << std::setprecision(8) << desired_thrust_magnitude_ << "\n";
-        testdata_controller << std::fixed << std::setprecision(8) << desired_moments_ << "\n";
-        testdata_controller << std::fixed << std::setprecision(8) << desired_rotor_rates_ << "\n";
-        testdata_controller  << "\n";
+//        testdata_controller << q.sim_time_ << "\n";
+//        testdata_controller << std::fixed << std::setprecision(8) << q.sensor_pos_ << "\n";
+//        testdata_controller << std::fixed << std::setprecision(8) << desired_pos_ << "\n";
+//        testdata_controller << std::fixed << std::setprecision(8) << pos_err_ << "\n";
+//        testdata_controller << std::fixed << std::setprecision(8) << omegac_hat << "\n";
+//        testdata_controller << std::fixed << std::setprecision(8) << omegac_ << "\n";
+//        testdata_controller << std::fixed << std::setprecision(8) << rot_err_ << "\n";
+//        testdata_controller << std::fixed << std::setprecision(8) << ang_vel_err_ << "\n";
+//        testdata_controller << std::fixed << std::setprecision(8) << omega_hat << "\n";
+//        testdata_controller << std::fixed << std::setprecision(8) << omegac_dot << "\n";
+//        testdata_controller << std::fixed << std::setprecision(8) << desired_thrust_magnitude_ << "\n";
+//        testdata_controller << std::fixed << std::setprecision(8) << desired_moments_ << "\n";
+//        testdata_controller << std::fixed << std::setprecision(8) << desired_rotor_rates_ << "\n";
+//        testdata_controller  << "\n";
+
+        troubleshooting << q.sim_time_ << "\n";
+        troubleshooting << std::fixed << std::setprecision(8) << desired_rotor_rates_ << "\n";
+        troubleshooting << std::fixed << std::setprecision(8) << desired_moments_ << "\n";
+        troubleshooting << std::fixed << std::setprecision(8) << test_desired_moments << "\n";
+        troubleshooting << std::fixed << std::setprecision(8) << test_Rc << "\n";
+        troubleshooting << std::fixed << std::setprecision(8) << test_omegacdot << "\n";
+        troubleshooting << std::fixed << std::setprecision(8) << test_derived_rot_ << "\n";
+        troubleshooting  << "\n";
 
     } // end att timing check
 

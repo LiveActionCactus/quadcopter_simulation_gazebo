@@ -155,6 +155,7 @@ private:
     private:
         //// logging variables
         std::ofstream testdata_controller;
+        std::ofstream troubleshooting;
 
         // controller specific data/properties; bounds checking (geometric modes; ctrl gains)
         //// controller gains
