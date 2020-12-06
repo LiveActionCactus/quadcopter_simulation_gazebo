@@ -25,8 +25,8 @@
 Quadcopter::Controller::Controller()
     : Kpos_(25.0),                          // controller gains; 8.0
       Kvel_(12.0),                          // 4.0
-      Krot_(-1.5),                         // -1.5             // motors are saturating at 10.0
-      Kang_(1.0),                          // 1.0
+      Krot_(0.0),                         // -1.5             // motors are saturating at 10.0
+      Kang_(0.0),                          // 1.0
       pos_err_(),                          // pos/vel/rot/angvel errors
       vel_err_(),
       rot_err_(),
@@ -124,13 +124,14 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
         Eigen::Matrix<double,1,3> desired_vel_ = t.get_desired_vel();
         Eigen::Matrix<double,1,3> desired_acc_ = t.get_desired_acc();
         Eigen::Matrix<double,1,3> b1d;
-        b1d << 1.0, 0.0, 0.0;               // how does this tuning parameter behave? how should it be set intelligently?
+        b1d << 2.0, 0.0, 0.0;               // how does this tuning parameter behave? how should it be set intelligently?
 
         e3_basis << 0.0, 0.0, -1.0;
-        temp_vec = -Kpos_ * pos_err_ - Kvel_ * vel_err_ - q.mass_ * q.gravity_ * e3_basis + q.mass_ * desired_acc_;
+        temp_vec = -(Kpos_ * pos_err_) - (Kvel_ * vel_err_) - (q.mass_ * q.gravity_ * e3_basis) + (q.mass_ * desired_acc_);
 
-        b3c = temp_vec / temp_vec.squaredNorm();
-        b1c = -(1.0 / (b3c.cross(b1d)).squaredNorm()) * b3c.cross((b3c.cross(b1d)));
+        // TODO: b3c isn't coming out as a unit vector...
+        b3c = temp_vec / temp_vec.norm();                   // norm() returns the sqrt of squaredNorm()
+        b1c = -(1.0 / (b3c.cross(b1d)).norm()) * b3c.cross((b3c.cross(b1d)));
         b2c = b3c.cross(b1c);
 
 //        // TODO: I flipped these signs to align with gazebo coordinate frame better
@@ -139,13 +140,13 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
 
         // TODO: I changed the signs on b2c and b3c to negative to try to better align the frames
         // 2) calculate computed attitude Rc
-//        Rc_ <<  b1c(0), b2c(0), b3c(0),   // most likely (column vectors)
-//                b1c(1), b2c(1), b3c(1),
-//                b1c(2), b2c(2), b3c(2);
+        Rc_ <<  b1c(0), b2c(0), b3c(0),   // most likely (column vectors)
+                b1c(1), b2c(1), b3c(1),
+                b1c(2), b2c(2), b3c(2);
 
-        Rc_ <<  b1c(0), -b2c(0), -b3c(0),   // most likely (column vectors)
-                b1c(1), -b2c(1), -b3c(1),
-                b1c(2), -b2c(2), -b3c(2);
+//        Rc_ <<  b1c(0), -b2c(0), -b3c(0),   // most likely (column vectors)
+//                b1c(1), -b2c(1), -b3c(1),
+//                b1c(2), -b2c(2), -b3c(2);
 
 //        Rc_ << b1c(0), b1c(1), b1c(2),                    // TODO: testing row vectors
 //               b2c(0), b2c(1), b2c(2),
@@ -260,6 +261,8 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
 //        testdata_controller  << "\n";
 
         troubleshooting << q.sim_time_ << "\n";
+        troubleshooting << q.sensor_pos_ << "\n";
+        troubleshooting << q.sensor_quat_ << "\n";
         troubleshooting << std::fixed << std::setprecision(8) << desired_rotor_rates_ << "\n";
         troubleshooting << std::fixed << std::setprecision(8) << desired_moments_ << "\n";
         troubleshooting << std::fixed << std::setprecision(8) << test_desired_moments << "\n";
