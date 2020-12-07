@@ -220,33 +220,40 @@ def visualize_results():
 	#  
 	#  TODO: my time derivatives are probably wrong, this is a fundamental math issue. I need to work these derivatives on paper
 	#  
+	#  TODO: the Rc rotations are plotted entirely wrong, when the quad rolls right and falls this appears as roll left and rise
+	#  		I'm not sure if this is just desired behavior though?
 
 	plt.figure(400)
 	ax = plot_basis(R=np.eye(3), ax_s=2)
 
 	scaling = 75
 	for i in range(math.floor(len(test_derived_rot_resize)/scaling)):	
-	# 	plot_basis(ax=ax, R=test_derived_rot_resize[:,:][i*100], p=actual_pos[i*100], ax_s=0.5)
-		plot_basis(ax=ax, R=test_Rc_resize[:,:][i*scaling], p=actual_pos[i*scaling], strict_check=False, ax_s=0.5) 		# FAILS INVERSION TEST
+		plot_basis(ax=ax, R=test_derived_rot_resize[:,:][i*scaling], p=actual_pos[i*scaling])
+
+	ax.set_xlabel("x-axis (m)")
+	ax.set_ylabel("y-axis (m)")
+	ax.set_zlabel("z-axis (m)")
+	plt.title("Body basis vectors over time")
+	plt.grid(True)
+
+
+	plt.figure(500)
+	ax = plot_basis(R=np.eye(3), ax_s=2)
+
+	scaling = 75
+	for i in range(math.floor(len(test_derived_rot_resize)/scaling)):	
+		plot_basis(ax=ax, R=test_Rc_resize[:,:][i*scaling], p=actual_pos[i*scaling]) 		# FAILS INVERSION TEST
 	# 		
 
 	# Plot "trajectory", doesn't look great	
 	# combined_traj = np.concatenate((actual_pos, actual_att), axis=1)
 	# plot_trajectory(ax=ax, P=combined_traj)	
 
-
-	# # plot Rc vectors (columns)
-	# plt.subplot(1,2,2)
-	# # plt.plot(time_ref[:], desired_thrust_mag[:], label="thrust mag")
-	# plt.plot(time_ref[:], test_Rc_resize[:,:][0], label="00")
-	# # plt.plot(time_ref[:], test_Rc_resize[:,0][1], label="01")
-	# # plt.plot(time_ref[:], test_Rc_resize[:,0][2], label="02")
-
-	# plt.xlabel('Sim time (s)')
-	# plt.ylabel('Rc value')
-	# plt.title("Rc vector over time")
-	# plt.legend()
-	# plt.grid(True)
+	ax.set_xlabel("x-axis (m)")
+	ax.set_ylabel("y-axis (m)")
+	ax.set_zlabel("z-axis (m)")
+	plt.title("Rc over time")
+	plt.grid(True)
 
 	plt.tight_layout()
 	plt.show()

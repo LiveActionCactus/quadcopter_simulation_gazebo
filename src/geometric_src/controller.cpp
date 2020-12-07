@@ -25,9 +25,9 @@
 Quadcopter::Controller::Controller()
     : Kpos_(25.0),                          // controller gains; 8.0
       Kvel_(12.0),                          // 4.0
-      Krot_(0.0),                         // -1.5             // motors are saturating at 10.0
-      Kang_(0.0),                          // 1.0
-      pos_err_(),                          // pos/vel/rot/angvel errors
+      Krot_(0.5),                           // -1.5             // motors are saturating at 10.0
+      Kang_(0.0),                           // 1.0
+      pos_err_(),                           // pos/vel/rot/angvel errors
       vel_err_(),
       rot_err_(),
       ang_vel_err_(),
@@ -124,7 +124,7 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
         Eigen::Matrix<double,1,3> desired_vel_ = t.get_desired_vel();
         Eigen::Matrix<double,1,3> desired_acc_ = t.get_desired_acc();
         Eigen::Matrix<double,1,3> b1d;
-        b1d << 2.0, 0.0, 0.0;               // how does this tuning parameter behave? how should it be set intelligently?
+        b1d << 1.0, 0.0, 0.0;               // how does this tuning parameter behave? how should it be set intelligently?
 
         e3_basis << 0.0, 0.0, -1.0;
         temp_vec = -(Kpos_ * pos_err_) - (Kvel_ * vel_err_) - (q.mass_ * q.gravity_ * e3_basis) + (q.mass_ * desired_acc_);
@@ -139,12 +139,13 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
 //        b3c = -b3c;       // TODO: the position and velocity errors are defined in pos control
 
         // TODO: I changed the signs on b2c and b3c to negative to try to better align the frames
+        // TODO: there might be an issue with calculation here, doesn't seem to invert when the quad does (the body axis invert, but not Rc...)
         // 2) calculate computed attitude Rc
         Rc_ <<  b1c(0), b2c(0), b3c(0),   // most likely (column vectors)
-                b1c(1), b2c(1), b3c(1),
+                b1c(1), b2c(1), b3c(1),   // original
                 b1c(2), b2c(2), b3c(2);
 
-//        Rc_ <<  b1c(0), -b2c(0), -b3c(0),   // most likely (column vectors)
+//        Rc_ <<  b1c(0), -b2c(0), -b3c(0),   // changed
 //                b1c(1), -b2c(1), -b3c(1),
 //                b1c(2), -b2c(2), -b3c(2);
 
@@ -152,6 +153,7 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
 //               b2c(0), b2c(1), b2c(2),
 //               b3c(0), b3c(1), b3c(2);
 
+        // TODO: 99% sure this method for the derivative is totally wrong
         // 3) calculated derivative of the computed attitude Rc
         Eigen::Matrix<double, 3, 3> Rc_dot;
         Rc_dot = (Rc_ - Rc_prev_) / (q.sim_time_ - att_time_);
@@ -161,9 +163,9 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
         omegac_hat = Rc_.transpose() * Rc_dot;
         omegac_hat = mat3d_check(-10.0, 10.0, omegac_hat);
 
-        omegac_(0) = omegac_hat(1, 2);
+        omegac_(0) = -omegac_hat(1, 2);             // I fixed a sign error here
         omegac_(1) = omegac_hat(0, 2);
-        omegac_(2) = omegac_hat(0, 1);
+        omegac_(2) = -omegac_hat(0, 1);             // I fixed a sign error here
         omegac_ = vec3d_check(-10.0, 10.0, omegac_);                // bounds checking
 
         // 5) calculate rotation error and angular velocity error
@@ -172,9 +174,10 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
 //        rot_err_(1) = temp_mat(0, 2);
 //        rot_err_(2) = -temp_mat(0, 1);
 
-        rot_err_(0) = temp_mat(1, 2);
+        // TODO: make "vee" and "skew" mapping functions for readability (and to avoid sign errors!)
+        rot_err_(0) = -temp_mat(1, 2);              // I fixed a sign error here
         rot_err_(1) = temp_mat(0, 2);
-        rot_err_(2) = -temp_mat(0, 1);
+        rot_err_(2) = -temp_mat(0, 1);              // I fixed a sign error here
 
         rot_err_ = 0.5 * rot_err_;
         rot_err_ = vec3d_check(-2*3.14, 2*3.14, rot_err_);
@@ -193,6 +196,7 @@ void Quadcopter::Controller::attitude_control(Quadcopter &q, Trajectory &t)
                      q.derived_pqr_att_(2),    0.0,                         -q.derived_pqr_att_(0),
                     -q.derived_pqr_att_(1),    q.derived_pqr_att_(0),  0.0;
 
+        // TODO: there is a chance this derivative method is wrong for vectors
         Eigen::Matrix<double, 1, 3> omegac_dot;    // TODO: needs to be initialized or can cause NAN issues
         omegac_dot << 0.0, 0.0, 0.0;
         omegac_dot = (omegac_ - omegac_prev_) / (q.sim_time_ - att_time_);
