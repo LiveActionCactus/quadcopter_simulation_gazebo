@@ -155,6 +155,7 @@ struct Time_Stamps
 	uint64_t position_target_global_int;
 	uint64_t highres_imu;
 	uint64_t attitude;
+	uint64_t HIL_actuator;
 
 	void
 	reset_timestamps()
@@ -211,6 +212,8 @@ struct Mavlink_Messages {
 	// Attitude
 	mavlink_attitude_t attitude;
 
+	mavlink_hil_actuator_controls_t actuator;
+
 	// System Parameters?
 
 
@@ -249,7 +252,7 @@ class Autopilot_Interface
 public:
 
 	Autopilot_Interface();
-	Autopilot_Interface(Generic_Port *port_);
+	Autopilot_Interface(Generic_Port *port_,float *a, float *b, float *c , float *d, float *e, float *f);
 	~Autopilot_Interface();
 
 	char reading_status;
@@ -280,7 +283,8 @@ public:
 	void start_write_thread(void);
 
 	void handle_quit( int sig );
-
+	float *_a;
+	float *_b;
 
 private:
 

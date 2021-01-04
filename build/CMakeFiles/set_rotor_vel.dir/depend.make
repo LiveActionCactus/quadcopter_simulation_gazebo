@@ -179,6 +179,7 @@ CMakeFiles/set_rotor_vel.dir/set_rotor_vel.cpp.o: /usr/include/gazebo-9/gazebo/m
 CMakeFiles/set_rotor_vel.dir/set_rotor_vel.cpp.o: /usr/include/gazebo-9/gazebo/msgs/packet.pb.h
 CMakeFiles/set_rotor_vel.dir/set_rotor_vel.cpp.o: /usr/include/gazebo-9/gazebo/msgs/param.pb.h
 CMakeFiles/set_rotor_vel.dir/set_rotor_vel.cpp.o: /usr/include/gazebo-9/gazebo/msgs/param_v.pb.h
+CMakeFiles/set_rotor_vel.dir/set_rotor_vel.cpp.o: /usr/include/gazebo-9/gazebo/msgs/performance_metrics.pb.h
 CMakeFiles/set_rotor_vel.dir/set_rotor_vel.cpp.o: /usr/include/gazebo-9/gazebo/msgs/physics.pb.h
 CMakeFiles/set_rotor_vel.dir/set_rotor_vel.cpp.o: /usr/include/gazebo-9/gazebo/msgs/pid.pb.h
 CMakeFiles/set_rotor_vel.dir/set_rotor_vel.cpp.o: /usr/include/gazebo-9/gazebo/msgs/planegeom.pb.h

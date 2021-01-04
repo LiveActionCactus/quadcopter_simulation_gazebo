@@ -76,8 +76,10 @@ void writeThread(Autopilot_Interface* api)
 
         _write_euler = quat2euler(_write_quat);
 
-        //<$OA008,10,20,30,2,3,4>
-
+        
+        sa.body_roll_rate =8;// _write_euler(0);//<$OA008,10,20,30,2,3,4>
+        sa.body_pitch_rate = 9;//_write_euler(1);
+        sa.body_yaw_rate = 10;//_write_euler(2);
         // int leng = snprintf(str1, sizeof(str1), "<$OA008,%f,%f,%f,%f,%f,%f>", _write_euler(0), _write_euler(1), _write_euler(2), _write_pos(0), _write_pos(1), _write_pos(2));
         api -> update_att_setpoint(sa);
         // write(globalfiledescriptor, str1, leng);
@@ -277,7 +279,7 @@ int main(int _argc, char **_argv)
 	// }
 	// else
 	// {
-		port = new Serial_Port("/dev/ttyUSB1", 921600);
+		port = new Serial_Port("/dev/ttyACM0", 921600);
 	// }
 
 
@@ -296,8 +298,13 @@ int main(int _argc, char **_argv)
 	 * otherwise the vehicle will go into failsafe.
 	 *
 	 */
-	Autopilot_Interface autopilot_interface(port);
-
+    float aa = 1.0;
+    float bb = 2.0;
+    float cc = 3.0;
+    float dd = 4.0;
+    float ee = 5.0;
+    float ff = 6.0;
+	Autopilot_Interface autopilot_interface(port, &aa,&bb,&cc,&dd,&ee,&ff);
 	/*
 	 * Setup interrupt signal handler
 	 *
@@ -335,7 +342,7 @@ int main(int _argc, char **_argv)
 
     // Subscribe to measured position and orientation values
     gazebo::transport::SubscriberPtr sub5 = node_handle->Subscribe("~/pose/local/info", local_poses_cb);
-
+std::cout<< "Test2" <<std::endl;
     threadRunning.lock();
     boost::thread readT{readThread,&autopilot_interface};
     boost::thread writeT{writeThread,&autopilot_interface};
@@ -351,6 +358,7 @@ int main(int _argc, char **_argv)
     {
 
         readData.lock();
+        std::cout<< "Sysid: " << autopilot_interface.current_messages.actuator.controls[2] <<std::endl;
         ref_motor_vel0.set_data(motor_values[0]);
         ref_motor_vel1.set_data(motor_values[1]);
         ref_motor_vel2.set_data(motor_values[2]);

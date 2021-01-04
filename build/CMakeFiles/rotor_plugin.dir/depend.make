@@ -463,6 +463,7 @@ CMakeFiles/rotor_plugin.dir/rotor_plugin.cpp.o: /usr/include/gazebo-9/gazebo/msg
 CMakeFiles/rotor_plugin.dir/rotor_plugin.cpp.o: /usr/include/gazebo-9/gazebo/msgs/packet.pb.h
 CMakeFiles/rotor_plugin.dir/rotor_plugin.cpp.o: /usr/include/gazebo-9/gazebo/msgs/param.pb.h
 CMakeFiles/rotor_plugin.dir/rotor_plugin.cpp.o: /usr/include/gazebo-9/gazebo/msgs/param_v.pb.h
+CMakeFiles/rotor_plugin.dir/rotor_plugin.cpp.o: /usr/include/gazebo-9/gazebo/msgs/performance_metrics.pb.h
 CMakeFiles/rotor_plugin.dir/rotor_plugin.cpp.o: /usr/include/gazebo-9/gazebo/msgs/physics.pb.h
 CMakeFiles/rotor_plugin.dir/rotor_plugin.cpp.o: /usr/include/gazebo-9/gazebo/msgs/pid.pb.h
 CMakeFiles/rotor_plugin.dir/rotor_plugin.cpp.o: /usr/include/gazebo-9/gazebo/msgs/planegeom.pb.h
