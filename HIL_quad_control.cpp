@@ -27,12 +27,12 @@ int top(int argc, char **argv);
 
 void commands(Autopilot_Interface &autopilot_interface, bool autotakeoff);
 void parse_commandline(int argc, char **argv, char *&uart_name, int &baudrate,
-		bool &use_udp, char *&udp_ip, int &udp_port, bool &autotakeoff);
+                       bool &use_udp, char *&udp_ip, int &udp_port, bool &autotakeoff);
 
 // quit handler
 Autopilot_Interface *autopilot_interface_quit;
 Generic_Port *port_quit;
-void quit_handler( int sig );
+void quit_handler(int sig);
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"
 
@@ -44,7 +44,9 @@ boost::mutex writeData;
 boost::mutex readData;
 char buf[100];
 Eigen::Matrix<double, 1, 4> motor_values;
-
+Eigen::Matrix<double, 1, 4> _write_quat((Eigen::Matrix<double, 1, 4>() << 1.0, 0.0, 0.0, 0.0).finished());
+Eigen::Matrix<double, 1, 3> _write_pos;
+Eigen::Matrix<double, 1, 3> _write_euler;
 FILE *rwfile;
 //// Subscriber callback functions
 // Provides measured motor velocity
@@ -59,14 +61,12 @@ void waitMillis(int seconds)
     boost::this_thread::sleep_for(boost::chrono::milliseconds{seconds});
 }
 
-void writeThread(Autopilot_Interface* api)
+void writeThread(Autopilot_Interface *api)
 {
     int i = 0;
-    Eigen::Matrix<double, 1, 4> _write_quat((Eigen::Matrix<double, 1, 4>() << 1.0, 0.0, 0.0, 0.0).finished());
-    Eigen::Matrix<double, 1, 3> _write_pos;
-    Eigen::Matrix<double, 1, 3> _write_euler;
-    mavlink_set_attitude_target_t sa;
 
+    mavlink_set_attitude_target_t sa;
+    mavlink_set_position_target_local_ned_t sp;
     while (!threadRunning.try_lock())
     {
         writeData.lock();
@@ -76,12 +76,15 @@ void writeThread(Autopilot_Interface* api)
 
         _write_euler = quat2euler(_write_quat);
 
-        
-        sa.body_roll_rate =8;// _write_euler(0);//<$OA008,10,20,30,2,3,4>
-        sa.body_pitch_rate = 9;//_write_euler(1);
-        sa.body_yaw_rate = 10;//_write_euler(2);
+        sa.body_roll_rate = _write_euler(0); //<$OA008,10,20,30,2,3,4>
+        sa.body_pitch_rate = _write_euler(1);
+        sa.body_yaw_rate = _write_euler(2);
         // int leng = snprintf(str1, sizeof(str1), "<$OA008,%f,%f,%f,%f,%f,%f>", _write_euler(0), _write_euler(1), _write_euler(2), _write_pos(0), _write_pos(1), _write_pos(2));
-        api -> update_att_setpoint(sa);
+        api->update_att_setpoint(sa);
+        sp.x = _write_pos(0);
+        sp.y = _write_pos(1);
+        sp.z = _write_pos(2);
+        api->update_desired_pos(sp);
         // write(globalfiledescriptor, str1, leng);
         // fsync(globalfiledescriptor);
         // std::cout<<str1<<std::endl;
@@ -90,7 +93,7 @@ void writeThread(Autopilot_Interface* api)
     threadRunning.unlock();
 }
 
-void readThread(Autopilot_Interface* api)
+void readThread(Autopilot_Interface *api)
 {
 
     std::stringstream ss;
@@ -98,24 +101,24 @@ void readThread(Autopilot_Interface* api)
 
     while (!threadRunning.try_lock())
     {
-    //     fgets(buf, sizeof(buf), rwfile);
-    //     ss.str(buf);
-    //     // std::cout  <<ss.str() ;
-    //     readData.lock();
-    //     for (int i = 0; ss.good() && i < 4; i++)
-    //     {
+        //     fgets(buf, sizeof(buf), rwfile);
+        //     ss.str(buf);
+        //     // std::cout  <<ss.str() ;
+        //     readData.lock();
+        //     for (int i = 0; ss.good() && i < 4; i++)
+        //     {
 
-    //         getline(ss, substr, ',');
-    //         // std::cout<<substr;
-    //         motor_values[i] = std::stoi(substr);
-    //     }
-    //     readData.unlock();
-    //     ss.clear();
-    Mavlink_Messages messages =  api -> current_messages;
-	// local position in ned frame
-	mavlink_local_position_ned_t pos = messages.local_position_ned;
-    std::cout << pos.x <<std::endl;
-    sleep(1);
+        //         getline(ss, substr, ',');
+        //         // std::cout<<substr;
+        //         motor_values[i] = std::stoi(substr);
+        //     }
+        //     readData.unlock();
+        //     ss.clear();
+        Mavlink_Messages messages = api->current_messages;
+        // local position in ned frame
+        mavlink_local_position_ned_t pos = messages.local_position_ned;
+        std::cout << pos.x << std::endl;
+        sleep(1);
     }
     threadRunning.unlock();
 }
@@ -241,28 +244,27 @@ int main(int _argc, char **_argv)
     // set_interface_attribs(globalfiledescriptor, B2000000, 0); // set speed to 115,200 bps, 8n1 (no parity)
     // set_blocking(globalfiledescriptor, 0);                    // set no blocking
     // rwfile = fdopen(globalfiledescriptor, "rw");
-	// Default input arguments
+    // Default input arguments
 #ifdef __APPLE__
-	char *uart_name = (char*)"/dev/tty.usbmodem1";
+    char *uart_name = (char *)"/dev/tty.usbmodem1";
 #else
-	char *uart_name = (char*)"/dev/ttyUSB0";
+    char *uart_name = (char *)"/dev/ttyUSB0";
 #endif
-	int baudrate = 57600;
+    int baudrate = 57600;
 
-	bool use_udp = false;
-	char *udp_ip = (char*)"127.0.0.1";
-	int udp_port = 14540;
-	bool autotakeoff = false;
+    bool use_udp = false;
+    char *udp_ip = (char *)"127.0.0.1";
+    int udp_port = 14540;
+    bool autotakeoff = false;
 
-	// do the parse, will throw an int if it fails
-	// parse_commandline(argc, argv, uart_name, baudrate, use_udp, udp_ip, udp_port, autotakeoff);
+    // do the parse, will throw an int if it fails
+    // parse_commandline(argc, argv, uart_name, baudrate, use_udp, udp_ip, udp_port, autotakeoff);
 
+    // --------------------------------------------------------------------------
+    //   PORT and THREAD STARTUP
+    // --------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------
-	//   PORT and THREAD STARTUP
-	// --------------------------------------------------------------------------
-
-	/*
+    /*
 	 * Instantiate a generic port object
 	 *
 	 * This object handles the opening and closing of the offboard computer's
@@ -272,18 +274,17 @@ int main(int _argc, char **_argv)
 	 * pthread mutex lock. It can be a serial or an UDP port.
 	 *
 	 */
-	Generic_Port *port;
-	// if(use_udp)
-	// {
-	// 	port = new UDP_Port(udp_ip, udp_port);
-	// }
-	// else
-	// {
-		port = new Serial_Port("/dev/ttyACM0", 921600);
-	// }
+    Generic_Port *port;
+    // if(use_udp)
+    // {
+    // 	port = new UDP_Port(udp_ip, udp_port);
+    // }
+    // else
+    // {
+    port = new Serial_Port("/dev/ttyACM0", 921600);
+    // }
 
-
-	/*
+    /*
 	 * Instantiate an autopilot interface object
 	 *
 	 * This starts two threads for read and write over MAVlink. The read thread
@@ -298,14 +299,9 @@ int main(int _argc, char **_argv)
 	 * otherwise the vehicle will go into failsafe.
 	 *
 	 */
-    float aa = 1.0;
-    float bb = 2.0;
-    float cc = 3.0;
-    float dd = 4.0;
-    float ee = 5.0;
-    float ff = 6.0;
-	Autopilot_Interface autopilot_interface(port, &aa,&bb,&cc,&dd,&ee,&ff);
-	/*
+
+    Autopilot_Interface autopilot_interface(port);
+    /*
 	 * Setup interrupt signal handler
 	 *
 	 * Responds to early exits signaled with Ctrl-C.  The handler will command
@@ -313,16 +309,16 @@ int main(int _argc, char **_argv)
 	 * The handler in this example needs references to the above objects.
 	 *
 	 */
-	port_quit         = port;
-	autopilot_interface_quit = &autopilot_interface;
-	signal(SIGINT,quit_handler);
+    port_quit = port;
+    autopilot_interface_quit = &autopilot_interface;
+    signal(SIGINT, quit_handler);
 
-	/*
+    /*
 	 * Start the port and autopilot_interface
 	 * This is where the port is opened, and read and write threads are started.
 	 */
-	port->start();
-	autopilot_interface.start();
+    port->start();
+    autopilot_interface.start();
     // Load gazebo as a client
     gazebo::client::setup(_argc, _argv);
 
@@ -342,10 +338,10 @@ int main(int _argc, char **_argv)
 
     // Subscribe to measured position and orientation values
     gazebo::transport::SubscriberPtr sub5 = node_handle->Subscribe("~/pose/local/info", local_poses_cb);
-std::cout<< "Test2" <<std::endl;
+    std::cout << "Test2" << std::endl;
     threadRunning.lock();
-    boost::thread readT{readThread,&autopilot_interface};
-    boost::thread writeT{writeThread,&autopilot_interface};
+    boost::thread readT{readThread, &autopilot_interface};
+    boost::thread writeT{writeThread, &autopilot_interface};
     // readT.join();
     // writeT.join();
 
@@ -358,30 +354,38 @@ std::cout<< "Test2" <<std::endl;
     {
 
         readData.lock();
-        std::cout<< "Sysid: " << autopilot_interface.current_messages.actuator.controls[2] <<std::endl;
-        ref_motor_vel0.set_data(motor_values[0]);
-        ref_motor_vel1.set_data(motor_values[1]);
-        ref_motor_vel2.set_data(motor_values[2]);
-        ref_motor_vel3.set_data(motor_values[3]);
+        // std::cout<< "Sysid: " << autopilot_interface.current_messages.actuator.controls[2] <<std::endl;
+        ref_motor_vel0.set_data(autopilot_interface.current_messages.actuator.controls[0] * 700.0); //frontright
+        ref_motor_vel1.set_data(autopilot_interface.current_messages.actuator.controls[1] * 700.0); //frontleft
+        ref_motor_vel2.set_data(autopilot_interface.current_messages.actuator.controls[2] * 700.0); //backleft
+        ref_motor_vel3.set_data(autopilot_interface.current_messages.actuator.controls[3] * 700.0); //backright
         readData.unlock();
         pub0->Publish(ref_motor_vel0);
         pub1->Publish(ref_motor_vel1);
         pub2->Publish(ref_motor_vel2);
         pub3->Publish(ref_motor_vel3);
-
+        testdata << std::to_string(_write_euler(0))<< ",";
+        testdata << std::to_string(_write_euler(1))<< ",";
+        testdata << std::to_string(_write_euler(2))<< ",";
+        testdata << std::to_string(autopilot_interface.current_messages.actuator.controls[0] * 700.0) << ",";
+        testdata << std::to_string(autopilot_interface.current_messages.actuator.controls[1] * 700.0) << ",";
+        testdata << std::to_string(autopilot_interface.current_messages.actuator.controls[2] * 700.0) << ",";
+        testdata << std::to_string(autopilot_interface.current_messages.actuator.controls[3] * 700.0);
+        testdata << std::endl;
         // std::cout << "sensor motor 0: " << motor_values[0] << std::endl;
         // std::cout << "sensor motor 1: " << motor_values[1] << std::endl;
         // // std::cout << "sensor motor 2: " << sensor_motor_vel2 << std::endl;
         // // std::cout << "sensor motor 3: " << sensor_motor_vel3 << std::endl;
         // std::cout << std::endl;
-        waitMillis(5);
+        // waitMillis(5);
+        waitMillis(1);
     } // end while(1)
-
+    testdata.close();
     threadRunning.unlock();
     autopilot_interface.stop();
-	port->stop();
+    port->stop();
 
-	delete port;
+    delete port;
 
     return (0);
 
@@ -491,114 +495,131 @@ Eigen::Matrix<double, 1, 3> derive_ang_velocity(const Eigen::Ref<const Eigen::Ma
 
 } // end derive_ang_velocity()
 
-
-
 // ------------------------------------------------------------------------------
 //   Parse Command Line
 // ------------------------------------------------------------------------------
 // throws EXIT_FAILURE if could not open the port
-void
-parse_commandline(int argc, char **argv, char *&uart_name, int &baudrate,
-		bool &use_udp, char *&udp_ip, int &udp_port, bool &autotakeoff)
+void parse_commandline(int argc, char **argv, char *&uart_name, int &baudrate,
+                       bool &use_udp, char *&udp_ip, int &udp_port, bool &autotakeoff)
 {
 
-	// string for command line usage
-	const char *commandline_usage = "usage: mavlink_control [-d <devicename> -b <baudrate>] [-u <udp_ip> -p <udp_port>] [-a ]";
+    // string for command line usage
+    const char *commandline_usage = "usage: mavlink_control [-d <devicename> -b <baudrate>] [-u <udp_ip> -p <udp_port>] [-a ]";
 
-	// Read input arguments
-	for (int i = 1; i < argc; i++) { // argv[0] is "mavlink"
+    // Read input arguments
+    for (int i = 1; i < argc; i++)
+    { // argv[0] is "mavlink"
 
-		// Help
-		if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
-			printf("%s\n",commandline_usage);
-			throw EXIT_FAILURE;
-		}
+        // Help
+        if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0)
+        {
+            printf("%s\n", commandline_usage);
+            throw EXIT_FAILURE;
+        }
 
-		// UART device ID
-		if (strcmp(argv[i], "-d") == 0 || strcmp(argv[i], "--device") == 0) {
-			if (argc > i + 1) {
-				i++;
-				uart_name = argv[i];
-			} else {
-				printf("%s\n",commandline_usage);
-				throw EXIT_FAILURE;
-			}
-		}
+        // UART device ID
+        if (strcmp(argv[i], "-d") == 0 || strcmp(argv[i], "--device") == 0)
+        {
+            if (argc > i + 1)
+            {
+                i++;
+                uart_name = argv[i];
+            }
+            else
+            {
+                printf("%s\n", commandline_usage);
+                throw EXIT_FAILURE;
+            }
+        }
 
-		// Baud rate
-		if (strcmp(argv[i], "-b") == 0 || strcmp(argv[i], "--baud") == 0) {
-			if (argc > i + 1) {
-				i++;
-				baudrate = atoi(argv[i]);
-			} else {
-				printf("%s\n",commandline_usage);
-				throw EXIT_FAILURE;
-			}
-		}
+        // Baud rate
+        if (strcmp(argv[i], "-b") == 0 || strcmp(argv[i], "--baud") == 0)
+        {
+            if (argc > i + 1)
+            {
+                i++;
+                baudrate = atoi(argv[i]);
+            }
+            else
+            {
+                printf("%s\n", commandline_usage);
+                throw EXIT_FAILURE;
+            }
+        }
 
-		// UDP ip
-		if (strcmp(argv[i], "-u") == 0 || strcmp(argv[i], "--udp_ip") == 0) {
-			if (argc > i + 1) {
-				i++;
-				udp_ip = argv[i];
-				use_udp = true;
-			} else {
-				printf("%s\n",commandline_usage);
-				throw EXIT_FAILURE;
-			}
-		}
+        // UDP ip
+        if (strcmp(argv[i], "-u") == 0 || strcmp(argv[i], "--udp_ip") == 0)
+        {
+            if (argc > i + 1)
+            {
+                i++;
+                udp_ip = argv[i];
+                use_udp = true;
+            }
+            else
+            {
+                printf("%s\n", commandline_usage);
+                throw EXIT_FAILURE;
+            }
+        }
 
-		// UDP port
-		if (strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "--port") == 0) {
-			if (argc > i + 1) {
-				i++;
-				udp_port = atoi(argv[i]);
-			} else {
-				printf("%s\n",commandline_usage);
-				throw EXIT_FAILURE;
-			}
-		}
+        // UDP port
+        if (strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "--port") == 0)
+        {
+            if (argc > i + 1)
+            {
+                i++;
+                udp_port = atoi(argv[i]);
+            }
+            else
+            {
+                printf("%s\n", commandline_usage);
+                throw EXIT_FAILURE;
+            }
+        }
 
-		// Autotakeoff
-		if (strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "--autotakeoff") == 0) {
-			autotakeoff = true;
-		}
+        // Autotakeoff
+        if (strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "--autotakeoff") == 0)
+        {
+            autotakeoff = true;
+        }
+    }
+    // end: for each input argument
 
-	}
-	// end: for each input argument
-
-	// Done!
-	return;
+    // Done!
+    return;
 }
-
 
 // ------------------------------------------------------------------------------
 //   Quit Signal Handler
 // ------------------------------------------------------------------------------
 // this function is called when you press Ctrl-C
-void
-quit_handler( int sig )
+void quit_handler(int sig)
 {
-	printf("\n");
-	printf("TERMINATING AT USER REQUEST\n");
-	printf("\n");
+    printf("\n");
+    printf("TERMINATING AT USER REQUEST\n");
+    printf("\n");
 
-	// autopilot interface
-	try {
-		autopilot_interface_quit->handle_quit(sig);
-	}
-	catch (int error){}
+    // autopilot interface
+    try
+    {
+        autopilot_interface_quit->handle_quit(sig);
+    }
+    catch (int error)
+    {
+    }
 
-	// port
-	try {
-		port_quit->stop();
-	}
-	catch (int error){}
+    // port
+    try
+    {
+        port_quit->stop();
+    }
+    catch (int error)
+    {
+    }
 
-	// end program here
-	exit(0);
-
+    // end program here
+    exit(0);
 }
-
 
 #pragma clang diagnostic pop

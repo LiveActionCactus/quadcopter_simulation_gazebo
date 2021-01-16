@@ -214,6 +214,8 @@ struct Mavlink_Messages {
 
 	mavlink_hil_actuator_controls_t actuator;
 
+	mavlink_local_position_ned_t current_des_pos;
+
 	// System Parameters?
 
 
@@ -252,7 +254,7 @@ class Autopilot_Interface
 public:
 
 	Autopilot_Interface();
-	Autopilot_Interface(Generic_Port *port_,float *a, float *b, float *c , float *d, float *e, float *f);
+	Autopilot_Interface(Generic_Port *port_);
 	~Autopilot_Interface();
 
 	char reading_status;
@@ -269,6 +271,7 @@ public:
 
 	void update_setpoint(mavlink_set_position_target_local_ned_t setpoint);
 	void update_att_setpoint(mavlink_set_attitude_target_t setpoint);
+	void update_desired_pos(mavlink_set_position_target_local_ned_t setpoint);
 	void read_messages();
 	int  write_message(mavlink_message_t message);
 
@@ -283,8 +286,7 @@ public:
 	void start_write_thread(void);
 
 	void handle_quit( int sig );
-	float *_a;
-	float *_b;
+
 
 private:
 
@@ -304,6 +306,12 @@ private:
 		std::mutex mutex;
 		mavlink_set_attitude_target_t data;
 	} current_attitude;
+
+
+	struct {
+		std::mutex mutex;
+		mavlink_set_position_target_local_ned_t data;
+	} current_des_pos;
 
 	void read_thread();
 	void write_thread(void);

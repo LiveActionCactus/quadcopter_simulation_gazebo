@@ -174,12 +174,10 @@ void set_yaw_rate(float yaw_rate, mavlink_set_position_target_local_ned_t &sp)
 //   Con/De structors
 // ------------------------------------------------------------------------------
 Autopilot_Interface::
-	Autopilot_Interface(Generic_Port *port_,float *a, float *b, float *c , float *d, float *e, float *f)
+	Autopilot_Interface(Generic_Port *port_)
 {
 	// initialize attributes
 	write_count = 0;
-    _a = a;
-	_b = b;
 	reading_status = 0;	  // whether the read thread is running
 	writing_status = 0;	  // whether the write thread is running
 	control_status = 0;	  // whether the autopilot is in offboard control mode
@@ -218,7 +216,12 @@ void Autopilot_Interface::
 	std::lock_guard<std::mutex> lock(current_attitude.mutex);
 	current_attitude.data = setpoint;
 }
-
+void Autopilot_Interface::
+	update_desired_pos(mavlink_set_position_target_local_ned_t setpoint)
+{
+	std::lock_guard<std::mutex> lock(current_des_pos.mutex);
+	current_des_pos.data = setpoint;
+}
 // ------------------------------------------------------------------------------
 //   Read Messages
 // ------------------------------------------------------------------------------
@@ -474,6 +477,11 @@ void Autopilot_Interface::
 		sa = current_attitude.data;
 	}
 
+	mavlink_set_position_target_local_ned_t sp;
+	{
+		std::lock_guard<std::mutex> lock(current_des_pos.mutex);
+		sp = current_des_pos.data;
+	}
 	// double check some system parameters
 	if (not sa.time_boot_ms)
 		sa.time_boot_ms = (uint32_t)(get_time_usec() / 1000);
@@ -485,18 +493,22 @@ void Autopilot_Interface::
 	//   ENCODE
 	// --------------------------------------------------------------------------
 
-	mavlink_message_t message;
-	mavlink_msg_set_attitude_target_encode(system_id, companion_id, &message, &sa);
+	mavlink_message_t message1;
+	mavlink_msg_set_attitude_target_encode(system_id, companion_id, &message1, &sa);
+
+	mavlink_message_t message2;
+	mavlink_msg_set_position_target_local_ned_encode(system_id, companion_id, &message2, &sp);
 
 	// --------------------------------------------------------------------------
 	//   WRITE
 	// --------------------------------------------------------------------------
 
 	// do the write
-	int len = write_message(message);
+	int len1 = write_message(message1);
+	int len2 = write_message(message2);
 
 	// check the write
-	if (len <= 0)
+	if (len1 <= 0)
 		fprintf(stderr, "WARNING: could not send Attiude \n");
 	else
 	{
@@ -922,8 +934,7 @@ void Autopilot_Interface::
 
 		// write_setpoint();
 		// std::cout<<(get_time_usec()-firsttime)<<std::endl;
-		std::cout << *_a << std::endl;
-		std::cout << *_b << std::endl;
+
 		// int leng = snprintf(str1, sizeof(str1), "<$OA008,%f,%f,%f,%f,%f,%f>", _write_euler(0), _write_euler(1), _write_euler(2), _write_pos(0), _write_pos(1), _write_pos(2));
 		write_msg_attitude();
 		// std::cout<<(get_time_usec()-firsttime)<<std::endl<<std::endl;
